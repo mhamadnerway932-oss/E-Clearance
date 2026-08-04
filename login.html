@@ -2241,54 +2241,5 @@
         });
     </script>
 
-    <!-- ══ Anti-Inspect Protection Shield ══ -->
-    <script>
-    (function(){
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
-            if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); return false; }
-            if (e.ctrlKey && ['U','u','S','s'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); return false; }
-            if (e.metaKey && e.altKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); return false; }
-        }, true);
-        document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; }, true);
-        document.addEventListener('selectstart', function(e) { e.preventDefault(); }, true);
-        document.addEventListener('dragstart', function(e) { e.preventDefault(); }, true);
-        (function _dbgLoop() {
-            try { (function() { return false; }['constructor']('debugger')()) } catch(e){}
-            setTimeout(_dbgLoop, 800);
-        })();
-        (function() {
-            const _noop = function(){};
-            try {
-                Object.defineProperty(window, 'console', {
-                    get: function() {
-                        return { log: _noop, warn: _noop, error: _noop, info: _noop, debug: _noop, table: _noop, clear: _noop, dir: _noop, trace: _noop, assert: _noop, group: _noop, groupEnd: _noop, time: _noop, timeEnd: _noop };
-                    },
-                    set: function(){}
-                });
-            } catch(e){}
-        })();
-        (function() {
-            var _dtOpen = false;
-            var _check = function() {
-                var w = window.outerWidth - window.innerWidth > 160;
-                var h = window.outerHeight - window.innerHeight > 160;
-                if (w || h) {
-                    if (!_dtOpen) {
-                        _dtOpen = true;
-                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1c0a00;color:#f87171;font-family:Vazirmatn,sans-serif;font-size:1.5rem;text-align:center;padding:20px;direction:rtl;">⛔ ناچالاک — ئامێرێن پەرەپێدان داخراون<br><small style="color:#94a3b8;font-size:0.9rem;margin-top:12px;display:block;">تکایە ئامێرێن دەڤەلۆپەری داخە و پەڕەکێ نوی بکەرەوە</small></div>';
-                    }
-                } else { _dtOpen = false; }
-            };
-            setInterval(_check, 1200);
-        })();
-        (function() {
-            if (window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) {
-                document.body.innerHTML = '';
-            }
-        })();
-        document.addEventListener('copy', function(e) { e.preventDefault(); return false; }, true);
-    })();
-    </script>
 </body>
 </html>
