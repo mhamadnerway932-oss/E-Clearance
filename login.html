@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl" id="html-tag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UoD E-Clearance - چوونەژوورێ ب پاراستن</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+        body {
+            margin: 0; padding: 0;
+            background: linear-gradient(135deg, #ffe5cc 0%, #ffd1b3 40%, #ffb380 70%, #ffa475 100%);
+            color: #431407;
+            font-family: 'Vazirmatn', 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* ── Autumn Layered Scenery ── */
+        .autumn-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .sky-sun {
+            position: absolute;
+            top: 10%; right: 15%;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, #fff7ed 0%, #ffedd5 50%, rgba(254, 215, 170, 0) 100%);
+            border-radius: 50%;
+            filter: blur(10px);
+            opacity: 0.8;
+        }
+
+        /* Hills / Paths */
+        .ground-back {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 25vh;
+            background: linear-gradient(180deg, #fdba74 0%, #f97316 100%);
+            border-radius: 50% 50% 0 0 / 25px 25px 0 0;
+            transform: scaleX(1.2) translateY(5px);
+        }
+
+        .ground-front {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 15vh;
+            background: linear-gradient(180deg, #ea580c 0%, #c2410c 100%);
+            border-radius: 40% 40% 0 0 / 15px 15px 0 0;
+            transform: scaleX(1.1) translateY(2px);
+            z-index: 2;
+        }
+
+        .pathway {
+            position: absolute;
+            bottom: 0; left: 10%; width: 80%; height: 12vh;
+            background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+            z-index: 3;
+            opacity: 0.85;
+        }
+
+        /* Trees */
+        .bg-tree {
+            position: absolute;
+            bottom: 12vh;
+            filter: drop-shadow(0 10px 15px rgba(120, 53, 4, 0.15));
+            z-index: 2;
+        }
+
+        .tree-left-1 { left: 5%; width: 180px; height: 260px; }
+        .tree-left-2 { left: 18%; width: 130px; height: 200px; bottom: 14vh; opacity: 0.85; }
+        .tree-right-1 { right: 5%; width: 220px; height: 320px; }
+        .tree-right-2 { right: 20%; width: 140px; height: 220px; bottom: 14vh; opacity: 0.85; }
+
+        /* Bicycle Rider Animation */
+        .cyclist-container {
+            position: absolute;
+            bottom: 2vh;
+            left: 8%;
+            width: 140px;
+            height: 120px;
+            z-index: 4;
+            animation: bikeBobbing 2.5s ease-in-out infinite;
+        }
+
+        @keyframes bikeBobbing {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(1deg); }
+        }
+
+        .spinning-wheel {
+            transform-origin: center;
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(-360deg); }
+        }
+
+        /* Pedaling Animation */
+        .left-leg {
+            animation: pedalLeft 1.2s linear infinite;
+            transform-origin: 60px 52px;
+        }
+        .right-leg {
+            animation: pedalRight 1.2s linear infinite;
+            transform-origin: 60px 52px;
+        }
+
+        @keyframes pedalLeft {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(45deg); }
+        }
+        @keyframes pedalRight {
+            0%, 100% { transform: rotate(180deg); }
+            50% { transform: rotate(225deg); }
+        }
+
+        /* Falling Leaves Container */
+        .leaves-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .leaf-particle {
+            position: absolute;
+            display: block;
+            pointer-events: none;
+            z-index: 5;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-50px) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.85; }
+            90% { opacity: 0.85; }
+            100% {
+                transform: translateY(105vh) translateX(120px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ── Container Layout ── */
+        .main-container {
+            display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ── Glassmorphic Login Card ── */
+        .login-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 40px;
+            border-radius: 30px;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 
+                0 30px 60px rgba(120, 50, 10, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 0 100px rgba(254, 215, 170, 0.2);
+            animation: floatUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transform: translateY(30px);
+            opacity: 0;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        @keyframes floatUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .form-group { margin-bottom: 18px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 7px; color: #7c2d12; font-size: 0.95rem; font-weight: 700; }
+        
+        .login-input {
+            width: 100%; padding: 13px 16px; border-radius: 14px;
+            border: 1px solid rgba(120, 50, 10, 0.2);
+            background: rgba(255, 255, 255, 0.7);
+            color: #431407; font-size: 1rem; text-align: right; box-sizing: border-box;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(120, 50, 10, 0.03);
+            font-family: inherit;
+        }
+        .login-input::placeholder {
+            color: #9a3412;
+            opacity: 0.65;
+        }
+        .login-input:focus {
+            border-color: #ea580c; outline: none;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 15px rgba(234, 88, 12, 0.25);
+        }
+
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .password-container .login-input {
+            padding-left: 45px !important;
+        }
+        .password-toggle-btn {
+            position: absolute;
+            left: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #7c2d12;
+            opacity: 0.7;
+            font-size: 1.1rem;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s, color 0.2s;
+            user-select: none;
+            z-index: 10;
+        }
+        .password-toggle-btn:hover {
+            opacity: 1;
+            color: #ea580c;
+        }
+        
+        /* Custom Dropdown Styling */
+        .custom-select-wrapper {
+            position: relative;
+            user-select: none;
+            width: 100%;
+        }
+        .custom-select {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%; padding: 13px 16px; border-radius: 14px;
+            border: 1px solid rgba(120, 50, 10, 0.2);
+            background: rgba(255, 255, 255, 0.7);
+            color: #431407; font-size: 1rem; text-align: right; box-sizing: border-box;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            direction: rtl;
+        }
+        .custom-select:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #ea580c;
+        }
+        .custom-select.open {
+            border-color: #ea580c;
+            box-shadow: 0 0 15px rgba(234, 88, 12, 0.2);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .custom-select-arrow {
+            transition: transform 0.3s ease;
+            font-size: 0.8rem;
+            color: #ea580c;
+        }
+        .custom-select.open .custom-select-arrow {
+            transform: rotate(180deg);
+        }
+        .custom-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid #ea580c;
+            border-top: none;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            box-shadow: 0 10px 25px rgba(120, 50, 10, 0.15);
+            z-index: 99;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeInDown 0.2s ease-out forwards;
+        }
+        .custom-select.open + .custom-options {
+            display: flex;
+        }
+        .custom-option {
+            padding: 11px 16px;
+            color: #7c2d12;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: right;
+            font-size: 0.95rem;
+        }
+        .custom-option:hover, .custom-option.selected {
+            background: rgba(234, 88, 12, 0.15);
+            color: #431407;
+            font-weight: 600;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .security-badge {
+            background: rgba(22, 163, 74, 0.1); color: #15803d;
+            padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 700;
+            display: inline-block; margin-bottom: 22px; border: 1px solid rgba(22, 163, 74, 0.2);
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+            color: #fff; font-weight: bold; font-size: 1.05rem; border: none;
+            padding: 14px; border-radius: 14px; width: 100%; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(153, 27, 27, 0.25);
+            font-family: inherit;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(153, 27, 27, 0.4);
+        }
+
+        /* ── Language Switcher ── */
+        .lang-switcher {
+            position: fixed;
+            top: 22px;
+            z-index: 999999;
+        }
+        html[dir="ltr"] .lang-switcher { left: 22px; right: auto; }
+        html[dir="rtl"] .lang-switcher { right: 22px; left: auto; }
+
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: #7c2d12;
+            padding: 9px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(120, 50, 10, 0.08);
+        }
+        .lang-btn:hover { background: rgba(255, 255, 255, 0.75); transform: translateY(-2px); }
+
+        .lang-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(120, 50, 10, 0.15);
+            border-radius: 16px;
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 150px;
+            box-shadow: 0 15px 40px rgba(120, 50, 10, 0.12);
+        }
+        html[dir="ltr"] .lang-menu { right: auto; left: 0; }
+        .lang-menu.show { display: flex; animation: popIn 0.2s ease; }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: translateY(-8px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .lang-option {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px;
+            color: #7c2d12;
+        }
+        .lang-option:hover { background: rgba(234, 88, 12, 0.1); color: #ea580c; }
+        .lang-option.active { background: rgba(234, 88, 12, 0.15); color: #ea580c; font-weight: 800; }
+
+        /* ── Auth Tabs Styling ── */
+        .auth-tabs {
+            display: flex;
+            background: rgba(120, 50, 10, 0.06);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(120, 50, 10, 0.1);
+            gap: 4px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: #9a3412;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+        .auth-tab.active {
+            background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(153, 27, 27, 0.25);
+            font-weight: 700;
+        }
+        
+        /* ── Custom Modal for Verification ── */
+        .custom-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(67, 20, 7, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 35px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 30px 70px rgba(120, 50, 10, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            text-align: center;
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-sizing: border-box;
+            color: #431407;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .modal-btn-cancel {
+            background: rgba(120, 50, 10, 0.08);
+            color: #7c2d12;
+            border: 1px solid rgba(120, 50, 10, 0.05);
+            font-weight: 700;
+            border-radius: 14px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .modal-btn-cancel:hover {
+            background: rgba(120, 50, 10, 0.15);
+        }
+
+        /* 💬 Slide-down SMS Notification Banner */
+        .sms-notification {
+            position: fixed;
+            top: -140px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(234, 88, 12, 0.4);
+            border-radius: 20px;
+            padding: 16px 20px;
+            box-shadow: 0 20px 40px rgba(120, 50, 10, 0.15), 0 0 30px rgba(234, 88, 12, 0.1);
+            z-index: 11000;
+            transition: top 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            color: #431407;
+            text-align: right;
+            direction: rtl;
+        }
+        html[dir="ltr"] .sms-notification {
+            text-align: left;
+            direction: ltr;
+        }
+        .sms-notification.show {
+            top: 25px;
+        }
+        .sms-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            color: #ea580c;
+            font-weight: bold;
+        }
+        .sms-time {
+            color: #9a3412;
+            font-size: 0.75rem;
+        }
+        .sms-body {
+            font-size: 0.95rem;
+            color: #431407;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container { padding: 20px 14px; }
+            .login-card { padding: 32px 24px; border-radius: 24px; }
+            .tree-left-2, .tree-right-2 { display: none; }
+            .cyclist-container { left: 2%; transform: scale(0.85); }
+        }
+
+        @media (max-width: 600px) {
+            .login-card { padding: 28px 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .bg-tree { display: none; }
+            .cyclist-container { display: none; }
+            .sky-sun { width: 70px; height: 70px; }
+            .main-container { padding: 16px 12px; }
+            .login-card {
+                padding: 24px 18px;
+                border-radius: 22px;
+                max-width: 100%;
+            }
+            .login-card h2 { font-size: 1.4rem !important; }
+            .auth-tab { font-size: 0.88rem; padding: 10px 6px; }
+            .login-input { font-size: 16px; padding: 12px 14px; }
+            .btn-primary { padding: 13px; font-size: 0.97rem; }
+            /* Stack dept + stage dropdowns on mobile */
+            #register-container > div[style*="display: flex"] {
+                flex-direction: column !important;
+                gap: 12px !important;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .login-card { padding: 20px 14px; }
+            .login-card h2 { font-size: 1.25rem !important; }
+            .form-group label { font-size: 0.88rem; }
+            .login-input { padding: 11px 12px; border-radius: 12px; }
+            .auth-tab { font-size: 0.82rem; padding: 9px 5px; }
+            .btn-primary { padding: 12px; font-size: 0.92rem; border-radius: 12px; }
+            .security-badge { font-size: 0.78rem; padding: 5px 12px; margin-bottom: 16px; }
+            .sms-notification { padding: 14px 16px; }
+        }
+
+        @media (max-width: 375px) {
+            .login-card { padding: 18px 12px; }
+            .login-card h2 { font-size: 1.15rem !important; }
+            .auth-tabs { gap: 2px; padding: 3px; }
+            .auth-tab { font-size: 0.78rem; padding: 8px 4px; }
+        }
+
+        /* ── Settings Drawer ── */
+        .settings-btn {
+            position: fixed;
+            top: 22px;
+            left: 22px;
+            z-index: 999999;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.65);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(120,50,10,0.12);
+            transition: all 0.3s ease;
+        }
+        html[dir="ltr"] .settings-btn { left: auto; right: 22px; }
+        .settings-btn:hover { background: rgba(255,255,255,0.8); transform: scale(1.08); }
+        .settings-btn span {
+            display: block;
+            width: 20px;
+            height: 2.5px;
+            background: #7c2d12;
+            border-radius: 3px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        .settings-btn.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .settings-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .settings-btn.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        /* Overlay */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(67,20,7,0.35);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 99998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .drawer-overlay.show { opacity: 1; pointer-events: all; }
+
+        /* Drawer Panel */
+        .settings-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background: rgba(255,247,237,0.97);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            box-shadow: -10px 0 40px rgba(120,50,10,0.18);
+            transition: right 0.38s cubic-bezier(0.4,0,0.2,1);
+            overflow-y: auto;
+        }
+        html[dir="ltr"] .settings-drawer { right: auto; left: -320px; box-shadow: 10px 0 40px rgba(120,50,10,0.18); }
+        .settings-drawer.open { right: 0; }
+        html[dir="ltr"] .settings-drawer.open { left: 0; right: auto; }
+
+        /* Drawer Header */
+        .drawer-header {
+            padding: 28px 24px 20px;
+            background: linear-gradient(135deg, #991b1b, #7f1d1d);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            flex-shrink: 0;
+        }
+        .drawer-header-icon { font-size: 2.2rem; filter: drop-shadow(0 0 8px rgba(255,200,150,0.4)); }
+        .drawer-header-text h3 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+        .drawer-header-text p { margin: 3px 0 0; font-size: 0.8rem; opacity: 0.75; }
+
+        /* Drawer Sections */
+        .drawer-section {
+            padding: 20px 18px 10px;
+        }
+        .drawer-section-title {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #9a3412;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 0 6px 8px;
+            border-bottom: 1px solid rgba(120,50,10,0.1);
+            margin-bottom: 10px;
+        }
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 14px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-bottom: 4px;
+            color: #431407;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            position: relative;
+        }
+        .drawer-item:hover {
+            background: rgba(234,88,12,0.1);
+            color: #ea580c;
+        }
+        .drawer-item:hover .drawer-item-icon { transform: scale(1.15); }
+        .drawer-item-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+        }
+        .icon-green  { background: rgba(22,163,74,0.12);  color: #16a34a; }
+        .icon-blue   { background: rgba(59,130,246,0.12); color: #3b82f6; }
+        .drawer-item-arrow {
+            margin-right: auto;
+            font-size: 0.85rem;
+            opacity: 0.45;
+            margin-left: 0;
+        }
+        html[dir="ltr"] .drawer-item-arrow { margin-left: auto; margin-right: 0; }
+
+        /* Sub-panels */
+        .drawer-sub {
+            display: none;
+            flex-direction: column;
+            gap: 0;
+            padding: 0 10px 10px;
+            animation: subSlide 0.25s ease;
+        }
+        .drawer-sub.open { display: flex; }
+        @keyframes subSlide {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Contact form inside drawer */
+        .drawer-input {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(120,50,10,0.18);
+            background: rgba(255,255,255,0.75);
+            color: #431407;
+            font-family: inherit;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            text-align: right;
+            resize: none;
+            transition: all 0.3s;
+        }
+        .drawer-input:focus {
+            outline: none;
+            border-color: #ea580c;
+            box-shadow: 0 0 10px rgba(234,88,12,0.18);
+            background: #fff;
+        }
+        .drawer-send-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #991b1b, #7f1d1d);
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(153,27,27,0.25);
+        }
+        .drawer-send-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(153,27,27,0.35); }
+
+        /* About card premium dark layout */
+        .about-dev-card {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            padding: 24px 16px;
+            text-align: center;
+            margin: 4px 0 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            color: #f8fafc;
+            direction: ltr;
+        }
+        .about-dev-card .moon-icon {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            user-select: none;
+        }
+        .about-dev-avatar {
+            width: 85px; height: 85px;
+            border-radius: 50%;
+            border: 2px solid #3b82f6;
+            margin: 0 auto 12px;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1e293b;
+        }
+        .about-dev-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .about-dev-avatar svg {
+            width: 60%;
+            height: 60%;
+            color: #60a5fa;
+        }
+        .about-dev-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Outfit', sans-serif;
+        }
+        .about-dev-role {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-weight: 400;
+            line-height: 1.4;
+            font-family: 'Outfit', sans-serif;
+        }
+        /* Inner details rows */
+        .about-dev-details {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .about-detail-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .about-detail-icon {
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3b82f6;
+            flex-shrink: 0;
+        }
+        .about-detail-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .about-detail-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Outfit', sans-serif;
+        }
+        .about-detail-val {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #f8fafc;
+            font-family: 'Outfit', sans-serif;
+        }
+        .about-detail-subval {
+            font-size: 0.72rem;
+            color: #64748b;
+            font-family: 'Outfit', sans-serif;
+        }
+        .about-dev-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .about-link-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.25s;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+        .link-whatsapp {
+            background: rgba(37, 211, 102, 0.1);
+            color: #25d366;
+            border: 1px solid rgba(37, 211, 102, 0.2);
+        }
+        .link-whatsapp:hover {
+            background: rgba(37, 211, 102, 0.2);
+            transform: translateY(-2px);
+        }
+        .link-email {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .link-email:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        .link-telegram {
+            background: rgba(0, 136, 204, 0.1);
+            color: #0088cc;
+            border: 1px solid rgba(0, 136, 204, 0.2);
+        }
+        .link-telegram:hover {
+            background: rgba(0, 136, 204, 0.2);
+            transform: translateY(-2px);
+        }
+        .about-version {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 12px;
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ⚙️ Settings Drawer -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+    <!-- Hamburger Button -->
+    <button class="settings-btn" id="settings-btn" onclick="toggleDrawer()" aria-label="Settings">
+        <span></span><span></span><span></span>
+    </button>
+
+    <!-- Drawer Panel -->
+    <div class="settings-drawer" id="settings-drawer">
+
+        <!-- Header -->
+        <div class="drawer-header">
+            <div class="drawer-header-icon">🍂</div>
+            <div class="drawer-header-text">
+                <h3 id="drawer-title">sitting</h3>
+                <p id="drawer-sub">UoD E-Clearance Portal</p>
+            </div>
+        </div>
+
+        <!-- Section: Contact & Feedback -->
+        <div class="drawer-section">
+            <div class="drawer-section-title" id="drawer-sec-1">پەیوەندی</div>
+
+            <!-- Contact & Feedback Item -->
+            <div class="drawer-item" id="drawer-item-contact" onclick="toggleSubPanel('sub-contact', this)">
+                <div class="drawer-item-icon icon-green">🎧</div>
+                <span id="drawer-lbl-contact">پەیوەندی و فیدبەک</span>
+                <span class="drawer-item-arrow">❯</span>
+            </div>
+            <!-- Contact Sub-panel -->
+            <div class="drawer-sub" id="sub-contact">
+                <p style="font-size:0.82rem;color:#9a3412;padding:8px 6px 10px;margin:0;line-height:1.7;" id="contact-desc">
+                هەر (پسیار، پێشینار) هەبیت تکایە بنڤیسە، وەلامێ تە دێ هێتە دان 💬
+                </p>
+                <input  class="drawer-input" id="contact-name-input"   type="text"     placeholder="ناڤێ تە..." />
+                <input  class="drawer-input" id="contact-phone-input"  type="tel"      placeholder="ڕەقەمێ مۆبایلێ..." style="text-align:center;" />
+                <textarea class="drawer-input" id="contact-msg-input" rows="3"        placeholder="پەیامێ تە..."></textarea>
+                <button class="drawer-send-btn" id="btn-send-feedback" onclick="sendFeedback()">📨 <span id="lbl-send">ناردن</span></button>
+                <div id="feedback-success" style="display:none;text-align:center;padding:10px;color:#16a34a;font-weight:700;font-size:0.9rem;margin-top:6px;">✅ <span id="lbl-sent-ok">پەیامێ تە هاتە ناردن، سوپاس! 🙏</span></div>
+            </div>
+
+        </div>
+
+        <!-- Divider -->
+        <div style="height:1px;background:rgba(120,50,10,0.08);margin:0 18px;"></div>
+
+        <!-- Section: About Developer -->
+        <div class="drawer-section">
+            <div class="drawer-section-title" id="drawer-sec-2">زانیاری</div>
+
+            <!-- About Developer Item -->
+            <div class="drawer-item" id="drawer-item-about" onclick="toggleSubPanel('sub-about', this)">
+                <div class="drawer-item-icon icon-blue">👤</div>
+                <span id="drawer-lbl-about">دەربارەی گەشەپێدەر</span>
+                <span class="drawer-item-arrow">❯</span>
+            </div>
+            <!-- About Sub-panel -->
+            <div class="drawer-sub" id="sub-about">
+                <div class="about-dev-card">
+                    <!-- Moon icon in top right -->
+                    <div class="moon-icon">🌙</div>
+                    
+                    <!-- Circular avatar -->
+                    <div class="about-dev-avatar" id="dev-avatar-container">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+
+                    <!-- Developer Name -->
+                    <div class="about-dev-name" id="dev-name">Mohammed Salim</div>
+                    
+                    <!-- Developer Subtitle/Role -->
+                    <div class="about-dev-role" id="dev-role">Developer & Statistics Student</div>
+
+                    <!-- Inner Card Details -->
+                    <div class="about-dev-details">
+                        <!-- Row 1: Programmed By -->
+                        <div class="about-detail-row">
+                            <div class="about-detail-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line><line x1="12" y1="17" x2="12" y2="20"></line></svg>
+                            </div>
+                            <div class="about-detail-text">
+                                <span class="about-detail-title">Programmed By</span>
+                                <span class="about-detail-val" id="dev-detail-programmed">Mohammed Salim</span>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Institution -->
+                        <div class="about-detail-row">
+                            <div class="about-detail-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path></svg>
+                            </div>
+                            <div class="about-detail-text">
+                                <span class="about-detail-title">Institution</span>
+                                <span class="about-detail-val" id="dev-detail-inst">University of Duhok</span>
+                                <span class="about-detail-subval" id="dev-detail-dept">Statistics Department</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social / Contact Links -->
+                    <div class="about-dev-links">
+                        <button class="about-link-btn link-whatsapp" id="dev-whatsapp-btn">💬 <span id="lbl-wa">WhatsApp</span></button>
+                        <button class="about-link-btn link-telegram" id="dev-telegram-btn">✈️ <span id="lbl-tg">Telegram</span></button>
+                        <button class="about-link-btn link-email" id="dev-email-btn">✉️ <span id="lbl-email">Email</span></button>
+                    </div>
+
+                    <!-- System Version -->
+                    <div class="about-version" id="dev-version">System Version: v2.0 — 2026</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top:auto;padding:18px 20px;border-top:1px solid rgba(120,50,10,0.1);text-align:center;">
+            <div style="font-size:0.75rem;color:#9a3412;opacity:0.6;" id="drawer-footer">UoD E-Clearance Portal © 2026</div>
+        </div>
+
+    </div>
+    <!-- End Settings Drawer -->
+
+    <!-- Autumn Layered Scenery -->
+    <div class="autumn-bg">
+        <div class="sky-sun"></div>
+        <div class="ground-back"></div>
+        <div class="ground-front"></div>
+        <div class="pathway"></div>
+        
+        <!-- Left Tree 1 (Tall, orange & peach) -->
+        <div class="bg-tree tree-left-1">
+            <svg viewBox="0 0 100 150" width="100%" height="100%">
+                <!-- Trunk -->
+                <path d="M50 150 L50 70 M47 150 L47 70" stroke="#451a03" stroke-width="4" stroke-linecap="round"/>
+                <!-- Canopy -->
+                <circle cx="50" cy="65" r="32" fill="#ea580c" opacity="0.95"/>
+                <circle cx="38" cy="50" r="28" fill="#f97316" opacity="0.9"/>
+                <circle cx="62" cy="50" r="28" fill="#fdba74" opacity="0.85"/>
+            </svg>
+        </div>
+        
+        <!-- Left Tree 2 (Smaller, red) -->
+        <div class="bg-tree tree-left-2">
+            <svg viewBox="0 0 100 150" width="100%" height="100%">
+                <!-- Trunk -->
+                <path d="M50 150 L50 80 M48 150 L48 80" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
+                <!-- Canopy -->
+                <circle cx="50" cy="70" r="25" fill="#dc2626" opacity="0.95"/>
+                <circle cx="40" cy="58" r="20" fill="#b91c1c" opacity="0.9"/>
+                <circle cx="60" cy="58" r="20" fill="#991b1b" opacity="0.85"/>
+            </svg>
+        </div>
+        
+        <!-- Right Tree 1 (Large foreground tree with pink/peach leaves) -->
+        <div class="bg-tree tree-right-1">
+            <svg viewBox="0 0 120 180" width="100%" height="100%">
+                <!-- Trunk -->
+                <path d="M60 180 L60 90 M56 180 L56 90" stroke="#451a03" stroke-width="6" stroke-linecap="round"/>
+                <path d="M56 110 L35 85" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
+                <path d="M60 100 L80 75" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
+                <!-- Canopy -->
+                <circle cx="60" cy="80" r="40" fill="#ea580c" opacity="0.9"/>
+                <circle cx="45" cy="60" r="35" fill="#f43f5e" opacity="0.85"/>
+                <circle cx="75" cy="55" r="38" fill="#fda4af" opacity="0.8"/>
+                <circle cx="60" cy="40" r="32" fill="#fecdd3" opacity="0.95"/>
+            </svg>
+        </div>
+
+        <!-- Right Tree 2 (Orange/Yellow) -->
+        <div class="bg-tree tree-right-2">
+            <svg viewBox="0 0 100 150" width="100%" height="100%">
+                <!-- Trunk -->
+                <path d="M50 150 L50 80 M48 150 L48 80" stroke="#451a03" stroke-width="4.5" stroke-linecap="round"/>
+                <!-- Canopy -->
+                <circle cx="50" cy="65" r="28" fill="#eab308" opacity="0.95"/>
+                <circle cx="40" cy="55" r="24" fill="#facc15" opacity="0.9"/>
+                <circle cx="60" cy="52" r="24" fill="#fef08a" opacity="0.85"/>
+            </svg>
+        </div>
+
+        <!-- Animated Cyclist Rider -->
+        <div class="cyclist-container">
+            <svg class="cyclist-svg" viewBox="0 0 120 100" width="120" height="100">
+                <!-- Bicycle Frame -->
+                <path d="M30 80 L52 52 L82 52 L95 80 L82 52 L68 80 L52 52 M52 52 L62 30 M68 80 L62 30 L80 30" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <!-- Wheels -->
+                <g class="spinning-wheel">
+                    <circle cx="30" cy="80" r="14" stroke="#451a03" stroke-width="2.5" fill="none" />
+                    <line x1="30" y1="66" x2="30" y2="94" stroke="#7c2d12" stroke-width="1.2"/>
+                    <line x1="16" y1="80" x2="44" y2="80" stroke="#7c2d12" stroke-width="1.2"/>
+                    <line x1="20" y1="70" x2="40" y2="90" stroke="#7c2d12" stroke-width="1"/>
+                    <line x1="20" y1="90" x2="40" y2="70" stroke="#7c2d12" stroke-width="1"/>
+                </g>
+                <g class="spinning-wheel">
+                    <circle cx="95" cy="80" r="14" stroke="#451a03" stroke-width="2.5" fill="none" />
+                    <line x1="95" y1="66" x2="95" y2="94" stroke="#7c2d12" stroke-width="1.2"/>
+                    <line x1="81" y1="80" x2="109" y2="80" stroke="#7c2d12" stroke-width="1.2"/>
+                    <line x1="85" y1="70" x2="105" y2="90" stroke="#7c2d12" stroke-width="1"/>
+                    <line x1="85" y1="90" x2="105" y2="70" stroke="#7c2d12" stroke-width="1"/>
+                </g>
+                <!-- Bicycle Basket -->
+                <rect x="100" y="44" width="10" height="9" rx="1.5" fill="#9a3412" />
+                <!-- Girl Rider -->
+                <!-- Pedaling Legs -->
+                <path class="left-leg" d="M62 48 L52 64 L55 78" stroke="#9a1f1f" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path class="right-leg" d="M62 48 L70 60 L75 74" stroke="#b91c1c" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <!-- Torso (Blue Coat) -->
+                <path d="M62 48 L56 24 L72 26 Z" fill="#1e40af" />
+                <!-- Scarf -->
+                <path d="M68 22 C76 22 78 26 72 32 L64 26 Z" fill="#dc2626" />
+                <!-- Head & Hat -->
+                <circle cx="61" cy="16" r="6.5" fill="#fbcfe8" />
+                <path d="M53 13 C53 7 69 7 69 13 Z" fill="#1e3a8a" />
+                <circle cx="61" cy="7" r="2.2" fill="#ef4444" />
+            </svg>
+        </div>
+    </div>
+    
+    <div class="leaves-container" id="leaves-container"></div>
+
+    <div class="main-container">
+        <div class="login-card">
+            <h2 id="main-title" style="color: #7c2d12; margin-bottom: 5px; font-size: 1.8rem; font-weight: 800;">سیستەمێ گەردەن ئازاکرنێ</h2>
+            <p id="college-sub" style="color: #9a3412; margin-bottom: 15px; font-size: 0.95rem; font-weight: 500;">کۆلیژا کارگێڕی و ئابووری - زانکۆیا دهۆک</p>
+            <div class="security-badge">🔒 SSL Secured & Encrypted</div>
+
+            <!-- ── Tabs to Switch Between Login and Register ── -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">چوونەژوورێ</button>
+                <button class="auth-tab" id="tab-register" onclick="switchTab('register')">دروستکرنا حسابێ</button>
+            </div>
+
+            <!-- 🚪 Login Container -->
+            <div id="login-container">
+                <div class="form-group">
+                    <label id="label-student-id">🆔 ڕەقەمێ مۆبایلێ:</label>
+                    <input type="text" id="student-id" class="login-input" placeholder="0750XXXXXXX" style="text-align: center;">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-login-name">👤 ناڤێ سێیانی یێ قوتابی:</label>
+                    <input type="text" id="login-name" class="login-input" placeholder="ناڤێ خۆ یێ سێیانی بنڤێسە">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-access-code" style="color: #7c2d12;">🔑 پاسوۆردێ تایبەت:</label>
+                    <div class="password-container">
+                        <input type="password" id="access-code" class="login-input" style="text-align: center; letter-spacing: 5px; font-size: 1.2rem;" placeholder="••••••••">
+                        <button type="button" class="password-toggle-btn" id="toggle-login-pass" onclick="togglePasswordVisibility('access-code', 'toggle-login-pass')">👁️</button>
+                    </div>
+                </div>
+
+                <button id="btn-login" class="btn-primary" style="margin-top: 15px;">🚪 چوونەژوورێ</button>
+            </div>
+
+            <!-- 📝 Register Container -->
+            <div id="register-container" style="display: none;">
+                <div class="form-group">
+                    <label id="label-student-name">👤 ناڤێ سێیانی یێ قوتابی:</label>
+                    <input type="text" id="student-name" class="login-input" placeholder="ناڤێ خۆ یێ دروست بنڤێسه">
+                </div>
+
+                <div class="form-group">
+                    <label id="label-student-phone">📱 ڕەقەمێ مۆبایلێ:</label>
+                    <input type="text" id="student-phone" class="login-input" placeholder="0750XXXXXXX" style="text-align: center;">
+                </div>
+
+                <!-- 🔄 Scientific Dept & Stage Selects -->
+                <div style="display: flex; gap: 15px; margin-bottom: 18px;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label id="label-dept">🏢 پشکا زانستی:</label>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select" id="dept-display">
+                                <span>ژمێریاری</span>
+                                <span class="custom-select-arrow">▼</span>
+                            </div>
+                            <div class="custom-options" id="dept-options">
+                                <div class="custom-option selected" data-value="Accounting" id="opt-dept-acc">ژمێریاری</div>
+                                <div class="custom-option" data-value="Statistics" id="opt-dept-stat">ئامار و زانیاری</div>
+                                <div class="custom-option" data-value="Finance" id="opt-dept-fin">دارایێ</div>
+                                <div class="custom-option" data-value="Economics" id="opt-dept-eco">ئابووری</div>
+                                <div class="custom-option" data-value="Marketing" id="opt-dept-mkt">بازارگەری</div>
+                                <div class="custom-option" data-value="Administration" id="opt-dept-adm">ئیدارێ</div>
+                            </div>
+                        </div>
+                        <select id="student-dept" style="display: none;">
+                            <option value="Accounting" id="hidden-dept-acc" selected>ژمێریاری</option>
+                            <option value="Statistics" id="hidden-dept-stat">ئامار و زانیاری</option>
+                            <option value="Finance" id="hidden-dept-fin">دارایێ</option>
+                            <option value="Economics" id="hidden-dept-eco">ئابووری</option>
+                            <option value="Marketing" id="hidden-dept-mkt">بازارگەری</option>
+                            <option value="Administration" id="hidden-dept-adm">ئیدارێ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label id="label-stage">🎓 قۆناغ:</label>
+                        <div class="custom-select-wrapper">
+                            <div class="custom-select" id="stage-display">
+                                <span>قۆناغا ٤</span>
+                                <span class="custom-select-arrow">▼</span>
+                            </div>
+                            <div class="custom-options" id="stage-options">
+                                <div class="custom-option" data-value="قۆناغا 1" id="opt-stage-1">قۆناغا ١</div>
+                                <div class="custom-option" data-value="قۆناغا 2" id="opt-stage-2">قۆناغا ٢</div>
+                                <div class="custom-option" data-value="قۆناغا 3" id="opt-stage-3">قۆناغا ٣</div>
+                                <div class="custom-option selected" data-value="قۆناغا 4" id="opt-stage-4">قۆناغا ٤</div>
+                            </div>
+                        </div>
+                        <select id="student-stage" style="display: none;">
+                            <option value="قۆناغا 1">قۆناغا 1</option>
+                            <option value="قۆناغا 2">قۆناغا 2</option>
+                            <option value="قۆناغا 3">قۆناغا 3</option>
+                            <option value="قۆناغا 4" selected>قۆناغا 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="label-register-pass">🔑 پاسوۆردێ تایبەت:</label>
+                    <div class="password-container">
+                        <input type="password" id="register-pass" class="login-input" style="text-align: center; letter-spacing: 5px; font-size: 1.2rem;" placeholder="••••••••">
+                        <button type="button" class="password-toggle-btn" id="toggle-register-pass" onclick="togglePasswordVisibility('register-pass', 'toggle-register-pass')">👁️</button>
+                    </div>
+                </div>
+
+                <button id="btn-register" class="btn-primary" style="margin-top: 15px;">💬 دروستکرنا حسابێ</button>
+            </div>
+        </div>
+
+        <!-- 🔑 OTP Verification Modal -->
+        <div class="custom-modal" id="otp-modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-icon" style="font-size: 3rem; margin-bottom: 15px;">💬</div>
+                <h3 id="modal-otp-title" style="color: #7c2d12; font-size: 1.5rem; margin-bottom: 8px;">پشتڕاستکرنا ڕەقەمی</h3>
+                <p id="modal-otp-desc" style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.6;">تکایە کۆدێ پشتڕاستکرنێ یێ بۆ مۆبایلا تە هاتی بنڤێسە دا کو حسابا تە دروست بیت.</p>
+                
+                <div class="form-group" style="text-align: center; margin-bottom: 25px;">
+                    <input type="text" id="otp-input" class="login-input" inputmode="numeric" pattern="[0-9]*" style="text-align: center; letter-spacing: 8px; font-size: 1.8rem; font-weight: bold; width: 100%; margin: 0 auto; padding: 14px 4px; box-sizing: border-box;" placeholder="------" maxlength="6">
+                    <span id="otp-error" style="color: #ef4444; font-size: 0.85rem; display: block; margin-top: 8px; font-weight: 500;"></span>
+                </div>
+                
+                <div class="modal-actions">
+                    <button id="btn-verify-otp" class="btn-primary" style="flex: 1; margin: 0;">پشتڕاستکرن</button>
+                    <button id="btn-cancel-otp" class="modal-btn-cancel" style="flex: 1; margin: 0;">پەشیمانبوون</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 💬 Slide-down SMS Notification Banner -->
+        <div class="sms-notification" id="sms-banner">
+            <div class="sms-header">
+                <span id="sms-header-title">💬 نامەیەکا نوو • نوکە</span>
+                <span class="sms-time">Now</span>
+            </div>
+            <div class="sms-body" id="sms-banner-body">
+                UoD Clearance: Your verification code is: <strong>123456</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Language Switcher ── -->
+    <div class="lang-switcher" id="lang-switcher">
+        <div class="lang-btn" onclick="toggleLangMenu()" id="lang-btn-trigger">
+            <span>🌐</span>
+            <span id="current-lang">KU</span>
+            <span style="font-size:0.75rem; opacity:0.6;">▾</span>
+        </div>
+        <div class="lang-menu" id="lang-menu">
+            <div class="lang-option active" onclick="changeLanguage('ku')" id="opt-ku">🟡 Kurdî (KU)</div>
+            <div class="lang-option" onclick="changeLanguage('en')" id="opt-en">🔵 English (EN)</div>
+            <div class="lang-option" onclick="changeLanguage('ar')" id="opt-ar">🟢 عربي (AR)</div>
+        </div>
+    </div>
+
+    <!-- ── i18n & Translation Scripts ── -->
+    <script>
+        const i18n = {
+            ku: {
+                loginTitle: "UoD E-Clearance - چوونەژوورێ ب پاراستن",
+                mainTitle: "سیستەمێ گەردەن ئازاکرنێ",
+                collegeSub: "کۆلیژا کارگێڕی و ئابووری - زانکۆیا دهۆک",
+                studentIdLabel: "🆔 ڕەقەمێ مۆبایلێ:",
+                studentIdPlaceholder: "0750XXXXXXX",
+                studentNameLabel: "👤 ناڤێ سێیانی یێ قوتابی:",
+                studentNamePlaceholder: "ناڤێ خۆ یێ دروست بنڤێسه",
+                deptLabel: "🏢 پشکا زانستی:",
+                deptAccounting: "ژمێریاری",
+                deptStatistics: "ئامار و زانیاری",
+                deptFinance: "دارایێ",
+                deptEconomics: "ئابووری",
+                deptMarketing: "بازارگەری",
+                deptAdministration: "ئیدارێ",
+                stageLabel: "🎓 قۆناغ:",
+                stage1: "قۆناغا ١",
+                stage2: "قۆناغا ٢",
+                stage3: "قۆناغا ٣",
+                stage4: "قۆناغا ٤",
+                passwordLabel: "🔑 پاسوۆردێ تایبەت:",
+                passwordHelp: "* ئەگەر جارا ئێکێ بیت، پاسوۆردەکێ بنڤێسە بۆ خۆ. بۆ جارێن داهاتی ب ڤی پاسوۆردی دێ شێی هێی ژوور.",
+                loginBtn: "🚪 چوونەژوورێ",
+                loginBtn: "🚪 چوونەژوورێ",
+                alertWrongPass: "❌ پاسوۆردێ تە خەلەتە! هیڤییە پاسوۆردێ دروست یێ خۆ لێبدە.",
+                alertWrongName: "❌ ناڤێ سێیانی خەلەتە! هیڤییە ناڤێ خۆ یێ دروست یێ تە ئەڤ حسابە پێ دروستکری بنڤێسی.",
+                alertFillAll: "هیڤییە هەمی خانان پڕ بکە (ڕەقەمێ مۆبایلێ، ناڤێ سێیانی، و پاسوۆرد)!",
+                alertErrorReg: "ئاریشەیەک چێبوو لە کاتی تۆمارکردندا: ",
+                alertErrorDb: "ئاریشەیەک د گەهشتنا داتابەیسێ دا هەیە: ",
+                loginNameLabel: "👤 ناڤێ سێیانی یێ قوتابی:",
+                loginNamePlaceholder: "ناڤێ خۆ یێ سێیانی بنڤێسە",
+                // New register strings
+                tabLogin: "چوونەژوورێ",
+                tabRegister: "دروستکرنا حسابێ",
+                studentPhoneLabel: "📱 ڕەقەمێ مۆبایلێ:",
+                registerPassLabel: "🔑 پاسوۆردێ تایبەت:",
+                registerBtn: "💬 دروستکرنا حسابێ",
+                otpTitle: "پشتڕاستکرنا ڕەقەمی",
+                otpDesc: "تکایە کۆدێ پشتڕاستکرنێ یێ بۆ مۆبایلا تە هاتی بنڤێسە دا کو حسابا تە دروست بیت.",
+                btnVerify: "پشتڕاستکرن",
+                btnCancel: "پەشیمانبوون",
+                smsHeaderTitle: "💬 نامەیەکا نوو • نوکە",
+                smsBodyText: "سیستمێ گەردەن ئازادکرنێ: کۆدێ پشتڕاستکرنا تە ئەڤەیە: ",
+                alertFillAllRegister: "هیڤییە هەمی خانان پڕ بکە ژ بۆ دروستکرنا حسابێ!",
+                alertPhoneExists: "❌ ئەڤ ڕەقەمە پێشتر هاتیە تۆمارکرن! هیڤییە بچی ب چوونا ژوورێ.",
+                alertAccountNotFound: "❌ ئەڤ حسابە شنی نەهاتیە دروستکرن! هیڤییە حسابەکا نوو دروست بکەی.",
+                otpWrong: "❌ کۆدێ پشتڕاستکرنێ خەلەتە! هیڤییە دووبارە تاقی بکەیەڤە.",
+                alertInvalidPhone: "❌ هیڤییە ڕەقەمەکێ مۆبایلێ یێ دروست بنڤێسە کو ب (0750) یان (0751) دەستپێبکەت و ژ ١١ ژماران پێکهاتبی.",
+                alertShortPassword: "❌ پاسوۆرد نابیت کێمتر بیت ژ ٨ کاراکتەران/ژماران!",
+                alertTripleName: "❌ هیڤییە ناڤێ خۆ یێ سێیانی (کێمتر نەبیت ژ سێ ناڤان) بنڤێسە!"
+            },
+            en: {
+                loginTitle: "UoD E-Clearance - Secure Login",
+                mainTitle: "E-Clearance System",
+                collegeSub: "College of Administration & Economics - University of Duhok",
+                studentIdLabel: "🆔 Phone Number:",
+                studentIdPlaceholder: "0750XXXXXXX",
+                studentNameLabel: "👤 Full Student Name:",
+                studentNamePlaceholder: "Enter your full name",
+                deptLabel: "🏢 Scientific Department:",
+                deptAccounting: "Accounting",
+                deptStatistics: "Statistics",
+                deptFinance: "Finance",
+                deptEconomics: "Economics",
+                deptMarketing: "Business Administration",
+                deptAdministration: "Administration",
+                stageLabel: "🎓 Stage:",
+                stage1: "Stage 1",
+                stage2: "Stage 2",
+                stage3: "Stage 3",
+                stage4: "Stage 4",
+                passwordLabel: "🔑 Personal Password:",
+                passwordHelp: "* If it is your first time, create a password. For future logins, use this password.",
+                loginBtn: "🚪 Login",
+                alertWrongPass: "❌ Incorrect password! Please enter your correct password.",
+                alertWrongName: "❌ Incorrect full name! Please enter the exact 3-part name used when creating your account.",
+                alertFillAll: "Please fill in all fields (Phone Number, Full 3-Part Name, and Password)!",
+                alertErrorReg: "An error occurred during registration: ",
+                alertErrorDb: "An error occurred reaching the database: ",
+                loginNameLabel: "👤 Full Student Name:",
+                loginNamePlaceholder: "Enter your 3-part full name",
+                // New register strings
+                tabLogin: "Login",
+                tabRegister: "Create Account",
+                studentPhoneLabel: "📱 Phone Number:",
+                registerPassLabel: "🔑 Password:",
+                registerBtn: "💬 Create Account",
+                otpTitle: "Phone Verification",
+                otpDesc: "Please enter the verification code sent to your phone to activate your account.",
+                btnVerify: "Verify",
+                btnCancel: "Cancel",
+                smsHeaderTitle: "💬 Messages • Now",
+                smsBodyText: "UoD Clearance: Your verification code is: ",
+                alertFillAllRegister: "Please fill in all fields to create an account!",
+                alertPhoneExists: "❌ This phone number is already registered! Please login.",
+                alertAccountNotFound: "❌ Account not found! Please create a new account first.",
+                otpWrong: "❌ Incorrect verification code! Please try again.",
+                alertInvalidPhone: "❌ Please enter a valid phone number starting with (0750) or (0751) and consisting of exactly 11 digits.",
+                alertShortPassword: "❌ Password must be at least 8 characters long!",
+                alertTripleName: "❌ Please enter your full triple name (at least 3 names)!"
+            },
+            ar: {
+                loginTitle: "UoD براءة الذمة - تسجيل دخول آمن",
+                mainTitle: "نظام براءة الذمة الإلكتروني",
+                collegeSub: "كلية الإدارة والاقتصاد - جامعة دهوك",
+                studentIdLabel: "🆔 رقم الهاتف:",
+                studentIdPlaceholder: "0750XXXXXXX",
+                studentNameLabel: "👤 اسم الطالب الثلاثي:",
+                studentNamePlaceholder: "أدخل اسمك الثلاثي الصحيح",
+                deptLabel: "🏢 القسم العلمي:",
+                deptAccounting: "المحاسبة",
+                deptStatistics: "الإحصاء والمعلوماتية",
+                deptFinance: "المالية",
+                deptEconomics: "الاقتصاد",
+                deptMarketing: "إدارة الأعمال",
+                deptAdministration: "الإدارة",
+                stageLabel: "🎓 المرحلة:",
+                stage1: "المرحلة ١",
+                stage2: "المرحلة ٢",
+                stage3: "المرحلة ٣",
+                stage4: "المرحلة ٤",
+                passwordLabel: "🔑 كلمة المرور الشخصية:",
+                passwordHelp: "* إذا كانت هذه المرة الأولى، اكتب كلمة مرور لنفسك. للمرات القادمة استخدم نفس الرمز.",
+                loginBtn: "🚪 تسجيل الدخول",
+                alertWrongPass: "❌ كلمة المرور خاطئة! يرجى إدخال كلمة المرور الصحيحة.",
+                alertWrongName: "❌ اسم الطالب الثلاثي غير مطابق! يرجى كتابة اسمك الثلاثي الذي أنشأت به الحساب.",
+                alertFillAll: "يرجى ملء جميع الحقول (رقم الهاتف، الاسم الثلاثي، وكلمة المرور)!",
+                alertErrorReg: "حدث خطأ أثناء التسجيل: ",
+                alertErrorDb: "حدث خطأ في الاتصال بقاعدة البيانات: ",
+                loginNameLabel: "👤 اسم الطالب الثلاثي:",
+                loginNamePlaceholder: "أدخل اسمك الثلاثي الصحيح",
+                // New register strings
+                tabLogin: "تسجيل الدخول",
+                tabRegister: "إنشاء حساب",
+                studentPhoneLabel: "📱 رقم الهاتف:",
+                registerPassLabel: "🔑 كلمة المرور:",
+                registerBtn: "💬 إنشاء حساب",
+                otpTitle: "تأكيد رقم الهاتف",
+                otpDesc: "يرجى إدخل رمز التأكيد المرسل إلى هاتفك لتفعيل حسابك.",
+                btnVerify: "تأكيد",
+                btnCancel: "إلغاء",
+                smsHeaderTitle: "💬 رسالة جديدة • الآن",
+                smsBodyText: "براءة الذمة: رمز التأكيد الخاص بك هو: ",
+                alertFillAllRegister: "يرجى ملء جميع الحقول لإنشاء حساب جديد!",
+                alertPhoneExists: "❌ هذا الرقم مسجل بالفعل! يرجى تسجيل الدخول.",
+                alertAccountNotFound: "❌ الحساب غير موجود! يرجى إنشاء حساب جديد أولاً.",
+                otpWrong: "❌ رمز التأكيد خاطئ! يرجى المحاولة مرة أخرى.",
+                alertInvalidPhone: "❌ يرجى إدخال رقم هاتف صالح يبدأ بـ (0750) أو (0751) ويتكون من 11 رقماً.",
+                alertShortPassword: "❌ يجب أن لا تقل كلمة المرور عن ٨ أحرف أو أرقام!",
+                alertTripleName: "❌ يرجى إدخال اسمك الثلاثي (ثلاثة أسماء على الأقل)!"
+            }
+        };
+
+        let currentLang = localStorage.getItem('uod_lang') || 'ku';
+
+        window.toggleLangMenu = function() {
+            document.getElementById('lang-menu').classList.toggle('show');
+        }
+
+        window.togglePasswordVisibility = function(inputId, btnId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleBtn = document.getElementById(btnId);
+            if (passwordInput && toggleBtn) {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleBtn.textContent = '🙈';
+                    passwordInput.style.letterSpacing = 'normal';
+                } else {
+                    passwordInput.type = 'password';
+                    toggleBtn.textContent = '👁️';
+                    passwordInput.style.letterSpacing = '5px';
+                }
+            }
+        };
+
+        window.toggleDrawer = function() {
+            const drawer = document.getElementById('settings-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            const btn = document.getElementById('settings-btn');
+            if (drawer && overlay && btn) {
+                drawer.classList.toggle('open');
+                overlay.classList.toggle('show');
+                btn.classList.toggle('open');
+            }
+        };
+
+        window.closeDrawer = function() {
+            const drawer = document.getElementById('settings-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            const btn = document.getElementById('settings-btn');
+            if (drawer && overlay && btn) {
+                drawer.classList.remove('open');
+                overlay.classList.remove('show');
+                btn.classList.remove('open');
+            }
+        };
+
+        window.toggleSubPanel = function(id, itemEl) {
+            const panel = document.getElementById(id);
+            if (!panel) return;
+            const arrow = itemEl.querySelector('.drawer-item-arrow');
+            const isOpen = panel.classList.contains('open');
+            
+            document.querySelectorAll('.drawer-sub').forEach(p => {
+                if (p.id !== id) {
+                    p.classList.remove('open');
+                    const otherItem = p.previousElementSibling;
+                    if (otherItem && otherItem.querySelector('.drawer-item-arrow')) {
+                        otherItem.querySelector('.drawer-item-arrow').style.transform = '';
+                    }
+                }
+            });
+
+            if (isOpen) {
+                panel.classList.remove('open');
+                if (arrow) arrow.style.transform = '';
+            } else {
+                panel.classList.add('open');
+                if (arrow) arrow.style.transform = 'rotate(90deg)';
+            }
+        };
+
+        document.addEventListener('click', e => {
+            if (!document.getElementById('lang-switcher').contains(e.target)) {
+                document.getElementById('lang-menu').classList.remove('show');
+            }
+        });
+
+        window.switchTab = function(tabName) {
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const loginContainer = document.getElementById('login-container');
+            const registerContainer = document.getElementById('register-container');
+            
+            if (tabName === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                loginContainer.style.display = 'block';
+                registerContainer.style.display = 'none';
+            } else {
+                tabLogin.classList.remove('active');
+                tabRegister.classList.add('active');
+                loginContainer.style.display = 'none';
+                registerContainer.style.display = 'block';
+            }
+        };
+
+        window.changeLanguage = function(lang) {
+            currentLang = lang;
+            localStorage.setItem('uod_lang', lang);
+            document.getElementById('current-lang').innerText = lang.toUpperCase();
+            document.getElementById('lang-menu').classList.remove('show');
+
+            const isRtl = lang !== 'en';
+            document.getElementById('html-tag').setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+            document.getElementById('html-tag').setAttribute('lang', lang);
+
+            // Update lang switcher position
+            const ls = document.getElementById('lang-switcher');
+            ls.style.right = isRtl ? '22px' : 'auto';
+            ls.style.left  = isRtl ? 'auto' : '22px';
+
+            // Active pill
+            ['ku','en','ar'].forEach(l => {
+                document.getElementById('opt-' + l).classList.toggle('active', l === lang);
+            });
+
+            const T = i18n[lang];
+            document.title = T.loginTitle;
+            document.getElementById('main-title').innerText = T.mainTitle;
+            document.getElementById('college-sub').innerText = T.collegeSub;
+            
+            // Tab switch translations
+            document.getElementById('tab-login').innerText = T.tabLogin;
+            document.getElementById('tab-register').innerText = T.tabRegister;
+
+            // Login inputs translations
+            document.getElementById('label-student-id').innerText = T.studentIdLabel;
+            document.getElementById('student-id').placeholder = T.studentIdPlaceholder;
+            if (document.getElementById('label-login-name')) document.getElementById('label-login-name').innerText = T.loginNameLabel;
+            if (document.getElementById('login-name')) document.getElementById('login-name').placeholder = T.loginNamePlaceholder;
+            document.getElementById('label-access-code').innerText = T.passwordLabel;
+            document.getElementById('btn-login').innerText = T.loginBtn;
+
+            // Register inputs translations
+            document.getElementById('label-student-name').innerText = T.studentNameLabel;
+            document.getElementById('student-name').placeholder = T.studentNamePlaceholder;
+            document.getElementById('label-student-phone').innerText = T.studentPhoneLabel;
+            document.getElementById('student-phone').placeholder = T.studentIdPlaceholder;
+            document.getElementById('label-dept').innerText = T.deptLabel;
+            document.getElementById('opt-dept-acc').innerText = T.deptAccounting;
+            document.getElementById('opt-dept-stat').innerText = T.deptStatistics;
+            document.getElementById('opt-dept-fin').innerText = T.deptFinance;
+            document.getElementById('opt-dept-eco').innerText = T.deptEconomics;
+            document.getElementById('opt-dept-mkt').innerText = T.deptMarketing;
+            document.getElementById('opt-dept-adm').innerText = T.deptAdministration;
+            document.getElementById('hidden-dept-acc').innerText = T.deptAccounting;
+            document.getElementById('hidden-dept-stat').innerText = T.deptStatistics;
+            document.getElementById('hidden-dept-fin').innerText = T.deptFinance;
+            document.getElementById('hidden-dept-eco').innerText = T.deptEconomics;
+            document.getElementById('hidden-dept-mkt').innerText = T.deptMarketing;
+            document.getElementById('hidden-dept-adm').innerText = T.deptAdministration;
+            
+            document.getElementById('label-stage').innerText = T.stageLabel;
+            document.getElementById('opt-stage-1').innerText = T.stage1;
+            document.getElementById('opt-stage-2').innerText = T.stage2;
+            document.getElementById('opt-stage-3').innerText = T.stage3;
+            document.getElementById('opt-stage-4').innerText = T.stage4;
+            
+            document.getElementById('label-register-pass').innerText = T.registerPassLabel;
+            document.getElementById('btn-register').innerText = T.registerBtn;
+
+            // Verification Modal i18n
+            document.getElementById('modal-otp-title').innerText = T.otpTitle;
+            document.getElementById('modal-otp-desc').innerText = T.otpDesc;
+            document.getElementById('btn-verify-otp').innerText = T.btnVerify;
+            document.getElementById('btn-cancel-otp').innerText = T.btnCancel;
+            document.getElementById('sms-header-title').innerText = T.smsHeaderTitle;
+
+            // Update visible custom select defaults
+            const currentDeptVal = document.getElementById('student-dept').value;
+            const deptTextMap = {
+                'Accounting': T.deptAccounting,
+                'Statistics': T.deptStatistics,
+                'Finance': T.deptFinance,
+                'Economics': T.deptEconomics,
+                'Marketing': T.deptMarketing,
+                'Administration': T.deptAdministration
+            };
+            document.getElementById('dept-display').querySelector('span').innerText = 
+                deptTextMap[currentDeptVal] || T.deptAccounting;
+
+            const currentStageVal = document.getElementById('student-stage').value;
+            let stageText = T.stage4;
+            if(currentStageVal === 'قۆناغا 1') stageText = T.stage1;
+            else if(currentStageVal === 'قۆناغا 2') stageText = T.stage2;
+            else if(currentStageVal === 'قۆناغا 3') stageText = T.stage3;
+            document.getElementById('stage-display').querySelector('span').innerText = stageText;
+        };
+
+        // Initialize language
+        document.addEventListener('DOMContentLoaded', () => {
+            changeLanguage(currentLang);
+        });
+
+        /* ─────────────────── Custom Glassmorphic Dialog Library ─────────────────── */
+        const injectModalCSS = () => {
+            if (document.getElementById('custom-modal-styles')) return;
+            const style = document.createElement('style');
+            style.id = 'custom-modal-styles';
+            style.innerHTML = `
+                .custom-modal-backdrop {
+                    position: fixed; inset: 0; background: rgba(3, 5, 12, 0.75);
+                    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                    z-index: 9999999; display: flex; align-items: center; justify-content: center;
+                    opacity: 0; transition: opacity 0.25s ease; padding: 20px;
+                    font-family: 'Vazirmatn', 'Outfit', sans-serif;
+                }
+                .custom-modal-backdrop.show { opacity: 1; }
+                .custom-modal-card {
+                    background: linear-gradient(135deg, rgba(13, 20, 38, 0.88) 0%, rgba(7, 10, 20, 0.94) 100%);
+                    border: 1px solid rgba(0, 240, 255, 0.18); border-radius: 24px;
+                    padding: 32px 24px 28px; width: 100%; max-width: 420px; text-align: center;
+                    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 45px rgba(0, 240, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+                    transform: scale(0.9) translateY(15px); transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    direction: rtl;
+                }
+                html[dir="ltr"] .custom-modal-card { direction: ltr; }
+                .custom-modal-backdrop.show .custom-modal-card { transform: scale(1) translateY(0); }
+                .custom-modal-icon {
+                    font-size: 3rem; margin-bottom: 14px; display: inline-block;
+                    animation: modalIconPulse 2s infinite ease-in-out;
+                }
+                @keyframes modalIconPulse {
+                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.2)); }
+                    50% { transform: scale(1.06); filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.45)); }
+                }
+                .custom-modal-title {
+                    font-size: 1.25rem; font-weight: 800; margin-bottom: 10px; color: #fff;
+                    background: linear-gradient(135deg, #00f0ff, #3b82f6);
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                    line-height: 1.3;
+                }
+                .custom-modal-message { font-size: 0.92rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 24px; }
+                .custom-modal-actions { display: flex; gap: 12px; justify-content: center; }
+                .custom-modal-btn {
+                    flex: 1; padding: 12px 20px; border-radius: 12px; font-weight: 700;
+                    font-size: 0.95rem; cursor: pointer; border: none; transition: all 0.2s ease;
+                    font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+                }
+                .custom-modal-btn.btn-confirm {
+                    background: linear-gradient(135deg, #00f0ff, #0088ff); color: #060c1a;
+                    box-shadow: 0 4px 15px rgba(0, 240, 255, 0.25);
+                }
+                .custom-modal-btn.btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4); }
+                .custom-modal-btn.btn-cancel {
+                    background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                .custom-modal-btn.btn-cancel:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-2px); }
+                @media (max-width: 480px) {
+                    .custom-modal-card { padding: 24px 18px 20px; border-radius: 20px; }
+                    .custom-modal-title { font-size: 1.15rem; }
+                    .custom-modal-message { font-size: 0.85rem; margin-bottom: 18px; }
+                    .custom-modal-btn { padding: 10px 16px; font-size: 0.88rem; border-radius: 10px; }
+                }
+            `;
+            document.head.appendChild(style);
+        };
+
+        window.customAlert = (message, title = '') => {
+            injectModalCSS();
+            return new Promise((resolve) => {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'custom-modal-backdrop';
+                
+                let icon = '🎓';
+                if (message.includes('خەلەت') || message.includes('error') || message.includes('كێشە') || message.includes('کێشە') || message.includes('wrong') || message.includes('failed') || message.includes('invalid') || message.includes('نەهاتینە') || message.includes('Wrong') || message.includes('not found') || message.includes('Not Found')) {
+                    icon = '❌';
+                } else if (message.includes('پەسەند') || message.includes('سەرکەفت') || message.includes('success') || message.includes('saved') || message.includes('تۆمار') || message.includes('approved') || message.includes('پاشەکەوت') || message.includes('Success')) {
+                    icon = '✅';
+                } else if (message.includes('⚠️') || message.includes('ئاگەهدار') || message.includes('پڕ بکە') || message.includes('تکایە')) {
+                    icon = '⚠️';
+                }
+
+                const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                const okText = isRtl ? 'باشە' : 'OK';
+
+                backdrop.innerHTML = `
+                    <div class="custom-modal-card">
+                        <div class="custom-modal-icon">${icon}</div>
+                        <div class="custom-modal-title">${title || (isRtl ? 'ئاگەهداری' : 'Notification')}</div>
+                        <div class="custom-modal-message">${message}</div>
+                        <div class="custom-modal-actions">
+                            <button class="custom-modal-btn btn-confirm" id="custom-modal-ok-btn">${okText}</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(backdrop);
+                
+                setTimeout(() => backdrop.classList.add('show'), 10);
+                
+                const closeAlert = () => {
+                    backdrop.classList.remove('show');
+                    setTimeout(() => {
+                        backdrop.remove();
+                        resolve();
+                    }, 250);
+                };
+                
+                backdrop.querySelector('#custom-modal-ok-btn').addEventListener('click', closeAlert);
+                backdrop.addEventListener('click', (e) => {
+                    if (e.target === backdrop) closeAlert();
+                });
+                
+                const keyHandler = (e) => {
+                    if (e.key === 'Enter' || e.key === 'Escape') {
+                        e.preventDefault();
+                        document.removeEventListener('keydown', keyHandler);
+                        closeAlert();
+                    }
+                };
+                document.addEventListener('keydown', keyHandler);
+                
+                setTimeout(() => backdrop.querySelector('#custom-modal-ok-btn').focus(), 50);
+            });
+        };
+
+        window.customConfirm = (message, title = '') => {
+            injectModalCSS();
+            return new Promise((resolve) => {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'custom-modal-backdrop';
+                
+                let icon = '❓';
+                if (message.includes('ژێ') || message.includes('دەر') || message.includes('delete') || message.includes('remove') || message.includes('logout')) {
+                    icon = '⚠️';
+                }
+
+                const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                const yesText = isRtl ? 'بەڵێ' : 'Confirm';
+                const noText = isRtl ? 'پەشیمانبوون' : 'Cancel';
+
+                backdrop.innerHTML = `
+                    <div class="custom-modal-card">
+                        <div class="custom-modal-icon">${icon}</div>
+                        <div class="custom-modal-title">${title || (isRtl ? 'پشتڕاستکرن' : 'Confirmation')}</div>
+                        <div class="custom-modal-message">${message}</div>
+                        <div class="custom-modal-actions">
+                            <button class="custom-modal-btn btn-cancel" id="custom-modal-cancel-btn">${noText}</button>
+                            <button class="custom-modal-btn btn-confirm" id="custom-modal-confirm-btn">${yesText}</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(backdrop);
+                
+                setTimeout(() => backdrop.classList.add('show'), 10);
+                
+                const closeConfirm = (val) => {
+                    backdrop.classList.remove('show');
+                    setTimeout(() => {
+                        backdrop.remove();
+                        resolve(val);
+                    }, 250);
+                };
+                
+                backdrop.querySelector('#custom-modal-confirm-btn').addEventListener('click', () => closeConfirm(true));
+                backdrop.querySelector('#custom-modal-cancel-btn').addEventListener('click', () => closeConfirm(false));
+                backdrop.addEventListener('click', (e) => {
+                    if (e.target === backdrop) closeConfirm(false);
+                });
+                
+                const keyHandler = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.removeEventListener('keydown', keyHandler);
+                        closeConfirm(true);
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        document.removeEventListener('keydown', keyHandler);
+                        closeConfirm(false);
+                    }
+                };
+                document.addEventListener('keydown', keyHandler);
+                
+                setTimeout(() => backdrop.querySelector('#custom-modal-confirm-btn').focus(), 50);
+            });
+        };
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+        // 📋 کلیلێن فایەربەیسێ خۆ لێرە دانیە:
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXSDEjntloZw1yttnDVbhQyfG4hyZshjk",
+            authDomain: "clearanceportal-128f9.firebaseapp.com",
+            projectId: "clearanceportal-128f9",
+            storageBucket: "clearanceportal-128f9.firebasestorage.app",
+            messagingSenderId: "804066048860",
+            appId: "1:804066048860:web:a5d95ccf266b127d589f99",
+            measurementId: "G-2Z3QBGG7FE"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let generatedOtpCode = "";
+        let registrationDataTemp = null;
+
+        // Sync login subtitle from Firebase System_Settings/Texts
+        onValue(ref(db, 'System_Settings/Texts'), (snapshot) => {
+            if (snapshot.exists()) {
+                const texts = snapshot.val();
+                if (texts.ku && texts.ku.loginSub) i18n.ku.collegeSub = texts.ku.loginSub;
+                if (texts.en && texts.en.loginSub) i18n.en.collegeSub = texts.en.loginSub;
+                if (texts.ar && texts.ar.loginSub) i18n.ar.collegeSub = texts.ar.loginSub;
+                changeLanguage(currentLang);
+            }
+        });
+
+        // Helper to normalize Kurdish/Arabic text for name comparison
+        function normalizeStudentName(text) {
+            if (!text) return "";
+            return text.trim()
+                .toLowerCase()
+                .replace(/[يى]/g, 'ی')
+                .replace(/ك/g, 'ک')
+                .replace(/\s+/g, ' ');
+        }
+
+        // 🚪 LOGIN PROCESS
+        document.getElementById("btn-login").addEventListener("click", async () => {
+            const phoneInput = document.getElementById("student-id");
+            const nameInput = document.getElementById("login-name");
+            const codeInput = document.getElementById("access-code");
+
+            if (!phoneInput || !nameInput || !codeInput) return customAlert("ئاریشەیەک د فۆڕمێ دا هەیە!");
+            
+            const phone = phoneInput.value.trim();
+            const enteredName = nameInput.value.trim();
+            const enteredCode = codeInput.value.trim();
+
+            if (!phone || !enteredName || !enteredCode) {
+                return customAlert(i18n[currentLang].alertFillAll);
+            }
+
+            // Validation: phone format check (0750 or 0751, 11 digits)
+            const phoneRegex = /^075[01]\d{7}$/;
+            if (!phoneRegex.test(phone)) {
+                return customAlert(i18n[currentLang].alertInvalidPhone);
+            }
+
+            // Validation: student name must be at least 3 names (triple name)
+            const nameParts = enteredName.split(/\s+/).filter(Boolean);
+            if (nameParts.length < 3) {
+                return customAlert(i18n[currentLang].alertTripleName);
+            }
+
+            const dbRef = ref(db);
+            get(child(dbRef, `Clearance_Requests/${phone}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+
+                    // 1. Verify exact 3-part Student Name match
+                    const storedNameNormalized = normalizeStudentName(data.name);
+                    const enteredNameNormalized = normalizeStudentName(enteredName);
+
+                    if (storedNameNormalized !== enteredNameNormalized) {
+                        return customAlert(i18n[currentLang].alertWrongName);
+                    }
+
+                    // 2. Verify Password match
+                    if (data.password && data.password !== enteredCode) {
+                        return customAlert(i18n[currentLang].alertWrongPass);
+                    }
+                    
+                    localStorage.setItem("current_student_id", phone);
+                    localStorage.setItem("is_new_registration", "false");
+                    window.location.href = "index.html";
+                } else {
+                    customAlert(i18n[currentLang].alertAccountNotFound);
+                }
+            }).catch((error) => {
+                customAlert(i18n[currentLang].alertErrorDb + error.message);
+            });
+        });
+
+        // 💬 REGISTER PROCESS (Generates OTP)
+        document.getElementById("btn-register").addEventListener("click", async () => {
+            const name = document.getElementById("student-name").value.trim();
+            const phone = document.getElementById("student-phone").value.trim();
+            const dept = document.getElementById("student-dept").value;
+            const stage = document.getElementById("student-stage").value;
+            const password = document.getElementById("register-pass").value.trim();
+
+            if (!name || !phone || !password) {
+                return customAlert(i18n[currentLang].alertFillAllRegister);
+            }
+
+            // Validation: student name must be at least 3 names (triple name)
+            const nameParts = name.trim().split(/\s+/).filter(Boolean);
+            if (nameParts.length < 3) {
+                return customAlert(i18n[currentLang].alertTripleName);
+            }
+
+            // Validation: must start with 0750 or 0751 and be exactly 11 digits
+            const phoneRegex = /^075[01]\d{7}$/;
+            if (!phoneRegex.test(phone)) {
+                return customAlert(i18n[currentLang].alertInvalidPhone);
+            }
+
+            // Validation: password length must be at least 8 characters
+            if (password.length < 8) {
+                return customAlert(i18n[currentLang].alertShortPassword);
+            }
+
+            const dbRef = ref(db);
+            get(child(dbRef, `Clearance_Requests/${phone}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    return customAlert(i18n[currentLang].alertPhoneExists);
+                }
+
+                // Generate 6 digit dynamically
+                generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+                registrationDataTemp = { name, phone, dept, stage, password };
+
+                // Show simulated SMS
+                const smsBanner = document.getElementById("sms-banner");
+                const smsBannerBody = document.getElementById("sms-banner-body");
+                smsBannerBody.innerHTML = i18n[currentLang].smsBodyText + `<strong>${generatedOtpCode}</strong>`;
+                smsBanner.classList.add("show");
+
+                // Auto hide simulated SMS banner after 60s
+                setTimeout(() => {
+                    smsBanner.classList.remove("show");
+                }, 60000);
+
+                // Show OTP Modal
+                document.getElementById("otp-input").value = "";
+                document.getElementById("otp-error").innerText = "";
+                document.getElementById("otp-modal").style.display = "flex";
+                document.getElementById("otp-input").focus();
+            }).catch((error) => {
+                customAlert(i18n[currentLang].alertErrorDb + error.message);
+            });
+        });
+
+        // Cancel OTP
+        document.getElementById("btn-cancel-otp").addEventListener("click", () => {
+            document.getElementById("otp-modal").style.display = "none";
+            document.getElementById("sms-banner").classList.remove("show");
+            generatedOtpCode = "";
+            registrationDataTemp = null;
+        });
+
+        // Verify OTP
+        document.getElementById("btn-verify-otp").addEventListener("click", () => {
+            const enteredOtp = document.getElementById("otp-input").value.trim();
+            const errorSpan = document.getElementById("otp-error");
+
+            if (enteredOtp !== generatedOtpCode) {
+                errorSpan.innerText = i18n[currentLang].otpWrong;
+                return;
+            }
+
+            // Correct code -> Save to Firebase
+            const data = registrationDataTemp;
+            set(ref(db, 'Clearance_Requests/' + data.phone), {
+                name: data.name,
+                phone: data.phone,
+                department: data.dept,
+                stage: data.stage,
+                password: data.password,
+                hod_approved: false,
+                status_registration: "Not Requested",
+                status_library: "Not Requested",
+                status_dormitory: "Not Requested",
+                status_finance: "Not Requested"
+            }).then(() => {
+                localStorage.setItem("current_student_id", data.phone);
+                localStorage.setItem("is_new_registration", "true");
+                window.location.href = "index.html";
+            }).catch((error) => {
+                customAlert(i18n[currentLang].alertErrorReg + error.message);
+            });
+        });
+
+        // 🎨 Dropdowns Setup Logic
+        function setupCustomDropdown(displayId, optionsId, hiddenSelectId) {
+            const display = document.getElementById(displayId);
+            const optionsBox = document.getElementById(optionsId);
+            const hiddenSelect = document.getElementById(hiddenSelectId);
+            const options = optionsBox.querySelectorAll('.custom-option');
+
+            display.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = display.classList.contains('open');
+                document.querySelectorAll('.custom-select').forEach(el => el.classList.remove('open'));
+                if (!isOpen) {
+                    display.classList.add('open');
+                }
+            });
+
+            options.forEach(opt => {
+                opt.addEventListener('click', () => {
+                    display.querySelector('span').innerText = opt.innerText;
+                    hiddenSelect.value = opt.getAttribute('data-value');
+                    
+                    options.forEach(o => o.classList.remove('selected'));
+                    opt.classList.add('selected');
+                    
+                    display.classList.remove('open');
+                });
+            });
+        }
+
+        window.sendFeedback = function() {
+            const name = document.getElementById("contact-name-input").value.trim();
+            const phone = document.getElementById("contact-phone-input").value.trim();
+            const msg = document.getElementById("contact-msg-input").value.trim();
+
+            if (!name || !phone || !msg) {
+                return customAlert(currentLang === 'en' ? 'Please fill in all fields!' : (currentLang === 'ar' ? 'يرجى ملء جميع الحقول!' : 'تکایە هەمی خانان پڕ بکە!'));
+            }
+
+            const feedbackId = phone + "_" + Date.now();
+            set(ref(db, 'Feedbacks/' + feedbackId), {
+                name: name,
+                phone: phone,
+                message: msg,
+                timestamp: new Date().toISOString()
+            }).then(() => {
+                document.getElementById('contact-name-input').value = '';
+                document.getElementById('contact-phone-input').value = '';
+                document.getElementById('contact-msg-input').value = '';
+                document.getElementById('feedback-success').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('feedback-success').style.display = 'none';
+                }, 5000);
+            }).catch(err => {
+                console.error(err);
+                customAlert('Error: ' + err.message);
+            });
+        };
+
+        setupCustomDropdown('dept-display', 'dept-options', 'student-dept');
+        setupCustomDropdown('stage-display', 'stage-options', 'student-stage');
+
+        // Sync developer info from Firebase Realtime Database
+        onValue(ref(db, 'System_Settings/Developer'), (snapshot) => {
+            const devData = snapshot.exists() ? snapshot.val() : {};
+            
+            const name = devData.name || "Mohammed Salim";
+            const role = devData.role || "Developer & Statistics Student";
+            const programmedBy = devData.programmedBy || "Mohammed Salim";
+            const institution = devData.institution || "University of Duhok";
+            const department = devData.department || "Statistics Department";
+            const avatarUrl = devData.avatarUrl || "";
+            const whatsapp = devData.whatsapp || "https://wa.me/9647501065299";
+            const email = devData.email || "mailto:dev@uod.ac";
+            const telegram = devData.telegram || "https://t.me/Muhamadsalm";
+            const version = devData.version || "v2.0 — 2026";
+
+            // Update DOM elements
+            document.getElementById("dev-name").innerText = name;
+            document.getElementById("dev-role").innerText = role;
+            document.getElementById("dev-detail-programmed").innerText = programmedBy;
+            document.getElementById("dev-detail-inst").innerText = institution;
+            document.getElementById("dev-detail-dept").innerText = department;
+            document.getElementById("dev-version").innerText = "System Version: " + version;
+
+            // Update Avatar
+            const avatarContainer = document.getElementById("dev-avatar-container");
+            if (avatarUrl && avatarUrl.trim() !== "") {
+                avatarContainer.innerHTML = `<img src="${avatarUrl.trim()}" alt="Developer Avatar" onerror="this.src=''; this.innerHTML='👨‍💻';">`;
+            } else {
+                avatarContainer.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+            }
+
+            // Update Links
+            const waBtn = document.getElementById("dev-whatsapp-btn");
+            if (waBtn) {
+                waBtn.onclick = () => {
+                    let link = whatsapp.trim();
+                    if (/^\d+$/.test(link)) {
+                        link = "https://wa.me/" + link;
+                    } else if (link.startsWith("+") || link.startsWith("00")) {
+                        link = "https://wa.me/" + link.replace(/\+/g, '').replace(/^00/, '');
+                    }
+                    window.open(link, '_blank');
+                };
+            }
+
+            const tgBtn = document.getElementById("dev-telegram-btn");
+            if (tgBtn) {
+                tgBtn.onclick = () => {
+                    let link = telegram.trim();
+                    if (!link.startsWith("http://") && !link.startsWith("https://")) {
+                        if (link.startsWith("t.me/")) {
+                            link = "https://" + link;
+                        } else {
+                            link = "https://t.me/" + link.replace(/@/g, '');
+                        }
+                    }
+                    window.open(link, '_blank');
+                };
+            }
+
+            const mailBtn = document.getElementById("dev-email-btn");
+            if (mailBtn) {
+                mailBtn.onclick = () => {
+                    let link = email.trim();
+                    if (!link.startsWith("mailto:") && link.includes("@")) {
+                        link = "mailto:" + link;
+                    }
+                    window.open(link, '_blank');
+                };
+            }
+        });
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.custom-select').forEach(el => el.classList.remove('open'));
+        });
+
+        // Falling Leaves Particle System
+        function createFallingLeaves() {
+            const container = document.getElementById('leaves-container');
+            if (!container) return;
+
+            const leafColors = ['#f97316', '#ea580c', '#c2410c', '#dc2626', '#eab308', '#fda4af'];
+            const leafShapes = [
+                'M10 0 C15 5 18 12 15 18 C12 24 5 28 0 20 C-5 12 -2 5 10 0 Z',
+                'M10 0 C20 8 20 22 10 30 C0 22 0 8 10 0 Z',
+                'M10 10 C30 -10 35 15 10 30 C-15 15 -10 -10 10 10 Z'
+            ];
+
+            const maxLeaves = 25;
+            for (let i = 0; i < maxLeaves; i++) {
+                setTimeout(() => {
+                    spawnLeaf(container, leafColors, leafShapes);
+                }, i * 350);
+            }
+        }
+
+        function spawnLeaf(container, colors, shapes) {
+            const leaf = document.createElement('div');
+            leaf.classList.add('leaf-particle');
+
+            const size = Math.random() * 16 + 12;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            const left = Math.random() * 100;
+            const duration = Math.random() * 8 + 6;
+            const delay = Math.random() * 5;
+
+            leaf.style.left = left + '%';
+            leaf.style.width = size + 'px';
+            leaf.style.height = size + 'px';
+            leaf.style.animationDuration = duration + 's';
+            leaf.style.animationDelay = '-' + delay + 's';
+
+            leaf.innerHTML = `
+                <svg viewBox="-20 -20 60 60" width="100%" height="100%" style="transform: rotate(${Math.random() * 360}deg)">
+                    <path d="${shape}" fill="${color}" opacity="${Math.random() * 0.3 + 0.65}" />
+                </svg>
+            `;
+
+            container.appendChild(leaf);
+
+            leaf.addEventListener('animationiteration', () => {
+                leaf.style.left = Math.random() * 100 + '%';
+                const newShape = shapes[Math.floor(Math.random() * shapes.length)];
+                const newColor = colors[Math.floor(Math.random() * colors.length)];
+                leaf.querySelector('path').setAttribute('d', newShape);
+                leaf.querySelector('path').setAttribute('fill', newColor);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            createFallingLeaves();
+        });
+    </script>
+
+    <!-- ══ Anti-Inspect Protection Shield ══ -->
+    <script>
+    (function(){
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.ctrlKey && ['U','u','S','s'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.metaKey && e.altKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); return false; }
+        }, true);
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; }, true);
+        document.addEventListener('selectstart', function(e) { e.preventDefault(); }, true);
+        document.addEventListener('dragstart', function(e) { e.preventDefault(); }, true);
+        (function _dbgLoop() {
+            try { (function() { return false; }['constructor']('debugger')()) } catch(e){}
+            setTimeout(_dbgLoop, 800);
+        })();
+        (function() {
+            const _noop = function(){};
+            try {
+                Object.defineProperty(window, 'console', {
+                    get: function() {
+                        return { log: _noop, warn: _noop, error: _noop, info: _noop, debug: _noop, table: _noop, clear: _noop, dir: _noop, trace: _noop, assert: _noop, group: _noop, groupEnd: _noop, time: _noop, timeEnd: _noop };
+                    },
+                    set: function(){}
+                });
+            } catch(e){}
+        })();
+        (function() {
+            var _dtOpen = false;
+            var _check = function() {
+                var w = window.outerWidth - window.innerWidth > 160;
+                var h = window.outerHeight - window.innerHeight > 160;
+                if (w || h) {
+                    if (!_dtOpen) {
+                        _dtOpen = true;
+                        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1c0a00;color:#f87171;font-family:Vazirmatn,sans-serif;font-size:1.5rem;text-align:center;padding:20px;direction:rtl;">⛔ ناچالاک — ئامێرێن پەرەپێدان داخراون<br><small style="color:#94a3b8;font-size:0.9rem;margin-top:12px;display:block;">تکایە ئامێرێن دەڤەلۆپەری داخە و پەڕەکێ نوی بکەرەوە</small></div>';
+                    }
+                } else { _dtOpen = false; }
+            };
+            setInterval(_check, 1200);
+        })();
+        (function() {
+            if (window.Firebug && window.Firebug.chrome && window.Firebug.chrome.isInitialized) {
+                document.body.innerHTML = '';
+            }
+        })();
+        document.addEventListener('copy', function(e) { e.preventDefault(); return false; }, true);
+    })();
+    </script>
+</body>
+</html>
