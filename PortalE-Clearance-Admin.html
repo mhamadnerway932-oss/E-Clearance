@@ -21,7 +21,7 @@
                 radial-gradient(ellipse at 20% 50%, rgba(100, 0, 220, 0.12) 0%, transparent 60%),
                 radial-gradient(ellipse at 80% 20%, rgba(0, 80, 255, 0.10) 0%, transparent 55%),
                 radial-gradient(ellipse at 60% 90%, rgba(0, 200, 255, 0.07) 0%, transparent 50%);
-            color: #f3f4f6;
+            color: #ffffff;
             margin: 0;
             padding: 0;
             min-height: 100vh;
@@ -68,7 +68,7 @@
         .logo-text p {
             margin: 2px 0 0 0;
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.85);
         }
 
         .active-user-badge {
@@ -141,7 +141,7 @@
         }
 
         .dept-card-select p {
-            color: #94a3b8;
+            color: rgba(255,255,255,0.80);
             font-size: 0.85rem;
             margin: 0;
         }
@@ -379,11 +379,11 @@
         .empty-state h3 {
             font-size: 1.4rem;
             margin: 0 0 10px 0;
-            color: #e5e7eb;
+            color: #ffffff;
         }
 
         .empty-state p {
-            color: #94a3b8;
+            color: rgba(255,255,255,0.82);
             font-size: 0.95rem;
             max-width: 350px;
             line-height: 1.6;
@@ -455,7 +455,7 @@
             border-radius: 30px;
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(255,255,255,0.1);
-            color: #cbd5e1;
+            color: #ffffff;
         }
 
         .meta-badge.highlight {
@@ -469,7 +469,7 @@
         .section-block-title {
             font-size: 1.05rem;
             font-weight: 700;
-            color: #f3f4f6;
+            color: #ffffff;
             margin: 0 0 15px 0;
             display: flex;
             align-items: center;
@@ -530,7 +530,7 @@
         .office-name {
             font-size: 0.9rem;
             font-weight: 700;
-            color: #e5e7eb;
+            color: #ffffff;
         }
 
         .office-badge {
@@ -561,7 +561,7 @@
 
         .office-note {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.82);
             background: rgba(0,0,0,0.15);
             padding: 8px 10px;
             border-radius: 8px;
@@ -672,7 +672,7 @@
         }
 
         .modal-content p {
-            color: #94a3b8;
+            color: rgba(255,255,255,0.82);
             font-size: 0.9rem;
             line-height: 1.5;
             margin: 0 0 25px 0;
@@ -776,7 +776,7 @@
         .dashboard-table td {
             padding: 12px 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            color: #e5e7eb;
+            color: #ffffff;
             vertical-align: middle;
         }
 
@@ -922,12 +922,12 @@
         .feedback-sender-name {
             font-size: 0.95rem;
             font-weight: 700;
-            color: #fff;
+            color: #ffffff;
         }
 
         .feedback-sender-phone {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: rgba(255,255,255,0.80);
             font-family: 'Outfit', sans-serif;
             direction: ltr;
             text-align: right;
@@ -935,7 +935,7 @@
 
         .feedback-message {
             font-size: 0.9rem;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.90);
             line-height: 1.65;
             background: rgba(0,0,0,0.15);
             padding: 12px 14px;
@@ -953,7 +953,7 @@
 
         .feedback-date {
             font-size: 0.75rem;
-            color: #64748b;
+            color: rgba(255,255,255,0.65);
             font-family: 'Outfit', sans-serif;
             direction: ltr;
         }
@@ -1134,7 +1134,7 @@
         <div class="header-logo">
             <span class="logo-icon">👑</span>
             <div class="logo-text">
-                <h2 data-i18n="adminTitle">UoD E-Clearance</h2>
+                <h2 data-i18n="adminTitle"> E-Clearance</h2>
                 <p data-i18n="adminSubtitle">پۆڕتاڵا ئەلیکترۆنی یا فەرمانبەران - زانکۆیا دهۆک</p>
             </div>
         </div>
@@ -1254,11 +1254,11 @@
                 <!-- Separator tabs for Statistics and Accounting -->
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
                     <button id="tab-ad-accounting" class="btn-action btn-search-style" onclick="switchAssistantDeanTab('Accounting')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📊 پشکا ژمێریاری (Accounting)</button>
-                    <button id="tab-ad-statistics" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Statistics')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📈 پشکا ئامار (Statistics)</button>
-                    <button id="tab-ad-finance" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Finance')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">💰 پشکا دارایێ (Finance)</button>
+                    <button id="tab-ad-statistics" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Statistics')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📈 پشکا ئامار و زانیاری (Statistics)</button>
+                    <button id="tab-ad-finance" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Finance')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">💰 پشکا دارای بانک (Finance)</button>
                     <button id="tab-ad-economics" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Economics')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📉 پشکا ئابوری (Economics)</button>
-                    <button id="tab-ad-administration" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Administration')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">🏢 پشکا ئیدارە (Administration)</button>
-                    <button id="tab-ad-marketing" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Marketing')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">🛒 پشکا بازارگەری (Marketing)</button>
+                    <button id="tab-ad-administration" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Administration')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">🏢 پشکا کارگیری (Administration)</button>
+                    <button id="tab-ad-marketing" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Marketing')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">🛒 پشکا کارگیری بازارگەری (Marketing)</button>
                 </div>
 
                 <div class="table-responsive">
@@ -1754,7 +1754,7 @@
         // Admin Language Switcher Logic
         const i18n = {
             ku: {
-                adminTitle: "UoD E-Clearance",
+                adminTitle: "E-Clearance",
                 adminSubtitle: "پۆڕتاڵا ئەلیکترۆنی یا فەرمانبەران - زانکۆیا دهۆک",
                 notLogged: "🔑 چوونا ژوورێ نەکریە",
                 deleteStudent: "ژێبرن",
@@ -1763,7 +1763,7 @@
                 assistantDeanTitle: "هاریکارێ ڕاگری",
             },
             en: {
-                adminTitle: "UoD E-Clearance",
+                adminTitle: "E-Clearance",
                 adminSubtitle: "Staff Electronic Portal - University of Duhok",
                 notLogged: "🔑 Not Logged In",
                 deleteStudent: "Delete",
@@ -2031,12 +2031,12 @@
         let globalClearanceCards = {};
 
         const titles = {
-            'hod_accounting': '👑 سەرۆک پشکا ژمێریاری',
-            'hod_statistics': '👑 سەرۆک پشکا ئامارێ',
-            'hod_finance': '👑 سەرۆک پشکا دارایێ',
-            'hod_economics': '👑 سەرۆک پشکا ئابووری',
-            'hod_marketing': '👑 سەرۆک پشکا بازارگەری',
-            'hod_administration': '👑 سەرۆک پشکا ئیدارێ',
+            'hod_accounting': '👑  پشکا ژمێریاری',
+            'hod_statistics': '👑 پشکا ئامار و زانیاری',
+            'hod_finance': '👑  پشکا دارای بانک',
+            'hod_economics': '👑  پشکا ئابووری',
+            'hod_marketing': '👑  پشکا کارکێری بازارگەری',
+            'hod_administration': '👑  پشکا کارگێری',
             'assistant_dean': '🏛️ هاریکارێ ڕاگری',
             'super_admin': '🛠️ سەرپەرشتێ گشتی'
         };
@@ -2537,18 +2537,19 @@
 
                 // HOD/Assistant Dean filter check
                 let belongsToView = false;
+                const dptVal = (data.department || '').toLowerCase();
                 if (selectedAdminDept === 'hod_accounting') {
-                    if (data.department === 'Accounting' || data.department === 'ژمێریاری') belongsToView = true;
+                    if (dptVal.includes('account') || dptVal.includes('ژمێریاری')) belongsToView = true;
                 } else if (selectedAdminDept === 'hod_statistics') {
-                    if (data.department === 'Statistics' || data.department === 'ئامار و زانیاری' || data.department === 'ئامار') belongsToView = true;
+                    if (dptVal.includes('statistic') || dptVal.includes('ئامار')) belongsToView = true;
                 } else if (selectedAdminDept === 'hod_finance') {
-                    if (data.department === 'Finance' || data.department === 'دارایێ') belongsToView = true;
+                    if (dptVal.includes('finance') || dptVal.includes('دارای') || dptVal.includes('بانک')) belongsToView = true;
                 } else if (selectedAdminDept === 'hod_economics') {
-                    if (data.department === 'Economics' || data.department === 'ئابووری') belongsToView = true;
+                    if (dptVal.includes('economic') || dptVal.includes('ئابووری') || dptVal.includes('ئابوری')) belongsToView = true;
                 } else if (selectedAdminDept === 'hod_marketing') {
-                    if (data.department === 'Marketing' || data.department === 'بازارگەری') belongsToView = true;
+                    if (dptVal.includes('market') || dptVal.includes('بازارگەری') || dptVal.includes('بازاڕگەڕی')) belongsToView = true;
                 } else if (selectedAdminDept === 'hod_administration') {
-                    if (data.department === 'Administration' || data.department === 'ئیدارێ') belongsToView = true;
+                    if (dptVal.includes('administr') || dptVal.includes('ئیدار') || dptVal.includes('کارگێڕی') || dptVal.includes('کارگێری')) belongsToView = true;
                 }
 
                 // If is Hod and student belongs to view, collect for HOD table
@@ -2840,7 +2841,7 @@
             document.getElementById("btn-logout").style.display = "none";
         };
 
-        // ─── Bulk Deletion Functions for HOD and Assistant Dean ───────────────
+        // ─── Bulk Reset Functions for HOD and Assistant Dean ───────────────
         window.deleteAllHodStudents = async function() {
             if (!latestSnapshot || !latestSnapshot.exists()) {
                 return customAlert("چو قوتابی نینن بۆ ژێبرنێ!");
@@ -2849,8 +2850,8 @@
             const deptBadge = document.getElementById("dashboard-dept-badge") ? document.getElementById("dashboard-dept-badge").innerText : selectedAdminDept;
 
             const confirmed = await customConfirm(
-                `⚠️ ئایا ب دروستی دڵنیایی دەیت تەواوی داخوازیێن قوتابیێن پشکا (${deptBadge}) ژێ بەری؟\n\nپشتی ژێبرنێ، قوتابی دێ شێن دووبارە داخوازیا خۆ تۆمار بکەنەڤە.`,
-                "ژێبرنا هەمی قوتابیان"
+                `⚠️ ئایا ب دروستی دڵنیایی دەیت واژۆیا سەرۆک پشکێ بۆ تەواوی قوتابیێن پشکا (${deptBadge}) هەڵوەشێنیەوە؟\n\nئەڤ کردارە هەژمارا قوتابیان د داتابەیسێ دا نااهێلیتە ژێبرن، تەنها واژۆکان بەتاڵ دکات.`,
+                "هەڵوەشاندنا واژۆیێن هەمی قوتابیان"
             );
 
             if (!confirmed) return;
@@ -2878,7 +2879,8 @@
                 }
 
                 if (belongsToView) {
-                    updates[`Clearance_Requests/${studentId}`] = null;
+                    updates[`Clearance_Requests/${studentId}/hod_approved`] = null;
+                    updates[`Clearance_Requests/${studentId}/note_hod`] = null;
                     deleteCount++;
                 }
             });
@@ -2888,9 +2890,9 @@
             }
 
             update(ref(db), updates).then(() => {
-                customAlert(`✅ بە سەرکەفتیانە هەمی قوتابیێن پشکێ (${deleteCount} قوتابی) هاتنە ژێبرن!`);
+                customAlert(`✅ بە سەرکەفتیانە واژۆیا سەرۆک پشکێ بۆ هەمی قوتابیێن پشکێ (${deleteCount} قوتابی) هاتە هەڵوەشاندن!`);
             }).catch(err => {
-                customAlert("❌ خەلەتیەک چێبوو د ژێبرنا قوتابیان دا: " + err.message);
+                customAlert("❌ خەلەتیەک چێبوو د دەستکاریکردنا داتایێ دا: " + err.message);
             });
         };
 
@@ -2902,14 +2904,15 @@
             const tabName = activeAssistantDeanTab === 'Accounting' ? 'ژمێریاری (Accounting)' : 'ئامار (Statistics)';
 
             const confirmed = await customConfirm(
-                `⚠️ ئایا ب دروستی دڵنیایی دەیت تەواوی داخوازیێن قوتابیێن پشکا (${tabName}) ژێ بەری؟\n\nپشتی ژێبرنێ، قوتابی دێ شێن دووبارە داخوازیا خۆ تۆمار بکەنەڤە.`,
-                "ژێبرنا هەمی قوتابیان"
+                `⚠️ ئایا ب دروستی دڵنیایی دەیت واژۆیا معاونێ عمیدی بۆ تەواوی قوتابیێن پشکا (${tabName}) هەڵوەشێنیەوە؟\n\nئەڤ کردارە هەژمارا قوتابیان د داتابەیسێ دا نااهێلیتە ژێبرن.`,
+                "هەڵوەشاندنا واژۆیێن هەمی قوتابیان"
             );
 
             if (!confirmed) return;
 
             let deleteCount = 0;
             const updates = {};
+            const finalId = getFinalCardId();
 
             latestSnapshot.forEach((childSnapshot) => {
                 const studentId = childSnapshot.key;
@@ -2923,7 +2926,8 @@
                 }
 
                 if (belongsToTab) {
-                    updates[`Clearance_Requests/${studentId}`] = null;
+                    updates[`Clearance_Requests/${studentId}/status_${finalId}`] = null;
+                    updates[`Clearance_Requests/${studentId}/note_${finalId}`] = null;
                     deleteCount++;
                 }
             });
@@ -2933,9 +2937,9 @@
             }
 
             update(ref(db), updates).then(() => {
-                customAlert(`✅ بە سەرکەفتیانە هەمی قوتابیێن پشکا (${tabName}) (${deleteCount} قوتابی) هاتنە ژێبرن!`);
+                customAlert(`✅ بە سەرکەفتیانە واژۆیا معاونێ عمیدی بۆ هەمی قوتابیێن پشکا (${tabName}) (${deleteCount} قوتابی) هاتە هەڵوەشاندن!`);
             }).catch(err => {
-                customAlert("❌ خەلەتیەک چێبوو د ژێبرنا قوتابیان دا: " + err.message);
+                customAlert("❌ خەلەتیەک چێبوو د دەستکاریکردنا داتایێ دا: " + err.message);
             });
         };
 
@@ -3765,22 +3769,22 @@
             if (!container) return;
             container.innerHTML = "";
             
-            let labelHodAcc = currentLang === 'ku' ? "سەرۆک پشکا ژمێریاری" : (currentLang === 'ar' ? "رئيس قسم المحاسبة" : "Accounting HOD");
-            let labelHodStat = currentLang === 'ku' ? "سەرۆک پشکا ئامارێ" : (currentLang === 'ar' ? "رئيس قسم الإحصاء" : "Statistics HOD");
-            let labelHodFin = currentLang === 'ku' ? "سەرۆک پشکا دارایێ" : (currentLang === 'ar' ? "رئيس قسم المالية" : "Finance HOD");
-            let labelHodEco = currentLang === 'ku' ? "سەرۆک پشکا ئابووری" : (currentLang === 'ar' ? "رئيس قسم الاقتصاد" : "Economics HOD");
-            let labelHodMkt = currentLang === 'ku' ? "سەرۆک پشکا بازارگەری" : (currentLang === 'ar' ? "رئيس قسم إدارة الأعمال" : "Marketing HOD");
-            let labelHodAdm = currentLang === 'ku' ? "سەرۆک پشکا ئیدارێ" : (currentLang === 'ar' ? "رئيس قسم الإدارة" : "Administration HOD");
+            let labelHodAcc = currentLang === 'ku' ? " پشکا ژمێریاری" : (currentLang === 'ar' ? "رئيس قسم المحاسبة" : " ");
+            let labelHodStat = currentLang === 'ku' ? "   پشکا ئامار زانیاری " : (currentLang === 'ar' ? "رئيس قسم الإحصاء" : "Statistics HOD");
+            let labelHodFin = currentLang === 'ku' ? " پشکا دارای بانک" : (currentLang === 'ar' ? "رئيس قسم المالية" : "Finance HOD");
+            let labelHodEco = currentLang === 'ku' ? "  پشکا ئابووری" : (currentLang === 'ar' ? "رئيس قسم الاقتصاد" : "Economics HOD");
+            let labelHodMkt = currentLang === 'ku' ? " پشکا کارگێری بازارگەری" : (currentLang === 'ar' ? "رئيس قسم إدارة الأعمال" : "Marketing HOD");
+            let labelHodAdm = currentLang === 'ku' ? " پشکا کارگێری" : (currentLang === 'ar' ? "رئيس قسم الإدارة" : "Administration HOD");
             let labelAssistantDean = t('assistantDeanTitle');
             
             // HOD Cards array
             const hodList = [
-                { id: 'hod_accounting', title: labelHodAcc, sub: 'Accounting HOD', color: 'rgba(239, 68, 68, 0.3)', bg: 'rgba(239, 68, 68, 0.03)' },
-                { id: 'hod_statistics', title: labelHodStat, sub: 'Statistics HOD', color: 'rgba(168, 85, 247, 0.3)', bg: 'rgba(168, 85, 247, 0.03)' },
-                { id: 'hod_finance', title: labelHodFin, sub: 'Finance HOD', color: 'rgba(16, 185, 129, 0.3)', bg: 'rgba(16, 185, 129, 0.03)' },
-                { id: 'hod_economics', title: labelHodEco, sub: 'Economics HOD', color: 'rgba(245, 158, 11, 0.3)', bg: 'rgba(245, 158, 11, 0.03)' },
-                { id: 'hod_marketing', title: labelHodMkt, sub: 'Marketing HOD', color: 'rgba(6, 182, 212, 0.3)', bg: 'rgba(6, 182, 212, 0.03)' },
-                { id: 'hod_administration', title: labelHodAdm, sub: 'Administration HOD', color: 'rgba(236, 72, 153, 0.3)', bg: 'rgba(236, 72, 153, 0.03)' }
+                { id: 'hod_accounting', title: labelHodAcc, sub: '', color: 'rgba(239, 68, 68, 0.3)', bg: 'rgba(239, 68, 68, 0.03)' },
+                { id: 'hod_statistics', title: labelHodStat, sub: '', color: 'rgba(168, 85, 247, 0.3)', bg: 'rgba(168, 85, 247, 0.03)' },
+                { id: 'hod_finance', title: labelHodFin, sub: '', color: 'rgba(16, 185, 129, 0.3)', bg: 'rgba(16, 185, 129, 0.03)' },
+                { id: 'hod_economics', title: labelHodEco, sub: '', color: 'rgba(245, 158, 11, 0.3)', bg: 'rgba(245, 158, 11, 0.03)' },
+                { id: 'hod_marketing', title: labelHodMkt, sub: '', color: 'rgba(6, 182, 212, 0.3)', bg: 'rgba(6, 182, 212, 0.03)' },
+                { id: 'hod_administration', title: labelHodAdm, sub: '', color: 'rgba(236, 72, 153, 0.3)', bg: 'rgba(236, 72, 153, 0.03)' }
             ];
 
             hodList.forEach(hod => {
@@ -3807,8 +3811,16 @@
                 const card = cards[key];
                 
                 // Aggressively skip any duplicate Assistant Dean cards
-                const checkStr = JSON.stringify(card).toLowerCase();
-                if (key === 'assistant_dean' || card.id === 'assistant_dean' || checkStr.includes('assistant dean') || checkStr.includes('هاریکارێ ڕاگری') || checkStr.includes('معاونێ عمیدی')) {
+                const checkStr = (JSON.stringify(card) + ' ' + key).toLowerCase();
+                const isAssistantDean = key === 'assistant_dean' || card.id === 'assistant_dean' ||
+                    card.is_final === true || card.is_final === 'true' || card.is_final === 1 ||
+                    key.includes('assistant') || key.includes('dean') || key.includes('ragiri') || key.includes('harikar') ||
+                    checkStr.includes('assistant') || checkStr.includes('dean') ||
+                    checkStr.includes('راگری') || checkStr.includes('ڕاگری') ||
+                    checkStr.includes('معاون') || checkStr.includes('مەعاون') ||
+                    checkStr.includes('هاریکار');
+                
+                if (isAssistantDean) {
                     return;
                 }
                 
@@ -3852,7 +3864,7 @@
                     ">✍️ واژۆیا کۆتایی</div>
                     <span class="dept-emoji" style="filter: drop-shadow(0 0 14px rgba(59,130,246,0.6));">🏛️</span>
                     <h2 style="color: #60a5fa;">${labelAssistantDean}</h2>
-                    <p>Final Signature</p>
+                    <p></p>
                 </div>
             `;
 
@@ -3871,7 +3883,7 @@
             if (!grid) return;
             grid.innerHTML = "";
 
-            const isManager = selectedAdminDept === 'hod_accounting' || selectedAdminDept === 'hod_statistics' || selectedAdminDept === 'assistant_dean' || selectedAdminDept === 'super_admin';
+            const isManager = (selectedAdminDept && selectedAdminDept.startsWith('hod_')) || selectedAdminDept === 'assistant_dean' || selectedAdminDept === 'super_admin';
 
             Object.values(cards).forEach(card => {
                 const cardId = card.id;
@@ -4189,27 +4201,27 @@
             if (!container) return;
             container.innerHTML = `
                 <div class="form-group" style="text-align: right;">
-                    <label style="color: #ef4444; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 سەرۆک پشکا ژمێریاری (HOD Acc):</label>
+                    <label style="color: #ef4444; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑  پشکا ژمێریاری (HOD Acc):</label>
                     <input type="text" id="pass-hod-acc" class="input-field" style="text-align: center;">
                 </div>
                 <div class="form-group" style="text-align: right;">
-                    <label style="color: #a855f7; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 سەرۆک پشکا ئامارێ (HOD Stat):</label>
+                    <label style="color: #a855f7; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 پشکا ئامار زانیاری(HOD Stat):</label>
                     <input type="text" id="pass-hod-stat" class="input-field" style="text-align: center;">
                 </div>
                 <div class="form-group" style="text-align: right;">
-                    <label style="color: #10b981; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 سەرۆک پشکا دارایێ (HOD Fin):</label>
+                    <label style="color: #10b981; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 پشکا دارای بانک(HOD Fin):</label>
                     <input type="text" id="pass-hod-fin" class="input-field" style="text-align: center;">
                 </div>
                 <div class="form-group" style="text-align: right;">
-                    <label style="color: #f59e0b; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 سەرۆک پشکا ئابووری (HOD Eco):</label>
+                    <label style="color: #f59e0b; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑  پشکا ئابووری(HOD Eco):</label>
                     <input type="text" id="pass-hod-eco" class="input-field" style="text-align: center;">
                 </div>
                 <div class="form-group" style="text-align: right;">
-                    <label style="color: #06b6d4; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 سەرۆک پشکا بازارگەری (HOD Mkt):</label>
+                    <label style="color: #06b6d4; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑  پشکا کارگێری بازارگەری (HOD Mkt):</label>
                     <input type="text" id="pass-hod-mkt" class="input-field" style="text-align: center;">
                 </div>
                 <div class="form-group" style="text-align: right;">
-                    <label style="color: #ec4899; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑 سەرۆک پشکا ئیدارێ (HOD Adm):</label>
+                    <label style="color: #ec4899; display: block; margin-bottom: 6px; font-size: 0.9rem;">👑  پشکا کارگێری (HOD Adm):</label>
                     <input type="text" id="pass-hod-adm" class="input-field" style="text-align: center;">
                 </div>
                 <div class="form-group" style="text-align: right;">
@@ -4249,15 +4261,61 @@
             `;
         }
 
-        // 🗑️ Delete student record from Firebase
+        // 🗑️ Delete/Reset student request logic
         let pendingDeleteId = "";
         window.confirmDeleteStudent = function(studentId, name) {
             pendingDeleteId = studentId;
-            document.getElementById("delete-confirm-msg").innerHTML = `
-                ئایا دڵنیایی دەیت <strong style="color:#fff;">${name}</strong><br>
-                <span style="font-size:0.8rem; font-family:'Outfit'; color:#64748b;">${studentId}</span><br><br>
-                ژێ بەری؟ ئەم کردارە ناگەڕێ!
-            `;
+            
+            const isHod = selectedAdminDept && selectedAdminDept.startsWith('hod_');
+            const isAssistantDean = selectedAdminDept === 'assistant_dean';
+            const isSuperAdmin = selectedAdminDept === 'super_admin';
+
+            let deptTitle = "";
+            if (globalClearanceCards && globalClearanceCards[selectedAdminDept]) {
+                const card = globalClearanceCards[selectedAdminDept];
+                deptTitle = card['name_' + (currentLang || 'ku')] || card.name_ku || selectedAdminDept;
+            } else {
+                deptTitle = titles[selectedAdminDept] || selectedAdminDept;
+            }
+
+            let msgHTML = "";
+            if (isSuperAdmin) {
+                msgHTML = `
+                    ⚠️ <strong style="color:#f87171;">سەرپەرشتێ گشتی:</strong><br>
+                    ئایا تو دڵنیایی دێ هەژمارا قوتابی <strong style="color:#fff;">${name}</strong><br>
+                    <span style="font-size:0.8rem; font-family:'Outfit'; color:#64748b;">${studentId}</span><br>
+                    ژ داتابەیسێ ب تەمامی ژێ بەری؟
+                `;
+            } else if (isHod) {
+                msgHTML = `
+                    ئایا دڵنیایی دەیت واژۆکرنا سەرۆک پشکێ بۆ قوتابی <strong style="color:#fff;">${name}</strong><br>
+                    <span style="font-size:0.8rem; font-family:'Outfit'; color:#64748b;">${studentId}</span><br>
+                    هەڵوەشێنیەوە؟<br><br>
+                    <span style="font-size:0.82rem; color:#00f0ff; line-height:1.5;">
+                    ✅ هەژمارا قوتابی ل داتابەیسێ <strong>نااهێتە ژێبرن</strong>، بەڵکو تەنها واژۆیا سەرۆک پشکێ دێ هێتە هەڵوەشاندن.
+                    </span>
+                `;
+            } else if (isAssistantDean) {
+                msgHTML = `
+                    ئایا دڵنیایی دەیت واژۆیا معاونێ عمیدی بۆ قوتابی <strong style="color:#fff;">${name}</strong><br>
+                    <span style="font-size:0.8rem; font-family:'Outfit'; color:#64748b;">${studentId}</span><br>
+                    هەڵوەشێنیەوە؟<br><br>
+                    <span style="font-size:0.82rem; color:#00f0ff; line-height:1.5;">
+                    ✅ هەژمارا قوتابی ل داتابەیسێ <strong>نااهێتە ژێبرن</strong>، بەڵکو تەنها واژۆیا کۆتایی دێ هێتە هەڵوەشاندن.
+                    </span>
+                `;
+            } else {
+                msgHTML = `
+                    ئایا دڵنیایی دەیت داخوازییا قوتابی <strong style="color:#fff;">${name}</strong><br>
+                    <span style="font-size:0.8rem; font-family:'Outfit'; color:#64748b;">${studentId}</span><br>
+                    ژ پشکا <strong style="color:#00f0ff;">${deptTitle}</strong> ژێ بەری / ڕەت بکەی؟<br><br>
+                    <span style="font-size:0.82rem; color:#00f0ff; line-height:1.5; display:block; background:rgba(0,240,255,0.08); padding:10px; border-radius:10px; border:1px solid rgba(0,240,255,0.2);">
+                    💡 هەژمارا قوتابی <strong>نااهێتە ژێبرن</strong> و ل دەڤ سەرۆک پشکێ ژی <strong>نااهێتە ژێبرن</strong>، بەڵکو تەنها داخوازییا ڤێ پشکێ دێ هێتە ڕەتکرن دا کو قوتابی بشێت دووبارە داخوازیێ فرێکەتەوە.
+                    </span>
+                `;
+            }
+
+            document.getElementById("delete-confirm-msg").innerHTML = msgHTML;
             document.getElementById("delete-confirm-modal").style.display = "flex";
         };
 
@@ -4268,17 +4326,63 @@
 
         document.getElementById("btn-delete-confirm").addEventListener("click", () => {
             if (!pendingDeleteId) return;
-            remove(ref(db, `Clearance_Requests/${pendingDeleteId}`))
-                .then(() => {
-                    document.getElementById("delete-confirm-modal").style.display = "none";
-                    if (currentSearchId === pendingDeleteId) {
-                        currentSearchId = "";
-                        document.getElementById("result-card").style.display = "none";
-                        document.getElementById("empty-state").style.display = "flex";
-                    }
-                    pendingDeleteId = "";
-                })
-                .catch(() => customAlert("❌ کێشەیەک د ژێبرنا داتایێ دا هەیە!"));
+
+            const isHod = selectedAdminDept && selectedAdminDept.startsWith('hod_');
+            const isAssistantDean = selectedAdminDept === 'assistant_dean';
+            const isSuperAdmin = selectedAdminDept === 'super_admin';
+
+            if (isSuperAdmin) {
+                remove(ref(db, `Clearance_Requests/${pendingDeleteId}`))
+                    .then(() => {
+                        document.getElementById("delete-confirm-modal").style.display = "none";
+                        if (currentSearchId === pendingDeleteId) {
+                            currentSearchId = "";
+                            document.getElementById("result-card").style.display = "none";
+                            document.getElementById("empty-state").style.display = "flex";
+                        }
+                        pendingDeleteId = "";
+                        customAlert("✅ هەژمارا قوتابی ب تەمامی هاتە ژێبرن!");
+                    })
+                    .catch(() => customAlert("❌ کێشەیەک د ژێبرنا داتایێ دا هەیە!"));
+            } else if (isHod) {
+                const updates = {};
+                updates[`Clearance_Requests/${pendingDeleteId}/hod_approved`] = null;
+                updates[`Clearance_Requests/${pendingDeleteId}/note_hod`] = null;
+
+                update(ref(db), updates)
+                    .then(() => {
+                        document.getElementById("delete-confirm-modal").style.display = "none";
+                        pendingDeleteId = "";
+                        customAlert("✅ واژۆیا سەرۆک پشکێ هاتە هەڵوەشاندن!");
+                    })
+                    .catch(() => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە!"));
+            } else if (isAssistantDean) {
+                const finalId = getFinalCardId();
+                const updates = {};
+                updates[`Clearance_Requests/${pendingDeleteId}/status_${finalId}`] = null;
+                updates[`Clearance_Requests/${pendingDeleteId}/note_${finalId}`] = null;
+
+                update(ref(db), updates)
+                    .then(() => {
+                        document.getElementById("delete-confirm-modal").style.display = "none";
+                        pendingDeleteId = "";
+                        customAlert("✅ واژۆیا معاونێ عمیدی هاتە هەڵوەشاندن!");
+                    })
+                    .catch(() => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە!"));
+            } else if (selectedAdminDept) {
+                const updates = {};
+                updates[`Clearance_Requests/${pendingDeleteId}/status_${selectedAdminDept}`] = null;
+                updates[`Clearance_Requests/${pendingDeleteId}/note_${selectedAdminDept}`] = null;
+                updates[`Clearance_Requests/${pendingDeleteId}/date_requested_${selectedAdminDept}`] = null;
+
+                update(ref(db), updates)
+                    .then(() => {
+                        document.getElementById("delete-confirm-modal").style.display = "none";
+                        pendingDeleteId = "";
+                        customAlert("✅ داخوازییا قوتابی هاتە ڕەتکرن! قوتابی نوکە دشێت دووبارە داخوازیێ بنێریتەوە.");
+                    })
+                    .catch(() => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە!"));
+            }
         });
 
         document.getElementById("btn-delete-card").addEventListener("click", () => {

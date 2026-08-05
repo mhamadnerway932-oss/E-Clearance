@@ -1164,21 +1164,15 @@
         <div class="login-card">
             <h2 id="main-title" style="color: #7c2d12; margin-bottom: 5px; font-size: 1.8rem; font-weight: 800;">سیستەمێ گەردەن ئازاکرنێ</h2>
             <p id="college-sub" style="color: #9a3412; margin-bottom: 15px; font-size: 0.95rem; font-weight: 500;">کۆلیژا کارگێڕی و ئابووری - زانکۆیا دهۆک</p>
-            <div class="security-badge">🔒 SSL Secured & Encrypted</div>
 
             <!-- ── Tabs to Switch Between Login and Register ── -->
             <div class="auth-tabs">
                 <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">چوونەژوورێ</button>
-                <button class="auth-tab" id="tab-register" onclick="switchTab('register')">دروستکرنا حسابێ</button>
+                <button class="auth-tab" id="tab-register" onclick="switchTab('register')">دروستکرنا هژمارێ</button>
             </div>
 
             <!-- 🚪 Login Container -->
             <div id="login-container">
-                <div class="form-group">
-                    <label id="label-student-id">🆔 ڕەقەمێ مۆبایلێ:</label>
-                    <input type="text" id="student-id" class="login-input" placeholder="0750XXXXXXX" style="text-align: center;">
-                </div>
-
                 <div class="form-group">
                     <label id="label-login-name">👤 ناڤێ سێیانی یێ قوتابی:</label>
                     <input type="text" id="login-name" class="login-input" placeholder="ناڤێ خۆ یێ سێیانی بنڤێسە">
@@ -1219,19 +1213,19 @@
                             <div class="custom-options" id="dept-options">
                                 <div class="custom-option selected" data-value="Accounting" id="opt-dept-acc">ژمێریاری</div>
                                 <div class="custom-option" data-value="Statistics" id="opt-dept-stat">ئامار و زانیاری</div>
-                                <div class="custom-option" data-value="Finance" id="opt-dept-fin">دارایێ</div>
+                                <div class="custom-option" data-value="Finance" id="opt-dept-fin">دارای بانک</div>
                                 <div class="custom-option" data-value="Economics" id="opt-dept-eco">ئابووری</div>
-                                <div class="custom-option" data-value="Marketing" id="opt-dept-mkt">بازارگەری</div>
-                                <div class="custom-option" data-value="Administration" id="opt-dept-adm">ئیدارێ</div>
-                            </div>
+                                <div class="custom-option" data-value="Marketing" id="opt-dept-mkt">کارگێری بازارگەری</div>
+                                <div class="custom-option" data-value="Administration" id="opt-dept-adm">کارگێری</div>
+                            </div>ش
                         </div>
                         <select id="student-dept" style="display: none;">
                             <option value="Accounting" id="hidden-dept-acc" selected>ژمێریاری</option>
                             <option value="Statistics" id="hidden-dept-stat">ئامار و زانیاری</option>
-                            <option value="Finance" id="hidden-dept-fin">دارایێ</option>
+                            <option value="Finance" id="hidden-dept-fin">دارای بانک</option>
                             <option value="Economics" id="hidden-dept-eco">ئابووری</option>
-                            <option value="Marketing" id="hidden-dept-mkt">بازارگەری</option>
-                            <option value="Administration" id="hidden-dept-adm">ئیدارێ</option>
+                            <option value="Marketing" id="hidden-dept-mkt">کارگێری بازارگەری</option>
+                            <option value="Administration" id="hidden-dept-adm">کارگێری</option>
                         </select>
                     </div>
                     
@@ -1266,7 +1260,7 @@
                     </div>
                 </div>
 
-                <button id="btn-register" class="btn-primary" style="margin-top: 15px;">💬 دروستکرنا حسابێ</button>
+                <button id="btn-register" class="btn-primary" style="margin-top: 15px;">💬 دروستکرنا هژمارێ </button>
             </div>
         </div>
 
@@ -1329,10 +1323,10 @@
                 deptLabel: "🏢 پشکا زانستی:",
                 deptAccounting: "ژمێریاری",
                 deptStatistics: "ئامار و زانیاری",
-                deptFinance: "دارایێ",
+                deptFinance: "دارای بانک",
                 deptEconomics: "ئابووری",
-                deptMarketing: "بازارگەری",
-                deptAdministration: "ئیدارێ",
+                deptMarketing: "کارگێری بازارگەری",
+                deptAdministration: "کارگێری",
                 stageLabel: "🎓 قۆناغ:",
                 stage1: "قۆناغا ١",
                 stage2: "قۆناغا ٢",
@@ -1341,33 +1335,34 @@
                 passwordLabel: "🔑 پاسوۆردێ تایبەت:",
                 passwordHelp: "* ئەگەر جارا ئێکێ بیت، پاسوۆردەکێ بنڤێسە بۆ خۆ. بۆ جارێن داهاتی ب ڤی پاسوۆردی دێ شێی هێی ژوور.",
                 loginBtn: "🚪 چوونەژوورێ",
-                loginBtn: "🚪 چوونەژوورێ",
                 alertWrongPass: "❌ پاسوۆردێ تە خەلەتە! هیڤییە پاسوۆردێ دروست یێ خۆ لێبدە.",
-                alertWrongName: "❌ ناڤێ سێیانی خەلەتە! هیڤییە ناڤێ خۆ یێ دروست یێ تە ئەڤ حسابە پێ دروستکری بنڤێسی.",
-                alertFillAll: "هیڤییە هەمی خانان پڕ بکە (ڕەقەمێ مۆبایلێ، ناڤێ سێیانی، و پاسوۆرد)!",
+                alertWrongName: "❌ ناڤێ سێیانی خەلەتە! هیڤییە ناڤێ خۆ یێ دروست بنڤێسی.",
+                alertFillAll: "هیڤییە هەمی خانان پڕ بکە (ناڤێ سێیانی و پاسوۆرد)!",
                 alertErrorReg: "ئاریشەیەک چێبوو لە کاتی تۆمارکردندا: ",
                 alertErrorDb: "ئاریشەیەک د گەهشتنا داتابەیسێ دا هەیە: ",
                 loginNameLabel: "👤 ناڤێ سێیانی یێ قوتابی:",
                 loginNamePlaceholder: "ناڤێ خۆ یێ سێیانی بنڤێسە",
                 // New register strings
                 tabLogin: "چوونەژوورێ",
-                tabRegister: "دروستکرنا حسابێ",
+                tabRegister: "دروستکرنا هژمارێ ",
                 studentPhoneLabel: "📱 ڕەقەمێ مۆبایلێ:",
                 registerPassLabel: "🔑 پاسوۆردێ تایبەت:",
-                registerBtn: "💬 دروستکرنا حسابێ",
+                registerBtn: "💬 دروستکرنا هژمارێ ",
                 otpTitle: "پشتڕاستکرنا ڕەقەمی",
                 otpDesc: "تکایە کۆدێ پشتڕاستکرنێ یێ بۆ مۆبایلا تە هاتی بنڤێسە دا کو حسابا تە دروست بیت.",
                 btnVerify: "پشتڕاستکرن",
                 btnCancel: "پەشیمانبوون",
                 smsHeaderTitle: "💬 نامەیەکا نوو • نوکە",
                 smsBodyText: "سیستمێ گەردەن ئازادکرنێ: کۆدێ پشتڕاستکرنا تە ئەڤەیە: ",
-                alertFillAllRegister: "هیڤییە هەمی خانان پڕ بکە ژ بۆ دروستکرنا حسابێ!",
+                alertFillAllRegister: "هیڤییە هەمی خانان پڕ بکە ژ بۆ دروستکرنا هژمارێ!",
                 alertPhoneExists: "❌ ئەڤ ڕەقەمە پێشتر هاتیە تۆمارکرن! هیڤییە بچی ب چوونا ژوورێ.",
+                alertNameExists: "❌ ئەڤ ناڤە پێشتر هاتیە تۆمارکرن! ناڤێ سێیانی دێ بیت وەکی رەقەمی، تاکەیەکێ بیت. هیڤییە ب چوونا ژوورێ بچی.",
                 alertAccountNotFound: "❌ ئەڤ حسابە شنی نەهاتیە دروستکرن! هیڤییە حسابەکا نوو دروست بکەی.",
                 otpWrong: "❌ کۆدێ پشتڕاستکرنێ خەلەتە! هیڤییە دووبارە تاقی بکەیەڤە.",
                 alertInvalidPhone: "❌ هیڤییە ڕەقەمەکێ مۆبایلێ یێ دروست بنڤێسە کو ب (0750) یان (0751) دەستپێبکەت و ژ ١١ ژماران پێکهاتبی.",
                 alertShortPassword: "❌ پاسوۆرد نابیت کێمتر بیت ژ ٨ کاراکتەران/ژماران!",
-                alertTripleName: "❌ هیڤییە ناڤێ خۆ یێ سێیانی (کێمتر نەبیت ژ سێ ناڤان) بنڤێسە!"
+                alertTripleName: "❌ هیڤییە ناڤێ خۆ یێ سێیانی (کێمتر نەبیت ژ سێ ناڤان) بنڤێسە!",
+                alertSearching: "🔍 گەریان د داتابەیسێ دا..."
             },
             en: {
                 loginTitle: "UoD E-Clearance - Secure Login",
@@ -1393,8 +1388,8 @@
                 passwordHelp: "* If it is your first time, create a password. For future logins, use this password.",
                 loginBtn: "🚪 Login",
                 alertWrongPass: "❌ Incorrect password! Please enter your correct password.",
-                alertWrongName: "❌ Incorrect full name! Please enter the exact 3-part name used when creating your account.",
-                alertFillAll: "Please fill in all fields (Phone Number, Full 3-Part Name, and Password)!",
+                alertWrongName: "❌ Account not found! Please check your full name and try again.",
+                alertFillAll: "Please fill in all fields (Full 3-Part Name and Password)!",
                 alertErrorReg: "An error occurred during registration: ",
                 alertErrorDb: "An error occurred reaching the database: ",
                 loginNameLabel: "👤 Full Student Name:",
@@ -1413,11 +1408,13 @@
                 smsBodyText: "UoD Clearance: Your verification code is: ",
                 alertFillAllRegister: "Please fill in all fields to create an account!",
                 alertPhoneExists: "❌ This phone number is already registered! Please login.",
+                alertNameExists: "❌ This name is already registered! Student names must be unique like phone numbers. Please login instead.",
                 alertAccountNotFound: "❌ Account not found! Please create a new account first.",
                 otpWrong: "❌ Incorrect verification code! Please try again.",
                 alertInvalidPhone: "❌ Please enter a valid phone number starting with (0750) or (0751) and consisting of exactly 11 digits.",
                 alertShortPassword: "❌ Password must be at least 8 characters long!",
-                alertTripleName: "❌ Please enter your full triple name (at least 3 names)!"
+                alertTripleName: "❌ Please enter your full triple name (at least 3 names)!",
+                alertSearching: "🔍 Searching in database..."
             },
             ar: {
                 loginTitle: "UoD براءة الذمة - تسجيل دخول آمن",
@@ -1443,8 +1440,8 @@
                 passwordHelp: "* إذا كانت هذه المرة الأولى، اكتب كلمة مرور لنفسك. للمرات القادمة استخدم نفس الرمز.",
                 loginBtn: "🚪 تسجيل الدخول",
                 alertWrongPass: "❌ كلمة المرور خاطئة! يرجى إدخال كلمة المرور الصحيحة.",
-                alertWrongName: "❌ اسم الطالب الثلاثي غير مطابق! يرجى كتابة اسمك الثلاثي الذي أنشأت به الحساب.",
-                alertFillAll: "يرجى ملء جميع الحقول (رقم الهاتف، الاسم الثلاثي، وكلمة المرور)!",
+                alertWrongName: "❌ الحساب غير موجود! يرجى التحقق من الاسم الثلاثي والمحاولة مرة أخرى.",
+                alertFillAll: "يرجى ملء جميع الحقول (الاسم الثلاثي وكلمة المرور)!",
                 alertErrorReg: "حدث خطأ أثناء التسجيل: ",
                 alertErrorDb: "حدث خطأ في الاتصال بقاعدة البيانات: ",
                 loginNameLabel: "👤 اسم الطالب الثلاثي:",
@@ -1463,11 +1460,13 @@
                 smsBodyText: "براءة الذمة: رمز التأكيد الخاص بك هو: ",
                 alertFillAllRegister: "يرجى ملء جميع الحقول لإنشاء حساب جديد!",
                 alertPhoneExists: "❌ هذا الرقم مسجل بالفعل! يرجى تسجيل الدخول.",
+                alertNameExists: "❌ هذا الاسم مسجل بالفعل! الاسم الثلاثي يجب أن يكون فريداً مثل رقم الهاتف تماماً. يرجى تسجيل الدخول.",
                 alertAccountNotFound: "❌ الحساب غير موجود! يرجى إنشاء حساب جديد أولاً.",
                 otpWrong: "❌ رمز التأكيد خاطئ! يرجى المحاولة مرة أخرى.",
                 alertInvalidPhone: "❌ يرجى إدخال رقم هاتف صالح يبدأ بـ (0750) أو (0751) ويتكون من 11 رقماً.",
                 alertShortPassword: "❌ يجب أن لا تقل كلمة المرور عن ٨ أحرف أو أرقام!",
-                alertTripleName: "❌ يرجى إدخال اسمك الثلاثي (ثلاثة أسماء على الأقل)!"
+                alertTripleName: "❌ يرجى إدخال اسمك الثلاثي (ثلاثة أسماء على الأقل)!",
+                alertSearching: "🔍 جارٍ البحث في قاعدة البيانات..."
             }
         };
 
@@ -1595,8 +1594,6 @@
             document.getElementById('tab-register').innerText = T.tabRegister;
 
             // Login inputs translations
-            document.getElementById('label-student-id').innerText = T.studentIdLabel;
-            document.getElementById('student-id').placeholder = T.studentIdPlaceholder;
             if (document.getElementById('label-login-name')) document.getElementById('label-login-name').innerText = T.loginNameLabel;
             if (document.getElementById('login-name')) document.getElementById('login-name').placeholder = T.loginNamePlaceholder;
             document.getElementById('label-access-code').innerText = T.passwordLabel;
@@ -1888,26 +1885,18 @@
                 .replace(/\s+/g, ' ');
         }
 
-        // 🚪 LOGIN PROCESS
+        // 🚪 LOGIN PROCESS - Search by Name
         document.getElementById("btn-login").addEventListener("click", async () => {
-            const phoneInput = document.getElementById("student-id");
             const nameInput = document.getElementById("login-name");
             const codeInput = document.getElementById("access-code");
 
-            if (!phoneInput || !nameInput || !codeInput) return customAlert("ئاریشەیەک د فۆڕمێ دا هەیە!");
+            if (!nameInput || !codeInput) return customAlert("ئاریشەیەک د فۆڕمێ دا هەیە!");
             
-            const phone = phoneInput.value.trim();
             const enteredName = nameInput.value.trim();
             const enteredCode = codeInput.value.trim();
 
-            if (!phone || !enteredName || !enteredCode) {
+            if (!enteredName || !enteredCode) {
                 return customAlert(i18n[currentLang].alertFillAll);
-            }
-
-            // Validation: phone format check (0750 or 0751, 11 digits)
-            const phoneRegex = /^075[01]\d{7}$/;
-            if (!phoneRegex.test(phone)) {
-                return customAlert(i18n[currentLang].alertInvalidPhone);
             }
 
             // Validation: student name must be at least 3 names (triple name)
@@ -1916,30 +1905,39 @@
                 return customAlert(i18n[currentLang].alertTripleName);
             }
 
+            const enteredNameNormalized = normalizeStudentName(enteredName);
+
+            // Search ALL records to find matching name
             const dbRef = ref(db);
-            get(child(dbRef, `Clearance_Requests/${phone}`)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-
-                    // 1. Verify exact 3-part Student Name match
-                    const storedNameNormalized = normalizeStudentName(data.name);
-                    const enteredNameNormalized = normalizeStudentName(enteredName);
-
-                    if (storedNameNormalized !== enteredNameNormalized) {
-                        return customAlert(i18n[currentLang].alertWrongName);
-                    }
-
-                    // 2. Verify Password match
-                    if (data.password && data.password !== enteredCode) {
-                        return customAlert(i18n[currentLang].alertWrongPass);
-                    }
-                    
-                    localStorage.setItem("current_student_id", phone);
-                    localStorage.setItem("is_new_registration", "false");
-                    window.location.href = "index.html";
-                } else {
-                    customAlert(i18n[currentLang].alertAccountNotFound);
+            get(child(dbRef, 'Clearance_Requests')).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    return customAlert(i18n[currentLang].alertAccountNotFound);
                 }
+
+                let foundRecord = null;
+                let foundPhone = null;
+
+                snapshot.forEach((childSnap) => {
+                    const data = childSnap.val();
+                    const storedNameNormalized = normalizeStudentName(data.name);
+                    if (storedNameNormalized === enteredNameNormalized) {
+                        foundRecord = data;
+                        foundPhone = childSnap.key;
+                    }
+                });
+
+                if (!foundRecord) {
+                    return customAlert(i18n[currentLang].alertWrongName);
+                }
+
+                // Verify Password match
+                if (foundRecord.password && foundRecord.password !== enteredCode) {
+                    return customAlert(i18n[currentLang].alertWrongPass);
+                }
+
+                localStorage.setItem("current_student_id", foundPhone);
+                localStorage.setItem("is_new_registration", "false");
+                window.location.href = "index.html";
             }).catch((error) => {
                 customAlert(i18n[currentLang].alertErrorDb + error.message);
             });
@@ -1975,31 +1973,49 @@
             }
 
             const dbRef = ref(db);
+            // First check phone uniqueness, then check name uniqueness
             get(child(dbRef, `Clearance_Requests/${phone}`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     return customAlert(i18n[currentLang].alertPhoneExists);
                 }
 
-                // Generate 6 digit dynamically
-                generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+                // Now check name uniqueness across ALL records
+                const nameNormalized = normalizeStudentName(name);
+                return get(child(dbRef, 'Clearance_Requests')).then((allSnap) => {
+                    if (allSnap.exists()) {
+                        let nameAlreadyExists = false;
+                        allSnap.forEach((childSnap) => {
+                            const existingData = childSnap.val();
+                            if (normalizeStudentName(existingData.name) === nameNormalized) {
+                                nameAlreadyExists = true;
+                            }
+                        });
+                        if (nameAlreadyExists) {
+                            return customAlert(i18n[currentLang].alertNameExists);
+                        }
+                    }
+
+                    // Generate 6 digit dynamically
+                    generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
                 registrationDataTemp = { name, phone, dept, stage, password };
 
-                // Show simulated SMS
-                const smsBanner = document.getElementById("sms-banner");
-                const smsBannerBody = document.getElementById("sms-banner-body");
-                smsBannerBody.innerHTML = i18n[currentLang].smsBodyText + `<strong>${generatedOtpCode}</strong>`;
-                smsBanner.classList.add("show");
+                    // Show simulated SMS
+                    const smsBanner = document.getElementById("sms-banner");
+                    const smsBannerBody = document.getElementById("sms-banner-body");
+                    smsBannerBody.innerHTML = i18n[currentLang].smsBodyText + `<strong>${generatedOtpCode}</strong>`;
+                    smsBanner.classList.add("show");
 
-                // Auto hide simulated SMS banner after 60s
-                setTimeout(() => {
-                    smsBanner.classList.remove("show");
-                }, 60000);
+                    // Auto hide simulated SMS banner after 60s
+                    setTimeout(() => {
+                        smsBanner.classList.remove("show");
+                    }, 60000);
 
-                // Show OTP Modal
-                document.getElementById("otp-input").value = "";
-                document.getElementById("otp-error").innerText = "";
-                document.getElementById("otp-modal").style.display = "flex";
-                document.getElementById("otp-input").focus();
+                    // Show OTP Modal
+                    document.getElementById("otp-input").value = "";
+                    document.getElementById("otp-error").innerText = "";
+                    document.getElementById("otp-modal").style.display = "flex";
+                    document.getElementById("otp-input").focus();
+                });
             }).catch((error) => {
                 customAlert(i18n[currentLang].alertErrorDb + error.message);
             });
