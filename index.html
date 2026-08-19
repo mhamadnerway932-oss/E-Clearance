@@ -798,6 +798,41 @@
             }
         }
 
+        .badge.has-note {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.38);
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge.has-note::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background-color: #f87171;
+            box-shadow: 0 0 6px #f87171;
+            display: inline-block;
+            animation: pulseDotRed 1.8s infinite ease-in-out;
+        }
+
+        @keyframes pulseDotRed {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
         .note-box {
             background: rgba(245, 158, 11, 0.08);
             border: 1px solid rgba(245, 158, 11, 0.2);
@@ -808,6 +843,20 @@
             text-align: center;
             max-width: 95%;
             line-height: 1.35;
+            transition: all 0.3s ease;
+        }
+
+        .note-box.has-note-box {
+            background: rgba(239, 68, 68, 0.12) !important;
+            border: 1px solid rgba(239, 68, 68, 0.38) !important;
+            color: #fca5a5 !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+        }
+
+        .status-card.has-note-card {
+            border-color: rgba(239, 68, 68, 0.45) !important;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(12, 18, 36, 0.6) 100%) !important;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(239, 68, 68, 0.2) !important;
         }
 
         .status-card.card-locked {
@@ -1636,7 +1685,11 @@
                 clickReq: "کلیک بکە بۆ داخوازیێ",
                 approved: "✅ پەسەندکر",
                 pending: "⏳ ل هیڤیا پشکنینێ",
+                hasNote: "⚠️ تێبینی هەیە",
                 notePre: "📝 تێبینی: ",
+                noteModalTitle: "⚠️ تێبینییا پشکا ",
+                noteModalSub: "تێبینییا هاتیە تۆمارکرن ژ لایێ ڤێ پشکێ ڤە:",
+                reRequest: "🔄 داخوازییا دووبارە",
                 alertReq: "✅ داخوازیا تە پێشتر هاتیە تۆمارکرن.",
                 alertSent: "✅ داخوازیا تە ب سەرکەفتیانە هاتە ناردن.",
             },
@@ -1664,7 +1717,11 @@
                 clickReq: "Click to request",
                 approved: "✅ Approved",
                 pending: "⏳ Pending Review",
+                hasNote: "⚠️ Has Note",
                 notePre: "📝 Note: ",
+                noteModalTitle: "⚠️ Note from ",
+                noteModalSub: "Note recorded by this department:",
+                reRequest: "🔄 Resend Request",
                 alertReq: "✅ Your request is already recorded.",
                 alertSent: "✅ Your request was sent successfully.",
             },
@@ -1692,7 +1749,11 @@
                 clickReq: "انقر للطلب",
                 approved: "✅ تمت الموافقة",
                 pending: "⏳ قيد المراجعة",
+                hasNote: "⚠️ يوجد ملاحظة",
                 notePre: "📝 ملاحظة: ",
+                noteModalTitle: "⚠️ ملاحظة من قسم ",
+                noteModalSub: "الملاحظة المسجلة من قبل هذا القسم:",
+                reRequest: "🔄 إعـادة الطلب",
                 alertReq: "✅ تم تسجيل طلبك مسبقاً.",
                 alertSent: "✅ تم إرسال طلبك بنجاح.",
             }
@@ -1764,25 +1825,42 @@
             const el = document.getElementById(elId);
             const noteEl = document.getElementById(noteElId);
             if (!el) return;
+            const cardDiv = el.closest('.status-card');
+
+            const hasUnapprovedNote = status !== 'Approved' && note && note.trim() !== '';
+
             if (status === 'Approved') {
                 el.innerHTML = t('approved');
                 el.className = 'badge approved';
+                if (cardDiv) cardDiv.classList.remove('has-note-card');
+            } else if (hasUnapprovedNote) {
+                el.innerHTML = t('hasNote');
+                el.className = 'badge has-note';
+                if (cardDiv) cardDiv.classList.add('has-note-card');
             } else if (status === 'Pending') {
                 el.innerHTML = t('pending');
                 el.className = 'badge pending';
+                if (cardDiv) cardDiv.classList.remove('has-note-card');
             } else {
                 el.innerHTML = `👆 ${t('clickReq')}`;
                 el.className = 'badge';
                 el.style.background = 'rgba(255,255,255,0.06)';
                 el.style.color = '#cbd5e1';
                 el.style.border = '1px solid rgba(255,255,255,0.12)';
+                if (cardDiv) cardDiv.classList.remove('has-note-card');
             }
             if (noteEl) {
                 if (note && note.trim()) {
                     noteEl.style.display = 'block';
                     noteEl.innerHTML = t('notePre') + note;
+                    if (hasUnapprovedNote) {
+                        noteEl.classList.add('has-note-box');
+                    } else {
+                        noteEl.classList.remove('has-note-box');
+                    }
                 } else {
                     noteEl.style.display = 'none';
+                    noteEl.classList.remove('has-note-box');
                 }
             }
         }
@@ -1897,12 +1975,89 @@
             });
         };
 
-        window.requestClearance = function (deptId) {
-            if (latestData && latestData['status_' + deptId] === 'Approved') {
-                customAlert(window.t('alertReq'));
-                return;
-            }
+        window.showRedNoteModal = function (deptTitle, noteText, deptId) {
+            injectModalCSS();
+            return new Promise((resolve) => {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'custom-modal-backdrop';
 
+                const isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+                const okText = isRtl ? 'باشە' : 'OK';
+                const resendText = t('reRequest');
+
+                backdrop.innerHTML = `
+                    <div class="custom-modal-card red-note-modal-card" style="
+                        border-color: rgba(239, 68, 68, 0.45);
+                        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(239, 68, 68, 0.25);
+                        background: linear-gradient(135deg, rgba(24, 12, 18, 0.96) 0%, rgba(10, 6, 12, 0.98) 100%);
+                    ">
+                        <div class="custom-modal-icon" style="font-size: 3rem; filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.5));">⚠️</div>
+                        <div class="custom-modal-title" style="
+                            background: linear-gradient(135deg, #f87171, #ef4444);
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                            font-size: 1.25rem;
+                            margin-bottom: 12px;
+                        ">${t('noteModalTitle')}${deptTitle}</div>
+                        <div style="font-size: 0.82rem; color: #94a3b8; margin-bottom: 12px;">${t('noteModalSub')}</div>
+                        <div style="
+                            background: rgba(239, 68, 68, 0.12);
+                            border: 1px solid rgba(239, 68, 68, 0.35);
+                            color: #fca5a5;
+                            padding: 14px 16px;
+                            border-radius: 14px;
+                            font-size: 0.92rem;
+                            font-weight: 600;
+                            line-height: 1.6;
+                            text-align: center;
+                            margin-bottom: 20px;
+                            box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.1);
+                            word-break: break-word;
+                        ">📝 "${noteText}"</div>
+                        <div class="custom-modal-actions" style="display: flex; gap: 10px;">
+                            <button class="custom-modal-btn btn-cancel" id="red-modal-close-btn" style="flex: 1;">${okText}</button>
+                            <button class="custom-modal-btn btn-confirm" id="red-modal-resend-btn" style="
+                                flex: 1.3;
+                                background: linear-gradient(135deg, #ef4444, #dc2626);
+                                color: #fff;
+                                box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+                            ">${resendText}</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(backdrop);
+
+                setTimeout(() => backdrop.classList.add('show'), 10);
+
+                const closeModal = () => {
+                    backdrop.classList.remove('show');
+                    setTimeout(() => {
+                        backdrop.remove();
+                        resolve(false);
+                    }, 250);
+                };
+
+                backdrop.querySelector('#red-modal-close-btn').addEventListener('click', closeModal);
+                backdrop.querySelector('#red-modal-resend-btn').addEventListener('click', () => {
+                    closeModal();
+                    window.sendClearanceFirebaseRequest(deptId);
+                });
+                backdrop.addEventListener('click', (e) => {
+                    if (e.target === backdrop) closeModal();
+                });
+
+                const keyHandler = (e) => {
+                    if (e.key === 'Enter' || e.key === 'Escape') {
+                        e.preventDefault();
+                        document.removeEventListener('keydown', keyHandler);
+                        closeModal();
+                    }
+                };
+                document.addEventListener('keydown', keyHandler);
+            });
+        };
+
+        window.sendClearanceFirebaseRequest = function (deptId) {
             const thisCard = window.globalClearanceCards && window.globalClearanceCards[deptId];
 
             const _chkFinalIds = ['assistant_dean', 'assistantdean', 'vice_dean', 'dean_assistant', 'supervisor', 'harikar', 'ragiri', 'muawin'];
@@ -1941,6 +2096,26 @@
             update(ref(db), updates)
                 .then(() => customAlert(window.t('alertSent')))
                 .catch(err => console.error(err));
+        };
+
+        window.requestClearance = function (deptId) {
+            if (latestData && latestData['status_' + deptId] === 'Approved') {
+                customAlert(window.t('alertReq'));
+                return;
+            }
+
+            const thisCard = window.globalClearanceCards && window.globalClearanceCards[deptId];
+            const noteVal = latestData ? latestData['note_' + deptId] : null;
+            const statusVal = latestData ? latestData['status_' + deptId] : null;
+            const hasUnapprovedNote = statusVal !== 'Approved' && noteVal && noteVal.trim() !== '';
+
+            if (hasUnapprovedNote) {
+                const titleText = (thisCard && (thisCard['name_' + (window.currentLang || 'ku')] || thisCard.name_ku)) || deptId;
+                window.showRedNoteModal(titleText, noteVal.trim(), deptId);
+                return;
+            }
+
+            window.sendClearanceFirebaseRequest(deptId);
         };
 
         onValue(ref(db, 'System_Settings/Clearance_Cards'), (snapshot) => {

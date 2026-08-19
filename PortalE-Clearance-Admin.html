@@ -527,6 +527,12 @@
             background: rgba(245, 158, 11, 0.03);
         }
 
+        .office-status-card.has-note-border {
+            border-color: rgba(239, 68, 68, 0.45);
+            background: rgba(239, 68, 68, 0.05);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+        }
+
         .office-name {
             font-size: 0.9rem;
             font-weight: 700;
@@ -553,6 +559,13 @@
             border: 1px solid rgba(245, 158, 11, 0.25);
         }
 
+        .office-badge.badge-has-note {
+            background: rgba(239, 68, 68, 0.16);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+
         .office-badge.badge-not-requested {
             background: rgba(255, 255, 255, 0.06);
             color: #94a3b8;
@@ -574,6 +587,11 @@
         }
         .office-note.pending-note {
             border-right-color: #f59e0b;
+        }
+        .office-note.has-note-office-note {
+            border-right-color: #ef4444;
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
         }
 
         /* Staff Approval Section */
@@ -2321,10 +2339,16 @@
             card.className = "office-status-card";
             badge.className = "office-badge";
 
+            const hasUnapprovedNote = status !== "Approved" && note && note.trim() !== "";
+
             if (status === "Approved") {
                 card.classList.add("approved-border");
                 badge.classList.add("badge-approved");
                 badge.innerText = "✅ پەسەندکران";
+            } else if (hasUnapprovedNote) {
+                card.classList.add("has-note-border");
+                badge.classList.add("badge-has-note");
+                badge.innerText = "⚠️ تێبینی هەیە";
             } else if (status === "Pending") {
                 card.classList.add("pending-border");
                 badge.classList.add("badge-pending");
@@ -2337,7 +2361,7 @@
             if (note && note.trim() !== "") {
                 noteDiv.style.display = "block";
                 noteDiv.innerText = "💬 تێبینی: " + note;
-                noteDiv.className = `office-note ${status === "Approved" ? "approved-note" : "pending-note"}`;
+                noteDiv.className = `office-note ${status === "Approved" ? "approved-note" : "has-note-office-note"}`;
             } else {
                 noteDiv.style.display = "none";
             }
@@ -2664,8 +2688,9 @@
             if (isHod && hodRows && hodStudentsArray.length > 0) {
                 hodStudentsArray.sort((a, b) => b.approvalCount - a.approvalCount);
 
-                const getBadgeHTML = (status) => {
+                const getBadgeHTML = (status, note) => {
                     if (status === "Approved") return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ پەسەندکران</span>`;
+                    if (status !== "Approved" && note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
                     if (status === "Pending") return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ل هیڤیێ</span>`;
                     return `<span class="office-badge badge-not-requested" style="font-size:0.75rem; padding: 3px 8px;">⚪ نەکریە</span>`;
                 };
@@ -2683,7 +2708,7 @@
                     `;
                     
                     Object.values(globalClearanceCards).forEach(card => {
-                        rowHTML += `<td>${getBadgeHTML(data['status_' + card.id])}</td>`;
+                        rowHTML += `<td>${getBadgeHTML(data['status_' + card.id], data['note_' + card.id])}</td>`;
                     });
                     
                     rowHTML += `
@@ -2703,8 +2728,9 @@
             if (isAssistantDean && adRows && adStudentsArray.length > 0) {
                 adStudentsArray.sort((a, b) => b.approvalCount - a.approvalCount);
 
-                const getBadgeHTML = (status) => {
+                const getBadgeHTML = (status, note) => {
                     if (status === "Approved") return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ پەسەندکران</span>`;
+                    if (status !== "Approved" && note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
                     if (status === "Pending") return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ل هیڤیێ</span>`;
                     return `<span class="office-badge badge-not-requested" style="font-size:0.75rem; padding: 3px 8px;">⚪ نەکریە</span>`;
                 };
@@ -2724,7 +2750,7 @@
                     const _finalId = getFinalCardId();
                     Object.values(globalClearanceCards).forEach(card => {
                         if (card.id !== _finalId) {
-                            rowHTML += `<td>${getBadgeHTML(data['status_' + card.id])}</td>`;
+                            rowHTML += `<td>${getBadgeHTML(data['status_' + card.id], data['note_' + card.id])}</td>`;
                         }
                     });
                     
@@ -3791,8 +3817,8 @@
                 container.innerHTML += `
                     <div class="dept-card-select" onclick="selectDept('${hod.id}')" style="border-color: ${hod.color}; background: ${hod.bg};">
                         <span class="dept-emoji" style="filter: drop-shadow(0 0 10px ${hod.color});">👑</span>
-                        <h2>${hod.title}</h2>
-                        <p>${hod.sub}</p>
+                        <h2 style="color: #ffffff;">${hod.title}</h2>
+                        <p style="color: rgba(255,255,255,0.85);">${hod.sub}</p>
                     </div>
                 `;
             });
@@ -3834,8 +3860,8 @@
                 container.innerHTML += `
                     <div class="dept-card-select" onclick="selectDept('${card.id}')" style="border-color: ${borderCol}; background: ${bgCol};">
                         <span class="dept-emoji" style="filter: drop-shadow(0 0 10px ${borderCol});">${card.icon || '📋'}</span>
-                        <h2 style="color: ${borderCol.replace('0.3', '1')};">${titleText}</h2>
-                        <p>${subText}</p>
+                        <h2 style="color: #ffffff;">${titleText}</h2>
+                        <p style="color: rgba(255,255,255,0.85);">${subText}</p>
                     </div>
                 `;
             });
@@ -3863,7 +3889,7 @@
                         box-shadow: 0 2px 8px rgba(59,130,246,0.4);
                     ">✍️ واژۆیا کۆتایی</div>
                     <span class="dept-emoji" style="filter: drop-shadow(0 0 14px rgba(59,130,246,0.6));">🏛️</span>
-                    <h2 style="color: #60a5fa;">${labelAssistantDean}</h2>
+                    <h2 style="color: #ffffff;">${labelAssistantDean}</h2>
                     <p></p>
                 </div>
             `;
@@ -3872,8 +3898,8 @@
             container.innerHTML += `
                 <div class="dept-card-select" onclick="selectDept('super_admin')" style="border-color: rgba(236, 72, 153, 0.3); background: rgba(236, 72, 153, 0.03);">
                     <span class="dept-emoji" style="filter: drop-shadow(0 0 10px rgba(236, 72, 153, 0.3));">🛠️</span>
-                    <h2 style="color: #ec4899;" data-i18n="superAdminTitle">${t('superAdminTitle')}</h2>
-                    <p>System Super Admin</p>
+                    <h2 style="color: #ffffff;" data-i18n="superAdminTitle">${t('superAdminTitle')}</h2>
+                    <p style="color: rgba(255,255,255,0.85);">System Super Admin</p>
                 </div>
             `;
         }
