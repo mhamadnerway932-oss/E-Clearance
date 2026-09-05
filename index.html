@@ -1937,7 +1937,7 @@
 
                 localStorage.setItem("current_student_id", foundPhone);
                 localStorage.setItem("is_new_registration", "false");
-                window.location.href = "index.html";
+                window.location.href = "dashboard.html";
             }).catch((error) => {
                 customAlert(i18n[currentLang].alertErrorDb + error.message);
             });
@@ -2055,7 +2055,7 @@
             }).then(() => {
                 localStorage.setItem("current_student_id", data.phone);
                 localStorage.setItem("is_new_registration", "true");
-                window.location.href = "index.html";
+                window.location.href = "dashboard.html";
             }).catch((error) => {
                 customAlert(i18n[currentLang].alertErrorReg + error.message);
             });
