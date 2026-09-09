@@ -1870,26 +1870,31 @@
         changeLanguage(currentLang);
     </script>
 
+    <script src="./firebase-config.js"></script>
+
     <!-- ══ Firebase Module & App Logic ══ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBXSDEjntloZw1yttnDVbhQyfG4hyZshjk",
-            authDomain: "clearanceportal-128f9.firebaseapp.com",
-            projectId: "clearanceportal-128f9",
-            storageBucket: "clearanceportal-128f9.firebasestorage.app",
-            messagingSenderId: "804066048860",
-            appId: "1:804066048860:web:a5d95ccf266b127d589f99",
-            measurementId: "G-2Z3QBGG7FE"
-        };
+        // 📋 کلیلێن فایەربەیسێ ژ فایلا جودا (firebase-config.js / firebase-config.php) دهێنە ئینان:
+        let firebaseConfig = window.firebaseConfig;
+        if (!firebaseConfig) {
+            try {
+                const configResponse = await fetch('./firebase-config.php');
+                if (configResponse.ok) {
+                    firebaseConfig = await configResponse.json();
+                }
+            } catch (err) {
+                console.warn("PHP config fetch warning:", err);
+            }
+        }
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
         const studentId = localStorage.getItem("current_student_id");
         if (!studentId) {
-            window.location.replace("login.html");
+            window.location.replace("index.html");
         }
 
         onValue(ref(db, 'System_Settings/Texts'), (snapshot) => {
@@ -1919,7 +1924,7 @@
             if (await customConfirm(window.t('confirmLogout'))) {
                 localStorage.removeItem("current_student_id");
                 localStorage.removeItem("is_new_registration");
-                window.location.href = "login.html";
+                window.location.href = "index.html";
             }
         });
 

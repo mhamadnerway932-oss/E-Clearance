@@ -1311,6 +1311,17 @@
 
     <!-- ── i18n & Translation Scripts ── -->
     <script>
+        function escapeHTML(value) {
+            if (value === null || value === undefined) return "";
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+        window.escapeHTML = escapeHTML;
+
         const i18n = {
             ku: {
                 loginTitle: "UoD E-Clearance - چوونەژوورێ ب پاراستن",
@@ -1361,6 +1372,7 @@
                 otpWrong: "❌ کۆدێ پشتڕاستکرنێ خەلەتە! هیڤییە دووبارە تاقی بکەیەڤە.",
                 alertInvalidPhone: "❌ هیڤییە ڕەقەمەکێ مۆبایلێ یێ دروست بنڤێسە کو ب (0750) یان (0751) دەستپێبکەت و ژ ١١ ژماران پێکهاتبی.",
                 alertShortPassword: "❌ پاسوۆرد نابیت کێمتر بیت ژ ٨ کاراکتەران/ژماران!",
+                alertWeakPassword: "⚠️ ئەڤ پاسوۆردە یێ هەری ساناهییە! هیڤییە پاسوۆردەکێ زەحمەتتر و بەهێزتر بنڤێسە (پیت و ژمارەیان تێکەڵ بکە).",
                 alertTripleName: "❌ هیڤییە ناڤێ خۆ یێ سێیانی (کێمتر نەبیت ژ سێ ناڤان) بنڤێسە!",
                 alertSearching: "🔍 گەریان د داتابەیسێ دا..."
             },
@@ -1413,6 +1425,7 @@
                 otpWrong: "❌ Incorrect verification code! Please try again.",
                 alertInvalidPhone: "❌ Please enter a valid phone number starting with (0750) or (0751) and consisting of exactly 11 digits.",
                 alertShortPassword: "❌ Password must be at least 8 characters long!",
+                alertWeakPassword: "⚠️ This password is too simple! Please create a stronger password (combine letters and numbers).",
                 alertTripleName: "❌ Please enter your full triple name (at least 3 names)!",
                 alertSearching: "🔍 Searching in database..."
             },
@@ -1465,6 +1478,7 @@
                 otpWrong: "❌ رمز التأكيد خاطئ! يرجى المحاولة مرة أخرى.",
                 alertInvalidPhone: "❌ يرجى إدخال رقم هاتف صالح يبدأ بـ (0750) أو (0751) ويتكون من 11 رقماً.",
                 alertShortPassword: "❌ يجب أن لا تقل كلمة المرور عن ٨ أحرف أو أرقام!",
+                alertWeakPassword: "⚠️ كلمة المرور هذه سهلة جداً! يرجى اختيار كلمة مرور أكثر قوة وتأكيداً (مزج من الأحرف والأرقام).",
                 alertTripleName: "❌ يرجى إدخال اسمك الثلاثي (ثلاثة أسماء على الأقل)!",
                 alertSearching: "🔍 جارٍ البحث في قاعدة البيانات..."
             }
@@ -1726,6 +1740,8 @@
 
         window.customAlert = (message, title = '') => {
             injectModalCSS();
+            const safeTitle = title ? escapeHTML(title) : '';
+            const safeMessage = escapeHTML(message);
             return new Promise((resolve) => {
                 const backdrop = document.createElement('div');
                 backdrop.className = 'custom-modal-backdrop';
@@ -1745,8 +1761,8 @@
                 backdrop.innerHTML = `
                     <div class="custom-modal-card">
                         <div class="custom-modal-icon">${icon}</div>
-                        <div class="custom-modal-title">${title || (isRtl ? 'ئاگەهداری' : 'Notification')}</div>
-                        <div class="custom-modal-message">${message}</div>
+                        <div class="custom-modal-title">${safeTitle || (isRtl ? 'ئاگەهداری' : 'Notification')}</div>
+                        <div class="custom-modal-message">${safeMessage}</div>
                         <div class="custom-modal-actions">
                             <button class="custom-modal-btn btn-confirm" id="custom-modal-ok-btn">${okText}</button>
                         </div>
@@ -1784,6 +1800,8 @@
 
         window.customConfirm = (message, title = '') => {
             injectModalCSS();
+            const safeTitle = title ? escapeHTML(title) : '';
+            const safeMessage = escapeHTML(message);
             return new Promise((resolve) => {
                 const backdrop = document.createElement('div');
                 backdrop.className = 'custom-modal-backdrop';
@@ -1800,8 +1818,8 @@
                 backdrop.innerHTML = `
                     <div class="custom-modal-card">
                         <div class="custom-modal-icon">${icon}</div>
-                        <div class="custom-modal-title">${title || (isRtl ? 'پشتڕاستکرن' : 'Confirmation')}</div>
-                        <div class="custom-modal-message">${message}</div>
+                        <div class="custom-modal-title">${safeTitle || (isRtl ? 'پشتڕاستکرن' : 'Confirmation')}</div>
+                        <div class="custom-modal-message">${safeMessage}</div>
                         <div class="custom-modal-actions">
                             <button class="custom-modal-btn btn-cancel" id="custom-modal-cancel-btn">${noText}</button>
                             <button class="custom-modal-btn btn-confirm" id="custom-modal-confirm-btn">${yesText}</button>
@@ -1844,20 +1862,24 @@
         };
     </script>
 
+    <script src="./firebase-config.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, onValue, query, orderByChild, equalTo, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        // 📋 کلیلێن فایەربەیسێ خۆ لێرە دانیە:
-        const firebaseConfig = {
-            apiKey: "AIzaSyBXSDEjntloZw1yttnDVbhQyfG4hyZshjk",
-            authDomain: "clearanceportal-128f9.firebaseapp.com",
-            projectId: "clearanceportal-128f9",
-            storageBucket: "clearanceportal-128f9.firebasestorage.app",
-            messagingSenderId: "804066048860",
-            appId: "1:804066048860:web:a5d95ccf266b127d589f99",
-            measurementId: "G-2Z3QBGG7FE"
-        };
+        // 📋 کلیلێن فایەربەیسێ ژ فایلا جودا (firebase-config.js / firebase-config.php) دهێنە ئینان:
+        let firebaseConfig = window.firebaseConfig;
+        if (!firebaseConfig) {
+            try {
+                const configResponse = await fetch('./firebase-config.php');
+                if (configResponse.ok) {
+                    firebaseConfig = await configResponse.json();
+                }
+            } catch (err) {
+                console.warn("PHP config fetch warning:", err);
+            }
+        }
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
@@ -1885,8 +1907,83 @@
                 .replace(/\s+/g, ' ');
         }
 
+        // 🛡️ Brute-force lockout protection for student login
+        const MAX_LOGIN_ATTEMPTS = 5;
+        function getLoginAttemptState() {
+            try {
+                return JSON.parse(localStorage.getItem("student_login_attempts")) || { count: 0, lockUntil: 0 };
+            } catch (e) { return { count: 0, lockUntil: 0 }; }
+        }
+        function setLoginAttemptState(state) {
+            try { localStorage.setItem("student_login_attempts", JSON.stringify(state)); } catch (e) {}
+        }
+        function clearLoginAttemptState() {
+            try { localStorage.removeItem("student_login_attempts"); } catch (e) {}
+        }
+        function registerFailedAttempt() {
+            const state = getLoginAttemptState();
+            state.count = (state.count || 0) + 1;
+            if (state.count >= MAX_LOGIN_ATTEMPTS) {
+                const lockSeconds = Math.min(30 * Math.pow(2, state.count - MAX_LOGIN_ATTEMPTS), 1800);
+                state.lockUntil = Date.now() + lockSeconds * 1000;
+            }
+            setLoginAttemptState(state);
+            return state;
+        }
+
+        // SHA-256 Password Hashing Helper (Web Crypto API)
+        async function hashPassword(password) {
+            if (!password) return "";
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        // Password complexity checker
+        function isEasyPassword(password) {
+            if (!password || password.length < 8) return true;
+            const lower = password.toLowerCase();
+
+            // Check if password has 2 or fewer unique characters (e.g. 11111111, 12121212)
+            if (new Set(password.split('')).size <= 2) return true;
+
+            // Common simple passwords
+            const commonEasy = [
+                "12345678", "123456789", "87654321", "00000000", "11111111", "22222222",
+                "33333333", "44444444", "55555555", "66666666", "77777777", "88888888",
+                "99999999", "12341234", "11223344", "12121212", "password", "qwertyui",
+                "asdfghjkl", "1234567890", "0123456789", "123321123", "77889900"
+            ];
+            if (commonEasy.includes(lower)) return true;
+
+            // Check sequential characters like 12345678 or abcdefgh
+            let isSequential = true;
+            let isReverseSeq = true;
+            for (let i = 0; i < password.length - 1; i++) {
+                if (password.charCodeAt(i + 1) - password.charCodeAt(i) !== 1) isSequential = false;
+                if (password.charCodeAt(i) - password.charCodeAt(i + 1) !== 1) isReverseSeq = false;
+            }
+            if (isSequential || isReverseSeq) return true;
+
+            return false;
+        }
+
         // 🚪 LOGIN PROCESS - Search by Name
         document.getElementById("btn-login").addEventListener("click", async () => {
+            const state = getLoginAttemptState();
+            if (state.lockUntil && Date.now() < state.lockUntil) {
+                const secsLeft = Math.ceil((state.lockUntil - Date.now()) / 1000);
+                return customAlert(
+                    currentLang === 'en'
+                        ? `🔒 Login is locked due to repeated failed attempts. Please wait ${secsLeft} seconds.`
+                        : (currentLang === 'ar'
+                            ? `🔒 تم قفل تسجيل الدخول بسبب المحاولات الخاطئة المتكررة. يرجى الانتظار ${secsLeft} ثانية.`
+                            : `🔒 چوونا ژوورێ هاتە قوفلکرن ژبەر گەلەک هەوڵێن خەلەت. چاڤەڕێ بە ${secsLeft} چرکەیان.`)
+                );
+            }
+
             const nameInput = document.getElementById("login-name");
             const codeInput = document.getElementById("access-code");
 
@@ -1906,41 +2003,105 @@
             }
 
             const enteredNameNormalized = normalizeStudentName(enteredName);
+            const hashedEnteredCode = await hashPassword(enteredCode);
 
-            // Search ALL records to find matching name
-            const dbRef = ref(db);
-            get(child(dbRef, 'Clearance_Requests')).then((snapshot) => {
-                if (!snapshot.exists()) {
-                    return customAlert(i18n[currentLang].alertAccountNotFound);
-                }
-
+            try {
                 let foundRecord = null;
                 let foundPhone = null;
 
-                snapshot.forEach((childSnap) => {
-                    const data = childSnap.val();
-                    const storedNameNormalized = normalizeStudentName(data.name);
-                    if (storedNameNormalized === enteredNameNormalized) {
-                        foundRecord = data;
-                        foundPhone = childSnap.key;
+                // Try efficient Firebase query by name_normalized
+                try {
+                    const studentQuery = query(ref(db, 'Clearance_Requests'), orderByChild('name_normalized'), equalTo(enteredNameNormalized));
+                    const snapshot = await get(studentQuery);
+                    if (snapshot.exists()) {
+                        snapshot.forEach((childSnap) => {
+                            foundRecord = childSnap.val();
+                            foundPhone = childSnap.key;
+                        });
                     }
-                });
+                } catch (queryErr) {
+                    console.warn("Firebase Index query warning, falling back to scan:", queryErr);
+                }
+
+                // Fallback search for legacy records or missing index rules
+                if (!foundRecord) {
+                    const allSnap = await get(ref(db, 'Clearance_Requests'));
+                    if (allSnap.exists()) {
+                        allSnap.forEach((childSnap) => {
+                            const data = childSnap.val();
+                            if (normalizeStudentName(data.name) === enteredNameNormalized) {
+                                foundRecord = data;
+                                foundPhone = childSnap.key;
+                            }
+                        });
+                    }
+                }
 
                 if (!foundRecord) {
-                    return customAlert(i18n[currentLang].alertWrongName);
+                    const state = registerFailedAttempt();
+                    const remaining = Math.max(0, MAX_LOGIN_ATTEMPTS - (state.count || 0));
+                    if (remaining === 0) {
+                        return customAlert(
+                            currentLang === 'en'
+                                ? `🔒 Login locked due to 5 failed attempts. Please wait 30 seconds.`
+                                : (currentLang === 'ar'
+                                    ? `🔒 تم قفل تسجيل الدخول بسبب ٥ محاولات خاطئة. يرجى الانتظار ٣٠ ثانية.`
+                                    : `🔒 چوونا ژوورێ هاتە قوفلکرن ژبەر ٥ هەوڵێن خەلەت. چاڤەڕێ بە 30 چرکەیان.`)
+                        );
+                    }
+                    return customAlert(
+                        currentLang === 'en'
+                            ? `🔑 Account not found! You have (${remaining}) attempt(s) remaining out of 5.`
+                            : (currentLang === 'ar'
+                                ? `🔑 الحساب غير موجود! متبقي لديك (${remaining}) محاولة من أصل ٥.`
+                                : `🔑 ناڤێ سێیانی نەهاتە لێدیتن! تە تەنها (${remaining}) محاولێدی یێن ماینە ژ ٥ محاولان.`)
+                    );
                 }
 
-                // Verify Password match
-                if (foundRecord.password && foundRecord.password !== enteredCode) {
-                    return customAlert(i18n[currentLang].alertWrongPass);
+                // Verify Password match (SHA-256 hash or legacy plaintext)
+                const isHashedMatch = foundRecord.password === hashedEnteredCode;
+                const isPlainMatch = foundRecord.password === enteredCode;
+
+                if (!isHashedMatch && !isPlainMatch) {
+                    const state = registerFailedAttempt();
+                    const remaining = Math.max(0, MAX_LOGIN_ATTEMPTS - (state.count || 0));
+                    if (remaining === 0) {
+                        return customAlert(
+                            currentLang === 'en'
+                                ? `🔒 Login locked due to 5 failed attempts. Please wait 30 seconds.`
+                                : (currentLang === 'ar'
+                                    ? `🔒 تم قفل تسجيل الدخول بسبب ٥ محاولات خاطئة. يرجى الانتظار ٣٠ ثانية.`
+                                    : `🔒 چوونا ژوورێ هاتە قوفلکرن ژبەر ٥ هەوڵێن خەلەت. چاڤەڕێ بە 30 چرکەیان.`)
+                        );
+                    }
+                    return customAlert(
+                        currentLang === 'en'
+                            ? `🔑 Incorrect password! You have (${remaining}) attempt(s) remaining out of 5.`
+                            : (currentLang === 'ar'
+                                ? `🔑 كلمة المرور غير صحيحة! متبقي لديك (${remaining}) محاولة من أصل ٥.`
+                                : `🔑 پاسوۆردێ تە خەلەتە! تە تەنها (${remaining}) محاولێدی یێن ماینە ژ ٥ محاولان.`)
+                    );
                 }
 
+                // Auto-upgrade legacy plaintext password & add name_normalized if missing
+                if (isPlainMatch || !foundRecord.name_normalized) {
+                    try {
+                        await update(ref(db, `Clearance_Requests/${foundPhone}`), {
+                            password: hashedEnteredCode,
+                            name_normalized: enteredNameNormalized
+                        });
+                    } catch (e) {
+                        console.error("Auto-upgrade failed:", e);
+                    }
+                }
+
+                clearLoginAttemptState();
                 localStorage.setItem("current_student_id", foundPhone);
                 localStorage.setItem("is_new_registration", "false");
                 window.location.href = "dashboard.html";
-            }).catch((error) => {
+            } catch (error) {
                 customAlert(i18n[currentLang].alertErrorDb + error.message);
-            });
+            }
         });
 
         // 💬 REGISTER PROCESS (Generates OTP)
@@ -1970,6 +2131,11 @@
             // Validation: password length must be at least 8 characters
             if (password.length < 8) {
                 return customAlert(i18n[currentLang].alertShortPassword);
+            }
+
+            // Validation: password complexity check (reject simple passwords like 12345678)
+            if (isEasyPassword(password)) {
+                return customAlert(i18n[currentLang].alertWeakPassword);
             }
 
             const dbRef = ref(db);
@@ -2030,7 +2196,7 @@
         });
 
         // Verify OTP
-        document.getElementById("btn-verify-otp").addEventListener("click", () => {
+        document.getElementById("btn-verify-otp").addEventListener("click", async () => {
             const enteredOtp = document.getElementById("otp-input").value.trim();
             const errorSpan = document.getElementById("otp-error");
 
@@ -2041,12 +2207,16 @@
 
             // Correct code -> Save to Firebase
             const data = registrationDataTemp;
+            const hashedPassword = await hashPassword(data.password);
+            const nameNormalized = normalizeStudentName(data.name);
+
             set(ref(db, 'Clearance_Requests/' + data.phone), {
                 name: data.name,
+                name_normalized: nameNormalized,
                 phone: data.phone,
                 department: data.dept,
                 stage: data.stage,
-                password: data.password,
+                password: hashedPassword,
                 hod_approved: false,
                 status_registration: "Not Requested",
                 status_library: "Not Requested",
