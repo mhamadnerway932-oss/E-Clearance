@@ -1870,24 +1870,19 @@
         changeLanguage(currentLang);
     </script>
 
-    <script src="./firebase-config.js"></script>
-
     <!-- ══ Firebase Module & App Logic ══ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-        // 📋 کلیلێن فایەربەیسێ ژ فایلا جودا (firebase-config.js / firebase-config.php) دهێنە ئینان:
-        let firebaseConfig = window.firebaseConfig;
-        if (!firebaseConfig) {
-            try {
-                const configResponse = await fetch('./firebase-config.php');
-                if (configResponse.ok) {
-                    firebaseConfig = await configResponse.json();
-                }
-            } catch (err) {
-                console.warn("PHP config fetch warning:", err);
+        let firebaseConfig = {};
+        try {
+            const configResponse = await fetch('./firebase-config.php');
+            if (configResponse.ok) {
+                firebaseConfig = await configResponse.json();
             }
+        } catch (err) {
+            console.error("Error loading Firebase configuration:", err);
         }
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
