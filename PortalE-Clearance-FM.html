@@ -2234,27 +2234,8 @@
             }
         }
 
-        // 🔑 پاسوۆردێن بەشان
-        // ⚠️ These are only a fallback used before Firebase's System_Settings/Passwords loads,
-        // and are still visible to anyone who views this page's source. They were rotated on
-        // 2026-09-05 because the previous values had been exposed. Treat this whole approach as
-        // temporary — see the security notes shared separately for the real fix (Firebase Auth).
-        let passwords = {
-            hod_accounting: "lMaUSW0Y60bJt^",
-            hod_statistics: "CLZaR8HVLIRpe@",
-            hod_finance: "pXQ6RcKZelRwE-",
-            hod_economics: "scCanLmc9zWnw!",
-            hod_marketing: "1gzOieKqoabOz@",
-            hod_administration: "4tHGzvGOjnAzM%",
-            assistant_dean: "9PJ87agomN6Q2_",
-            registration: "BI0w6uhSPpR4m^",
-            library: "%NawSCoKd7HjMq",
-            centrallibrary: "%NawSCoKd7HjMq",
-            central_library: "%NawSCoKd7HjMq",
-            dormitory: "x8RarAFtZNHAw&",
-            finance: "Q09rsdrg6XfHN-",
-            super_admin: "TJoWSZENysId1&"
-        };
+        // 🔐 Passwords object is dynamically populated from Firebase Realtime Database (System_Settings/Passwords)
+        let passwords = {};
 
         let systemTexts = {
             ku: {
