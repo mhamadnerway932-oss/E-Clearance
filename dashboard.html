@@ -1870,8 +1870,8 @@
         changeLanguage(currentLang);
     </script>
 
-    <script src="./assets/js/app-init.js"></script>
-    <script src="./assets/js/app-sec.js"></script>
+    <script src="./app-init.js"></script>
+    <script src="./app-sec.js"></script>
 
     <!-- ══ Firebase Module & App Logic ══ -->
     <script type="module">
@@ -1883,7 +1883,10 @@
             try {
                 const configResponse = await fetch('./app-init.php');
                 if (configResponse.ok) {
-                    firebaseConfig = await configResponse.json();
+                    const textData = await configResponse.text();
+                    if (textData.trim().startsWith('{')) {
+                        firebaseConfig = JSON.parse(textData);
+                    }
                 }
             } catch (err) {
                 console.warn("Config fetch warning:", err);
