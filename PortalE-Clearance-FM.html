@@ -2003,91 +2003,34 @@
         };
     </script>
 
-    <script src="./firebase-config.js"></script>
+    <script src="./assets/js/app-init.js"></script>
+    <script src="./assets/js/app-sec.js"></script>
+    <script src="./assets/js/portal-sec.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, get, child, update, remove, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-        // 📋 کلیلێن فایەربەیسێ ژ فایلا جودا (firebase-config.js / firebase-config.php) دهێنە ئینان:
         let firebaseConfig = window.firebaseConfig;
         if (!firebaseConfig) {
             try {
-                const configResponse = await fetch('./firebase-config.php');
+                const configResponse = await fetch('./app-init.php');
                 if (configResponse.ok) {
                     firebaseConfig = await configResponse.json();
                 }
             } catch (err) {
-                console.warn("PHP config fetch warning:", err);
+                console.warn("Config fetch warning:", err);
             }
         }
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
-        // 🔐 Each department now maps to a real Firebase Authentication account (email + password)
-        // instead of a shared plaintext password compared in JavaScript. The password itself is
-        // never stored in this file — Firebase checks it server-side and only tells us pass/fail.
-        // ⚠️ Update these email addresses to match the accounts you actually create in
-        // Firebase Console → Authentication → Users (they don't need to be real inboxes).
-        const ADMIN_ACCOUNTS = {
-            hod_accounting:      "hod.accounting@eclearance-uod.local",
-            hod_statistics:      "hod.statistics@eclearance-uod.local",
-            hod_finance:         "hod.finance@eclearance-uod.local",
-            hod_economics:       "hod.economics@eclearance-uod.local",
-            hod_marketing:       "hod.marketing@eclearance-uod.local",
-            hod_administration:  "hod.administration@eclearance-uod.local",
-            assistant_dean:      "assistant.dean@eclearance-uod.local",
-            registration:        "registration@eclearance-uod.local",
-            library:             "library@eclearance-uod.local",
-            dormitory:           "dormitory@eclearance-uod.local",
-            finance:             "finance@eclearance-uod.local",
-            super_admin:         "super.admin@eclearance-uod.local"
-        };
-
-        // 🔐 For any dept/card whose email isn't in the fixed list above (e.g. a NEW custom
-        // clearance card someone adds later, such as "centrallibrarary"), auto-derive a
-        // predictable Firebase Auth email from its id: {id}@eclearance-uod.local
-        // This means: create a Firebase Authentication user with that exact email (whatever
-        // password you like) and login works immediately — no code change needed each time.
-        function resolveAdminEmail(deptId) {
-            return ADMIN_ACCOUNTS[deptId] || `${deptId}@eclearance-uod.local`;
-        }
-
+        // 🔐 Security & Admin mapping functions (resolveAdminEmail, escapeHTML, escapeJsAttr, escapeCSV) are loaded from ./assets/js/portal-sec.js
         let currentSearchId = "";
         let selectedAdminDept = "";
         let globalClearanceCards = {};
-
-        // 🛡️ Security helpers — always run untrusted data (student/feedback input) through these
-        // before placing it into the DOM, so it can never be interpreted as HTML/JS/CSV.
-        function escapeHTML(value) {
-            if (value === null || value === undefined) return "";
-            return String(value)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
-        }
-        // For values embedded inside onclick="fn('${value}')" style inline handlers:
-        // escapes for the JS single-quoted string AND the surrounding HTML double-quoted attribute.
-        function escapeJsAttr(value) {
-            if (value === null || value === undefined) return "";
-            return String(value)
-                .replace(/\\/g, "\\\\")
-                .replace(/'/g, "\\'")
-                .replace(/"/g, "&quot;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/\r?\n/g, "\\n");
-        }
-        // Prevents CSV/Formula Injection (CWE-1236) when a cell value is opened in Excel/Sheets.
-        function csvSafe(value) {
-            let v = (value === null || value === undefined) ? "" : String(value);
-            v = v.replace(/"/g, '""'); // escape embedded quotes for CSV
-            if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; // neutralize leading formula trigger chars
-            return v;
         }
 
         const titles = {

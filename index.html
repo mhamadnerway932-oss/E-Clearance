@@ -1862,7 +1862,8 @@
         };
     </script>
 
-    <script src="./firebase-config.js"></script>
+    <script src="./assets/js/app-init.js"></script>
+    <script src="./assets/js/app-sec.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1872,12 +1873,12 @@
         let firebaseConfig = window.firebaseConfig;
         if (!firebaseConfig) {
             try {
-                const configResponse = await fetch('./firebase-config.php');
+                const configResponse = await fetch('./app-init.php');
                 if (configResponse.ok) {
                     firebaseConfig = await configResponse.json();
                 }
             } catch (err) {
-                console.warn("PHP config fetch warning:", err);
+                console.warn("Config fetch warning:", err);
             }
         }
         const app = initializeApp(firebaseConfig);
@@ -1897,78 +1898,7 @@
             }
         });
 
-        // Helper to normalize Kurdish/Arabic text for name comparison
-        function normalizeStudentName(text) {
-            if (!text) return "";
-            return text.trim()
-                .toLowerCase()
-                .replace(/[يى]/g, 'ی')
-                .replace(/ك/g, 'ک')
-                .replace(/\s+/g, ' ');
-        }
-
-        // 🛡️ Brute-force lockout protection for student login
-        const MAX_LOGIN_ATTEMPTS = 5;
-        function getLoginAttemptState() {
-            try {
-                return JSON.parse(localStorage.getItem("student_login_attempts")) || { count: 0, lockUntil: 0 };
-            } catch (e) { return { count: 0, lockUntil: 0 }; }
-        }
-        function setLoginAttemptState(state) {
-            try { localStorage.setItem("student_login_attempts", JSON.stringify(state)); } catch (e) {}
-        }
-        function clearLoginAttemptState() {
-            try { localStorage.removeItem("student_login_attempts"); } catch (e) {}
-        }
-        function registerFailedAttempt() {
-            const state = getLoginAttemptState();
-            state.count = (state.count || 0) + 1;
-            if (state.count >= MAX_LOGIN_ATTEMPTS) {
-                const lockSeconds = Math.min(30 * Math.pow(2, state.count - MAX_LOGIN_ATTEMPTS), 1800);
-                state.lockUntil = Date.now() + lockSeconds * 1000;
-            }
-            setLoginAttemptState(state);
-            return state;
-        }
-
-        // SHA-256 Password Hashing Helper (Web Crypto API)
-        async function hashPassword(password) {
-            if (!password) return "";
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-        }
-
-        // Password complexity checker
-        function isEasyPassword(password) {
-            if (!password || password.length < 8) return true;
-            const lower = password.toLowerCase();
-
-            // Check if password has 2 or fewer unique characters (e.g. 11111111, 12121212)
-            if (new Set(password.split('')).size <= 2) return true;
-
-            // Common simple passwords
-            const commonEasy = [
-                "12345678", "123456789", "87654321", "00000000", "11111111", "22222222",
-                "33333333", "44444444", "55555555", "66666666", "77777777", "88888888",
-                "99999999", "12341234", "11223344", "12121212", "password", "qwertyui",
-                "asdfghjkl", "1234567890", "0123456789", "123321123", "77889900"
-            ];
-            if (commonEasy.includes(lower)) return true;
-
-            // Check sequential characters like 12345678 or abcdefgh
-            let isSequential = true;
-            let isReverseSeq = true;
-            for (let i = 0; i < password.length - 1; i++) {
-                if (password.charCodeAt(i + 1) - password.charCodeAt(i) !== 1) isSequential = false;
-                if (password.charCodeAt(i) - password.charCodeAt(i + 1) !== 1) isReverseSeq = false;
-            }
-            if (isSequential || isReverseSeq) return true;
-
-            return false;
-        }
+        // 🛡️ Security & helper functions (normalizeStudentName, getLoginAttemptState, hashPassword, etc.) loaded via ./assets/js/app-sec.js
 
         // 🚪 LOGIN PROCESS - Search by Name
         document.getElementById("btn-login").addEventListener("click", async () => {
