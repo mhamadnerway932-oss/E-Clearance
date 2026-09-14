@@ -1,50 +1,65 @@
-// 🛡️ Protected Module System (Obfuscated)
-(function(){
-    const _0xk = 0x4b;
-    const _0xs = 0x09;
-    const _0xtbl = ["2c2d386e3331312d472e482b2e3514373130373342332e31376f472d386e302d313330", "2c2d386e414833482b41482b314114373130373342332e31376f472d386e302d313330", "2c2d386e362b2e332e313714373130373342332e31376f472d386e302d313330", "2c2d386e37312d2e2d2f2b314114373130373342332e31376f472d386e302d313330", "2c2d386e2f33422937482b2e3514373130373342332e31376f472d386e302d313330", "2c2d386e33382f2b2e2b41484233482b2d2e14373130373342332e31376f472d386e302d313330", "3341412b4148332e486e3837332e14373130373342332e31376f472d386e302d313330", "4237352b41484233482b2d2e14373130373342332e31376f472d386e302d313330", "302b324233423b14373130373342332e31376f472d386e302d313330", "382d422f2b482d423b14373130373342332e31376f472d386e302d313330", "362b2e332e313714373130373342332e31376f472d386e302d313330", "41474437426e33382f2b2e14373130373342332e31376f472d386e302d313330", "14373130373342332e31376f472d386e302d313330", "", "76332f4479", "76304879", "76354879", "6d357074", "6b4a7474747474747474747474746e423744303331376c6d756d357074", "6b794a747474743f794a4a74747474456e3741313344370a4113484842747f7436472e31482b2d2e6c46333047376b74394a74747474747474742b36746c4633304737747f7f7f742e473030744040744633304737747f7f7f74472e3837362b2e37386b7442374847422e74", "794a747474747474747442374847422e742148422b2e356c46333047376b4a7474747474747474747474746e423744303331376c6d20206d357074", "6b4a7474747474747474747474746e423744303331376c6d756d357074", "726b4a7474747474747474747474746e423744303331376c6d726d357074727643472d4879726b794a747474743f794a4a74747474456e374131334437112126747f7436472e31482b2d2e6c46333047376b74394a74747474747474742b36746c4633304737747f7f7f742e473030744040744633304737747f7f7f74472e3837362b2e37386b7442374847422e74", "", "794a747474747474747430374874414842747f742148422b2e356c46333047376b794a74747474747474742b36746c6d1e197f69206f14204820421f6d6e483741486c4148426b6b74394a747474747474747474747474414842747f7472", "746974414842794a74747474747474743f4a747474747474747442374847422e7475", "7469744148426e423744303331376c6d726d357074", "", "6b746974"];
+// 🛡️ System Security & Resolver Module (Obfuscated)
+(function(w){
+    const _0xk = 0x6c;
+    const _0xs = 0x11;
+    const _0xeMap = {
+        "hod_accounting": "151419531e2020142a132916131c3d1a20111a1e2f1e13201a522a1419531114201e11",
+        "hod_statistics": "1514195330291e291630291620303d1a20111a1e2f1e13201a522a1419531114201e11",
+        "hod_finance": "151419531b16131e13201a3d1a20111a1e2f1e13201a522a1419531114201e11",
+        "hod_economics": "151419531a20141314121620303d1a20111a1e2f1e13201a522a1419531114201e11",
+        "hod_marketing": "15141953121e2f181a2916131c3d1a20111a1e2f1e13201a522a1419531114201e11",
+        "hod_administration": "151419531e191216131630292f1e291614133d1a20111a1e2f1e13201a522a1419531114201e11",
+        "assistant_dean": "1e30301630291e132953191a1e133d1a20111a1e2f1e13201a522a1419531114201e11",
+        "registration": "2f1a1c1630292f1e291614133d1a20111a1e2f1e13201a522a1419531114201e11",
+        "library": "11161f2f1e2f263d1a20111a1e2f1e13201a522a1419531114201e11",
+        "dormitory": "19142f121629142f263d1a20111a1e2f1e13201a522a1419531114201e11",
+        "finance": "1b16131e13201a3d1a20111a1e2f1e13201a522a1419531114201e11",
+        "super_admin": "302a2d1a2f531e191216133d1a20111a1e2f1e13201a522a1419531114201e11"
+};
+    const _0esuf = "3d1a20111a1e2f1e13201a522a1419531114201e11";
 
-    function _0xst(idx) {
-        let hex = _0xtbl[idx];
-        let bytes = [];
+    function _0xd(hex) {
+        let s = '';
         for (let i = 0; i < hex.length; i += 2) {
             let v = parseInt(hex.substr(i, 2), 16);
             let b = ((v - _0xs + 256) & 0xFF) ^ _0xk;
-            bytes.push(b);
+            s += String.fromCharCode(b);
         }
-        return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+        return s;
     }
 
-// 🛡️ Portal Admin Security & Sanitization Module (Obfuscated)
-(function(w){
-    const _0xACCOUNTS = {
-        hod_accounting:      _0xst(0),
-        hod_statistics:      _0xst(1),
-        hod_finance:         _0xst(2),
-        hod_economics:       _0xst(3),
-        hod_marketing:       _0xst(4),
-        hod_administration:  _0xst(5),
-        assistant_dean:      _0xst(6),
-        registration:        _0xst(7),
-        library:             _0xst(8),
-        dormitory:           _0xst(9),
-        finance:             _0xst(10),
-        super_admin:         _0xst(11)
-    };
-
     w.resolveAdminEmail = function(deptId) {
-        return _0xACCOUNTS[deptId] || (deptId + _0xst(12));
+        if (_0xeMap[deptId]) {
+            return _0xd(_0xeMap[deptId]);
+        }
+        return deptId + _0xd(_0esuf);
     };
 
     w.escapeHTML = function(value) {
-        if (value === null || value === undefined) return _0xst(13);
+        if (value === null || value === undefined) return "";
         return String(value)
-            .replace(/&/g, _0xst(14))
-            .replace(/</g, _0xst(15))
-            .replace(/>/g, _0xst(16))
-            .replace(/_0xst(17)&quot;_0xst(18)&#39;_0xst(19)_0xst(20)\\\\_0xst(21)\\_0xst(22)_0xst(23)_0xst(24)_0xst(25)_0xst(26)_0xst(27)_0xst(28)"';
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    };
+
+    w.escapeJsAttr = function(value) {
+        if (value === null || value === undefined) return "";
+        return String(value)
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'")
+            .replace(/"/g, "&quot;");
+    };
+
+    w.escapeCSV = function(value) {
+        if (value === null || value === undefined) return '""';
+        let str = String(value);
+        if (/^[=+\-\t\r]/.test(str)) {
+            str = "'" + str;
+        }
+        return '"' + str.replace(/"/g, '""') + '"';
     };
 
 })(window);
-
-})();
