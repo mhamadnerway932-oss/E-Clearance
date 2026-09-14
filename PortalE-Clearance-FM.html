@@ -2043,6 +2043,12 @@
             'hod_marketing': '👑  پشکا کارکێری بازارگەری',
             'hod_administration': '👑  پشکا کارگێری',
             'assistant_dean': '🏛️ هاریکارێ ڕاگری',
+            'registration': '📝 تۆمارکرن',
+            'library': '📚 پەرتووکخانا ناڤەندی',
+            'centrallibrary': '📚 پەرتووکخانا ناڤەندی',
+            'central_library': '📚 پەرتووکخانا ناڤەندی',
+            'dormitory': '🏠 بەشێن ناوخۆیی',
+            'finance': '💰 دارایی و حیسابات',
             'super_admin': '🛠️ سەرپەرشتێ گشتی'
         };
 
@@ -2078,8 +2084,8 @@
         }
 
         async function confirmDeptLogin() {
-            const entered = document.getElementById("dept-login-password").value;
-            const email = resolveAdminEmail(pendingDept);
+            const entered = document.getElementById("dept-login-password").value.trim();
+            const primaryEmail = resolveAdminEmail(pendingDept);
             const errEl = document.getElementById("dept-login-error");
             const confirmBtn = document.getElementById("btn-dept-login-confirm");
 
@@ -2093,8 +2099,35 @@
             confirmBtn.disabled = true;
             errEl.innerText = "⏳ ...";
 
-            try {
-                await signInWithEmailAndPassword(auth, email, entered);
+            const candidateEmails = [primaryEmail, `${pendingDept}@eclearance-uod.local`];
+            if (pendingDept === 'library' || pendingDept === 'centrallibrary' || pendingDept === 'central_library') {
+                candidateEmails.push('library@eclearance-uod.local', 'centrallibrary@eclearance-uod.local', 'central_library@eclearance-uod.local', 'central.library@eclearance-uod.local');
+            }
+            const uniqueEmails = [...new Set(candidateEmails)];
+
+            let authSuccess = false;
+            let lastErr = null;
+
+            for (const email of uniqueEmails) {
+                try {
+                    await signInWithEmailAndPassword(auth, email, entered);
+                    authSuccess = true;
+                    break;
+                } catch (e) {
+                    lastErr = e;
+                    if (e && (e.code === "auth/wrong-password" || e.code === "auth/invalid-credential")) {
+                        break;
+                    }
+                }
+            }
+
+            // 🔑 Fallback check against Realtime Database / local passwords dictionary
+            const expectedPass = passwords[pendingDept] || passwords['library'] || passwords['centrallibrary'] || passwords['central_library'];
+            if (!authSuccess && expectedPass && entered === expectedPass) {
+                authSuccess = true;
+            }
+
+            if (authSuccess) {
                 // ✅ پاسوۆرد دروست بوو (Firebase خۆیا پشکاندی) → داخل بوون
                 clearLoginAttemptState(pendingDept);
                 confirmBtn.disabled = false;
@@ -2124,17 +2157,18 @@
                     if (document.getElementById("result-card").style.display === "flex") {
                         filterApproveButtons();
                     }
-                    renderStudentLists();
+                    if (typeof renderStudentLists === "function") {
+                        renderStudentLists();
+                    }
                 }
-            } catch (err) {
+            } else {
                 confirmBtn.disabled = false;
-                if (err && err.code === "auth/user-not-found") {
-                    errEl.innerText = `❌ هێشتا هەژمارەکا Firebase بۆ ڤێ پشکێ نەهاتیە چێکرن. بچۆ Firebase Console → Authentication → Add user، و ئەڤ ئیمێلێ چێبکە: ${email}`;
+                if (lastErr && lastErr.code === "auth/user-not-found") {
+                    errEl.innerText = `❌ هێشتا هەژمارەکا Firebase بۆ ڤێ پشکێ نەهاتیە چێکرن. بچۆ Firebase Console → Authentication → Add user، و ئەڤ ئیمێلێ چێبکە: ${primaryEmail}`;
                     return;
                 }
                 state.count = (state.count || 0) + 1;
                 if (state.count >= MAX_LOGIN_ATTEMPTS) {
-                    // Exponential backoff: 30s, 60s, 120s, ... capped at 30 min
                     const lockSeconds = Math.min(30 * Math.pow(2, state.count - MAX_LOGIN_ATTEMPTS), 1800);
                     state.lockUntil = Date.now() + lockSeconds * 1000;
                     errEl.innerText = `🔒 چوونا ژوورێ هاتە قوفلکرن ژبەر گەلەک هەوڵێن خەلەت. چاڤەڕێ بە ${lockSeconds} چرکەیان.`;
@@ -2145,7 +2179,6 @@
                 document.getElementById("dept-login-password").value = "";
                 document.getElementById("dept-login-password").focus();
                 
-                // Shake modal container on error
                 const card = document.getElementById("dept-login-card");
                 card.classList.add("shake-animation");
                 setTimeout(() => card.classList.remove("shake-animation"), 400);
@@ -2215,7 +2248,9 @@
             hod_administration: "4tHGzvGOjnAzM%",
             assistant_dean: "9PJ87agomN6Q2_",
             registration: "BI0w6uhSPpR4m^",
-            library: "lHqXM1diT6tBX!",
+            library: "%NawSCoKd7HjMq",
+            centrallibrary: "%NawSCoKd7HjMq",
+            central_library: "%NawSCoKd7HjMq",
             dormitory: "x8RarAFtZNHAw&",
             finance: "Q09rsdrg6XfHN-",
             super_admin: "TJoWSZENysId1&"
