@@ -1,5 +1,5 @@
 <?php
-// Core System Settings Provider
+// Core System Settings Provider - Backend Environment Loader
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Cache-Control: post-check=0, pre-check=0', false);
 header('Pragma: no-cache');
@@ -13,31 +13,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$_0x1a8f = 0x7e;
-$_0x3b1c = 0x0d;
-$_0xmap = [
-    'apiKey' => '4c44112c3a1449333a4748211d171f1e31165c1417171d473529233c142546572314311a232122',
-    'authDomain' => '2a1f282c192c1d2a281b1e19172c1f605c595325545d25241928292c1a282c1b1b5d2a1e20',
-    'projectId' => '2a1f282c192c1d2a281b1e19172c1f605c59532554',
-    'storageBucket' => '2a1f282c192c1d2a281b1e19172c1f605c595325545d25241928292c1a281a171e192c26285d2c1b1b',
-    'messagingSenderId' => '535b575b55555b575353555b',
-    'appId' => '5c51535b575b55555b575353555b51162829512c582754582a2a25595555295c595627585354255454',
-    'measurementId' => '466059315a3c494646564548'
-];
-
-function _0xec($hex, $key, $shift) {
-    $str = '';
-    for ($i = 0; $i < strlen($hex); $i += 2) {
-        $val = hexdec(substr($hex, $i, 2));
-        $byte = (($val - $shift + 256) & 0xFF) ^ $key;
-        $str .= chr($byte);
+function loadEnvFile($path) {
+    $env = [];
+    if (file_exists($path) && is_readable($path)) {
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || strpos($line, '#') === 0) {
+                continue;
+            }
+            if (strpos($line, '=') !== false) {
+                list($name, $value) = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim($value);
+                if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+                    (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+                    $value = substr($value, 1, -1);
+                }
+                $env[$name] = $value;
+            }
+        }
     }
-    return $str;
+    return $env;
 }
 
-$sysConfig = [];
-foreach ($_0xmap as $k => $v) {
-    $sysConfig[$k] = _0xec($v, $_0x1a8f, $_0x3b1c);
+$envLocal = loadEnvFile(__DIR__ . '/.env.local');
+$envStd   = loadEnvFile(__DIR__ . '/.env');
+
+function getEnvVar($key, $default, $envLocal, $envStd) {
+    $val = getenv($key);
+    if ($val !== false && $val !== '') return $val;
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') return $_ENV[$key];
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') return $_SERVER[$key];
+    if (isset($envLocal[$key]) && $envLocal[$key] !== '') return $envLocal[$key];
+    if (isset($envStd[$key]) && $envStd[$key] !== '') return $envStd[$key];
+    return $default;
 }
+
+$sysConfig = [
+    'apiKey'            => getEnvVar('FIREBASE_API_KEY', 'AIzaSyBXSDEjntloZw1yttnDVbhQyfG4hyZshjk', $envLocal, $envStd),
+    'authDomain'        => getEnvVar('FIREBASE_AUTH_DOMAIN', 'clearanceportal-128f9.firebaseapp.com', $envLocal, $envStd),
+    'projectId'         => getEnvVar('FIREBASE_PROJECT_ID', 'clearanceportal-128f9', $envLocal, $envStd),
+    'storageBucket'     => getEnvVar('FIREBASE_STORAGE_BUCKET', 'clearanceportal-128f9.firebasestorage.app', $envLocal, $envStd),
+    'messagingSenderId' => getEnvVar('FIREBASE_MESSAGING_SENDER_ID', '804066048860', $envLocal, $envStd),
+    'appId'             => getEnvVar('FIREBASE_APP_ID', '1:804066048860:web:a5d95ccf266b127d589f99', $envLocal, $envStd),
+    'measurementId'     => getEnvVar('FIREBASE_MEASUREMENT_ID', 'G-2Z3QBGG7FE', $envLocal, $envStd)
+];
 
 echo json_encode($sysConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

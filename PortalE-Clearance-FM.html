@@ -2016,17 +2016,23 @@
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         let firebaseConfig = window.firebaseConfig;
-        if (!firebaseConfig) {
-            try {
-                const configResponse = await fetch('./app-init.php');
-                if (configResponse.ok) {
-                    const textData = await configResponse.text();
-                    if (textData.trim().startsWith('{')) {
-                        firebaseConfig = JSON.parse(textData);
+        if (window.firebaseConfigPromise) {
+            firebaseConfig = await window.firebaseConfigPromise;
+        }
+        if (!firebaseConfig || !firebaseConfig.apiKey) {
+            for (const endpoint of ['./api/app-init', './app-init.php']) {
+                try {
+                    const configResponse = await fetch(endpoint);
+                    if (configResponse.ok) {
+                        const data = await configResponse.json();
+                        if (data && data.apiKey) {
+                            firebaseConfig = data;
+                            break;
+                        }
                     }
+                } catch (err) {
+                    console.warn("Config fetch warning for " + endpoint + ":", err);
                 }
-            } catch (err) {
-                console.warn("Config fetch warning:", err);
             }
         }
         const app = initializeApp(firebaseConfig);
