@@ -10,6 +10,7 @@
     };
 
     const MAX_LOGIN_ATTEMPTS = 5;
+    w.MAX_LOGIN_ATTEMPTS = MAX_LOGIN_ATTEMPTS;
     const KEY_NAME = "student_login_attempts";
 
     w.getLoginAttemptState = function() {

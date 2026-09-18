@@ -1405,7 +1405,10 @@
             <!-- Search bar & Count badge for student accounts -->
             <div style="margin: 15px 0; display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
                 <input type="text" id="super-student-search-input" class="input-field" placeholder="🔍 سێرچ ب ناڤ یان ڕەقەمی مۆبایل..." oninput="filterSuperStudentAccounts()" style="max-width: 360px;">
-                <span id="super-student-count-badge" class="meta-badge highlight" style="background: rgba(0, 240, 255, 0.15); color: #00f0ff; font-size: 0.85rem;">ژمارە: 0 قوتابی</span>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <button type="button" id="btn-toggle-all-passwords" onclick="toggleAllStudentPasswords()" class="table-btn-view" style="background: rgba(0, 240, 255, 0.12); color: #00f0ff; border-color: rgba(0, 240, 255, 0.3); padding: 6px 14px; font-size: 0.85rem; border-radius: 8px;">👁️ دیارکرنا هەمی پاسوۆردان</button>
+                    <span id="super-student-count-badge" class="meta-badge highlight" style="background: rgba(0, 240, 255, 0.15); color: #00f0ff; font-size: 0.85rem;">ژمارە: 0 قوتابی</span>
+                </div>
             </div>
 
             <!-- Separator tabs for All, Statistics and Accounting inside Super Admin Student Accounts -->
@@ -3338,6 +3341,45 @@
             renderSuperStudentAccounts();
         };
 
+        window.showAllStudentPasswordsState = false;
+
+        window.toggleAllStudentPasswords = function() {
+            window.showAllStudentPasswordsState = !window.showAllStudentPasswordsState;
+            const fields = document.querySelectorAll('.super-student-pass-field');
+            const type = window.showAllStudentPasswordsState ? 'text' : 'password';
+            fields.forEach(f => {
+                f.type = type;
+            });
+            const btns = document.querySelectorAll('.super-student-pass-toggle-btn');
+            btns.forEach(b => {
+                b.innerText = window.showAllStudentPasswordsState ? '🙈' : '👁️';
+                b.style.color = window.showAllStudentPasswordsState ? '#f472b6' : '#00f0ff';
+            });
+            const headerBtn = document.getElementById('btn-toggle-all-passwords');
+            if (headerBtn) {
+                headerBtn.innerText = window.showAllStudentPasswordsState ? '🙈 ڤەشارتنا هەمی پاسوۆردان' : '👁️ دیارکرنا هەمی پاسوۆردان';
+                headerBtn.style.color = window.showAllStudentPasswordsState ? '#f472b6' : '#00f0ff';
+            }
+        };
+
+        window.togglePasswordVisibility = function(inputId, btn) {
+            const inp = document.getElementById(inputId);
+            if (!inp) return;
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                if (btn) {
+                    btn.innerText = '🙈';
+                    btn.style.color = '#f472b6';
+                }
+            } else {
+                inp.type = 'password';
+                if (btn) {
+                    btn.innerText = '👁️';
+                    btn.style.color = '#00f0ff';
+                }
+            }
+        };
+
         window.filterSuperStudentAccounts = function() {
             renderSuperStudentAccounts();
         };
@@ -3383,6 +3425,10 @@
                 }
 
                 count++;
+                const passType = window.showAllStudentPasswordsState ? 'text' : 'password';
+                const eyeIcon = window.showAllStudentPasswordsState ? '🙈' : '👁️';
+                const eyeColor = window.showAllStudentPasswordsState ? '#f472b6' : '#00f0ff';
+
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="font-weight: 700; color: #fff;">${escapeHTML(data.name || '—')}</td>
@@ -3390,7 +3436,10 @@
                     <td style="font-family: 'Outfit'; color: #00f0ff;">${escapeHTML(studentId)}</td>
                     <td>${escapeHTML(data.stage || "١")}</td>
                     <td>
-                        <input type="password" id="super-student-pass-${escapeHTML(studentId)}" class="input-field" value="${escapeHTML(data.password || '')}" style="text-align: center; width: 140px; padding: 6px 10px; font-size: 0.9rem; font-family: 'Outfit'; display: inline-block;">
+                        <div style="display:flex; gap:5px; align-items:center; justify-content:center;">
+                            <input type="${passType}" id="super-student-pass-${escapeHTML(studentId)}" class="input-field super-student-pass-field" value="${escapeHTML(data.password || '')}" style="text-align: center; width: 125px; padding: 6px 8px; font-size: 0.9rem; font-family: 'Outfit'; display: inline-block;">
+                            <button type="button" class="super-student-pass-toggle-btn" onclick="togglePasswordVisibility('super-student-pass-${escapeJsAttr(studentId)}', this)" title="بینینا پاسوۆردی" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: ${eyeColor}; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;">${eyeIcon}</button>
+                        </div>
                     </td>
                     <td>
                         <div style="display:flex; gap:6px; align-items:center; justify-content:center;">

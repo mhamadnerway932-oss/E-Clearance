@@ -956,7 +956,7 @@
             <div class="drawer-header-icon">🍂</div>
             <div class="drawer-header-text">
                 <h3 id="drawer-title">sitting</h3>
-                <p id="drawer-sub">UoD E-Clearance Portal</p>
+                <p id="drawer-sub">UoD E-cLearance </p>
             </div>
         </div>
 
@@ -1056,7 +1056,7 @@
 
         <!-- Footer -->
         <div style="margin-top:auto;padding:18px 20px;border-top:1px solid rgba(120,50,10,0.1);text-align:center;">
-            <div style="font-size:0.75rem;color:#9a3412;opacity:0.6;" id="drawer-footer">UoD E-Clearance Portal © 2026</div>
+            <div style="font-size:0.75rem;color:#9a3412;opacity:0.6;" id="drawer-footer">UoD E-clearance © 2026</div>
         </div>
 
     </div>
@@ -1350,7 +1350,7 @@
                 alertWrongName: "❌ ناڤێ سێیانی خەلەتە! هیڤییە ناڤێ خۆ یێ دروست بنڤێسی.",
                 alertFillAll: "هیڤییە هەمی خانان پڕ بکە (ناڤێ سێیانی و پاسوۆرد)!",
                 alertErrorReg: "ئاریشەیەک چێبوو لە کاتی تۆمارکردندا: ",
-                alertErrorDb: "ئاریشەیەک د گەهشتنا داتابەیسێ دا هەیە: ",
+                alertErrorDb: "ئاریشەیەک د داتابەیسێ دا چێبوو: ",
                 loginNameLabel: "👤 ناڤێ سێیانی یێ قوتابی:",
                 loginNamePlaceholder: "ناڤێ خۆ یێ سێیانی بنڤێسە",
                 // New register strings
@@ -1970,9 +1970,11 @@
                     }
                 }
 
+                const maxAttempts = window.MAX_LOGIN_ATTEMPTS || 5;
+
                 if (!foundRecord) {
                     const state = registerFailedAttempt();
-                    const remaining = Math.max(0, MAX_LOGIN_ATTEMPTS - (state.count || 0));
+                    const remaining = Math.max(0, maxAttempts - (state.count || 0));
                     if (remaining === 0) {
                         return customAlert(
                             currentLang === 'en'
@@ -1987,7 +1989,7 @@
                             ? `🔑 Account not found! You have (${remaining}) attempt(s) remaining out of 5.`
                             : (currentLang === 'ar'
                                 ? `🔑 الحساب غير موجود! متبقي لديك (${remaining}) محاولة من أصل ٥.`
-                                : `🔑 ناڤێ سێیانی نەهاتە لێدیتن! تە تەنها (${remaining}) محاولێدی یێن ماینە ژ ٥ محاولان.`)
+                                : `🔑 هیڤییە زانیاریێن خۆ دروست داخل بکەی! (${remaining}) هەوڵێن دی یێن ماینە.`)
                     );
                 }
 
@@ -1997,7 +1999,7 @@
 
                 if (!isHashedMatch && !isPlainMatch) {
                     const state = registerFailedAttempt();
-                    const remaining = Math.max(0, MAX_LOGIN_ATTEMPTS - (state.count || 0));
+                    const remaining = Math.max(0, maxAttempts - (state.count || 0));
                     if (remaining === 0) {
                         return customAlert(
                             currentLang === 'en'
@@ -2012,7 +2014,7 @@
                             ? `🔑 Incorrect password! You have (${remaining}) attempt(s) remaining out of 5.`
                             : (currentLang === 'ar'
                                 ? `🔑 كلمة المرور غير صحيحة! متبقي لديك (${remaining}) محاولة من أصل ٥.`
-                                : `🔑 پاسوۆردێ تە خەلەتە! تە تەنها (${remaining}) محاولێدی یێن ماینە ژ ٥ محاولان.`)
+                                : `🔑 هیڤییە زانیاریێن خۆ دروست داخل بکەی! (${remaining}) هەوڵێن دی یێن ماینە.`)
                     );
                 }
 
