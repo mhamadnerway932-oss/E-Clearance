@@ -1,4 +1,3 @@
-// 🛡️ Application Security & Helper Module (Obfuscated)
 (function(w){
     w.normalizeStudentName = function(text) {
         if (!text) return "";
