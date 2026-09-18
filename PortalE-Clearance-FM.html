@@ -2024,26 +2024,7 @@
                 }
             } catch (e) {}
         }
-        if (!firebaseConfig || !firebaseConfig.apiKey) {
-            for (const endpoint of ['/api/app-init', './api/app-init', './app-init.php']) {
-                try {
-                    const configResponse = await fetch(endpoint, { cache: 'no-store' });
-                    if (configResponse.ok) {
-                        const textData = await configResponse.text();
-                        if (textData.trim().startsWith('{')) {
-                            const data = JSON.parse(textData);
-                            if (data && data.apiKey) {
-                                firebaseConfig = data;
-                                break;
-                            }
-                        }
-                    }
-                } catch (err) {
-                    // Ignore silently
-                }
-            }
-        }
-        const app = initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig || window.firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
 
