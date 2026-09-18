@@ -1880,21 +1880,29 @@
 
         let firebaseConfig = window.firebaseConfig;
         if (window.firebaseConfigPromise) {
-            firebaseConfig = await window.firebaseConfigPromise;
+            try {
+                const asyncConfig = await window.firebaseConfigPromise;
+                if (asyncConfig && asyncConfig.apiKey) {
+                    firebaseConfig = asyncConfig;
+                }
+            } catch (e) {}
         }
         if (!firebaseConfig || !firebaseConfig.apiKey) {
-            for (const endpoint of ['./api/app-init', './app-init.php']) {
+            for (const endpoint of ['/api/app-init', './api/app-init', './app-init.php']) {
                 try {
-                    const configResponse = await fetch(endpoint);
+                    const configResponse = await fetch(endpoint, { cache: 'no-store' });
                     if (configResponse.ok) {
-                        const data = await configResponse.json();
-                        if (data && data.apiKey) {
-                            firebaseConfig = data;
-                            break;
+                        const textData = await configResponse.text();
+                        if (textData.trim().startsWith('{')) {
+                            const data = JSON.parse(textData);
+                            if (data && data.apiKey) {
+                                firebaseConfig = data;
+                                break;
+                            }
                         }
                     }
                 } catch (err) {
-                    console.warn("Config fetch warning for " + endpoint + ":", err);
+                    // Ignore silently
                 }
             }
         }
