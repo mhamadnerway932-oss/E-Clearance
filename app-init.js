@@ -1,22 +1,12 @@
-// ⚙️ Core Application Settings Provider Module (Backend Integration)
+// ⚙️ Core Application Settings Provider Module (Backend Dynamic Loader)
 (function(w){
-    const defaultConfig = {
-        apiKey: 'AIzaSyBXSDEjntloZw1yttnDVbhQyfG4hyZshjk',
-        authDomain: 'clearanceportal-128f9.firebaseapp.com',
-        projectId: 'clearanceportal-128f9',
-        storageBucket: 'clearanceportal-128f9.firebasestorage.app',
-        messagingSenderId: '804066048860',
-        appId: '1:804066048860:web:a5d95ccf266b127d589f99',
-        measurementId: 'G-2Z3QBGG7FE'
-    };
-
-    w.firebaseConfig = defaultConfig;
+    w.firebaseConfig = null;
 
     w.firebaseConfigPromise = (async function() {
-        const endpoints = ['./api/app-init', './app-init.php', 'api/app-init'];
+        const endpoints = ['/api/app-init', './api/app-init', './app-init.php'];
         for (const ep of endpoints) {
             try {
-                const res = await fetch(ep);
+                const res = await fetch(ep, { cache: 'no-store' });
                 if (res.ok) {
                     const data = await res.json();
                     if (data && data.apiKey) {
@@ -25,9 +15,9 @@
                     }
                 }
             } catch (e) {
-                // Ignore and try next endpoint
+                // Ignore and try next backend endpoint
             }
         }
-        return defaultConfig;
+        return w.firebaseConfig;
     })();
 })(window);
