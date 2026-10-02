@@ -1394,6 +1394,9 @@
                 <div class="hod-banner-dot"></div>
                 <div class="hod-banner-dot"></div>
             </div>
+            <button id="btn-re-request-hod" onclick="reRequestHod()" style="display:none; padding: 10px 18px; border-radius: 12px; background: linear-gradient(135deg, #00f0ff, #0088ff); color: #040814; font-weight: 800; font-size: 0.88rem; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; box-shadow: 0 4px 14px rgba(0, 240, 255, 0.3); transition: all 0.2s ease;">
+                🔄 داخوازییا دووبارە بۆ سەرۆکێ پشکێ
+            </button>
         </div>
 
         <!-- Portal Branding -->
@@ -1705,7 +1708,13 @@
                 notePre: "📝 تێبینی: ",
                 noteModalTitle: "⚠️ تێبینییا پشکا ",
                 noteModalSub: "تێبینییا هاتیە تۆمارکرن ژ لایێ ڤێ پشکێ ڤە:",
+                lockHint: "تکایە پێدڤییە هەمی بەشێن دی واژۆ بکەن",
                 reRequest: "🔄 داخوازییا دووبارە",
+                reRequestHod: "داخوازییا دووبارە بۆ سەرۆکێ پشکێ",
+                confirmReRequestHod: "ئایا دڵنیایی دێ داخوازییا خۆ دووبارە بۆ سەرۆکێ پشکێ فرێکەیەوە بۆ پەسەندکرن و واژۆکرنێ؟",
+                titleReRequestHod: "ناردنا دووبارە بۆ سەرۆکێ پشکێ",
+                alertReRequestHodSuccess: "✅ داخوازییا تە ب سەرکەفتیانە بۆ سەرۆکێ پشکێ هاتە دووبارەکرن و فرێکرن!",
+                alertHodApproved: "✅ سەرۆکێ پشکێ داخوازیا تە پەسەند کرییە.",
                 alertReq: "✅ داخوازیا تە پێشتر هاتیە تۆمارکرن.",
                 alertSent: "✅ داخوازیا تە ب سەرکەفتیانە هاتە ناردن.",
             },
@@ -1725,7 +1734,7 @@
                 hodBannerSubNote: "HOD Note: ",
                 deptLabel: "Department",
                 stageLabel: "Stage",
-                btnReq: "Your request is in the system",
+                btnReq: "Send request to all departments",
                 logout: "Logout",
                 confirmLogout: "Are you sure you want to log out?",
                 cardReg: "College Registration",
@@ -1739,7 +1748,13 @@
                 notePre: "📝 Note: ",
                 noteModalTitle: "⚠️ Note from ",
                 noteModalSub: "Note recorded by this department:",
+                lockHint: "All other departments must approve first",
                 reRequest: "🔄 Resend Request",
+                reRequestHod: "Resend Request to HOD",
+                confirmReRequestHod: "Are you sure you want to resend your clearance request to the Head of Department?",
+                titleReRequestHod: "Resend Request to HOD",
+                alertReRequestHodSuccess: "✅ Your request was successfully resent to the Head of Department!",
+                alertHodApproved: "✅ The Head of Department has already approved your request.",
                 alertReq: "✅ Your request is already recorded.",
                 alertSent: "✅ Your request was sent successfully.",
             },
@@ -1773,11 +1788,40 @@
                 notePre: "📝 ملاحظة: ",
                 noteModalTitle: "⚠️ ملاحظة من قسم ",
                 noteModalSub: "الملاحظة المسجلة من قبل هذا القسم:",
+                lockHint: "يجب موافقة جميع الأقسام الأخرى أولاً",
                 reRequest: "🔄 إعـادة الطلب",
+                reRequestHod: "إعادة إرسال الطلب لرئيس القسم",
+                confirmReRequestHod: "هل أنت متأكد من إعادة إرسال طلب براءة الذمة لرئيس القسم؟",
+                titleReRequestHod: "إعادة إرسال الطلب لرئيس القسم",
+                alertReRequestHodSuccess: "✅ تم إعادة إرسال طلبك بنجاح لرئيس القسم!",
+                alertHodApproved: "✅ وافق رئيس القسم على طلبك مسبقاً.",
                 alertReq: "✅ تم تسجيل طلبك مسبقاً.",
                 alertSent: "✅ تم إرسال طلبك بنجاح.",
             }
         };
+
+        function getTranslatedDept(deptName, lang) {
+            if (!deptName) return '—';
+            if (lang !== 'en') return deptName;
+            const lower = deptName.toLowerCase().trim();
+            if (lower.includes('account') || lower.includes('ژمێریاری')) return 'Accounting';
+            if (lower.includes('statistic') || lower.includes('ئامار')) return 'Statistics';
+            if (lower.includes('finance') || lower.includes('دارای') || lower.includes('بانک')) return 'Finance';
+            if (lower.includes('economic') || lower.includes('ئابووری') || lower.includes('ئابوری')) return 'Economics';
+            if (lower.includes('market') || lower.includes('بازارگەری') || lower.includes('بازاڕگەڕی')) return 'Marketing';
+            if (lower.includes('administr') || lower.includes('ئیدار') || lower.includes('کارگێڕی') || lower.includes('کارگێری')) return 'Administration';
+            return deptName;
+        }
+
+        function getTranslatedStage(stage, lang) {
+            if (!stage) return '—';
+            if (lang === 'en') {
+                const numMap = { '١': '1', '٢': '2', '٣': '3', '٤': '4', '1': '1', '2': '2', '3': '3', '4': '4' };
+                const num = numMap[stage] || stage;
+                return 'Stage ' + num;
+            }
+            return stage;
+        }
 
         let currentLang = localStorage.getItem('uod_lang') || 'ku';
         let latestData = null;
@@ -1804,22 +1848,31 @@
             document.getElementById('html-tag').setAttribute('lang', lang);
 
             const ls = document.getElementById('lang-switcher');
-            ls.style.right = isRtl ? '18px' : 'auto';
-            ls.style.left = isRtl ? 'auto' : '18px';
+            if (ls) {
+                ls.style.right = isRtl ? '18px' : 'auto';
+                ls.style.left = isRtl ? 'auto' : '18px';
+            }
 
             ['ku', 'en', 'ar'].forEach(l => {
-                document.getElementById('opt-' + l).classList.toggle('active', l === lang);
+                const opt = document.getElementById('opt-' + l);
+                if (opt) opt.classList.toggle('active', l === lang);
             });
 
-            const T = i18n[lang];
-            document.getElementById('page-title').innerText = T.pageTitle;
-            document.getElementById('brand-sub').innerText = T.brandSub;
-            document.getElementById('welcome-txt').innerText = T.welcome;
-            document.getElementById('btn-req-txt').innerText = T.btnReq;
-            document.querySelector('#btn-logout span').innerText = T.logout;
+            const T = i18n[lang] || i18n.ku;
+            if (document.getElementById('page-title')) document.getElementById('page-title').innerText = T.pageTitle || '';
+            if (document.getElementById('brand-sub')) document.getElementById('brand-sub').innerText = T.brandSub || '';
+            if (document.getElementById('welcome-txt')) document.getElementById('welcome-txt').innerText = T.welcome || '';
+            if (document.getElementById('btn-req-txt')) document.getElementById('btn-req-txt').innerText = T.btnReq || '';
+            const logoutSpan = document.querySelector('#btn-logout span');
+            if (logoutSpan) logoutSpan.innerText = T.logout || '';
+
+            if (latestData) {
+                if (document.getElementById('pill-dept')) document.getElementById('pill-dept').innerText = getTranslatedDept(latestData.department, lang);
+                if (document.getElementById('pill-stage')) document.getElementById('pill-stage').innerText = getTranslatedStage(latestData.stage, lang);
+            }
 
             const banner = document.getElementById("hod-pending-banner");
-            if (banner.style.display === "flex") {
+            if (banner && banner.style.display === "flex") {
                 if (banner.classList.contains('has-note-banner')) {
                     document.getElementById("hod-banner-icon").innerText = "⚠️";
                     document.getElementById("hod-banner-title").innerText = t('hodBannerTitleNote');
@@ -1958,12 +2011,68 @@
             if (!grid) return;
             grid.innerHTML = '';
 
+            // 👑 Head of Department (HOD) Status Card
+            const hodCardId = "hod";
+            const hodApproved = studentData ? studentData.hod_approved === true : false;
+            const hodNote = studentData ? studentData.note_hod : null;
+            const hodStatus = hodApproved ? "Approved" : (hodNote && hodNote.trim() !== "" ? "HasNote" : (studentData && studentData.status_hod ? studentData.status_hod : "Pending"));
+            const hodTitle = currentLang === 'en' ? 'Head of Department' : (currentLang === 'ar' ? 'رئيس القسم' : 'سەرۆکێ پشکێ');
+
+            const hodCardDiv = document.createElement('div');
+            hodCardDiv.className = 'status-card card-hod';
+            hodCardDiv.onclick = () => {
+                if (hodStatus === "Approved") {
+                    customAlert(t('alertHodApproved') || "✅ سەرۆکێ پشکێ داخوازیا تە پەسەند کرییە.");
+                } else if (hodNote && hodNote.trim() !== "") {
+                    window.showRedNoteModal(hodTitle, hodNote.trim(), "hod");
+                } else {
+                    window.reRequestHod();
+                }
+            };
+
+            hodCardDiv.innerHTML = `
+                <span class="card-icon">👑</span>
+                <h3>${hodTitle}</h3>
+                <div class="badge" id="status-hod">👆 <span>${t('clickReq')}</span></div>
+                <div class="note-box" id="note-hod" style="display:none;"></div>
+            `;
+
+            grid.appendChild(hodCardDiv);
+            window.updateCardStatus("status-hod", hodStatus, hodNote, "note-hod");
+
+            const defaultEnNames = {
+                registration: "College Registration",
+                library: "College Library",
+                dormitory: "Student Dormitories",
+                finance: "Finance & Tuition",
+                assistant_dean: "Assistant Dean"
+            };
+
+            const defaultArNames = {
+                registration: "تسجيل الكلية",
+                library: "المكتبة",
+                dormitory: "الأقسام الداخلية",
+                finance: "المالية (القسط)",
+                assistant_dean: "معاون العميد"
+            };
+
             Object.values(cards).forEach(card => {
                 const cardId = card.id;
                 const statusVal = studentData ? studentData['status_' + cardId] : null;
                 const noteVal = studentData ? studentData['note_' + cardId] : null;
 
-                let titleText = card['name_' + currentLang] || card.name_ku || cardId;
+                let rawName = card['name_' + currentLang];
+                let titleText = (rawName && rawName.trim() !== '.' && rawName.trim() !== '') ? rawName.trim() : null;
+
+                if (!titleText) {
+                    if (currentLang === 'en') {
+                        titleText = defaultEnNames[cardId] || card.name_en || card.name_ku || cardId;
+                    } else if (currentLang === 'ar') {
+                        titleText = defaultArNames[cardId] || card.name_ar || card.name_ku || cardId;
+                    } else {
+                        titleText = card.name_ku || cardId;
+                    }
+                }
 
                 const _finalIds = ['assistant_dean', 'assistantdean', 'vice_dean', 'dean_assistant', 'supervisor', 'harikar', 'ragiri', 'muawin'];
                 const _cardNameAll = [
@@ -1999,7 +2108,7 @@
                     <h3>${titleText}</h3>
                     <div class="badge" id="status-${cardId}">👆 <span>${t('clickReq')}</span></div>
                     <div class="note-box" id="note-${cardId}" style="display:none;"></div>
-                    ${isLocked ? '<p class="lock-hint">تکایە پێدڤییە هەمی بەشێن دی واژۆ بکەن</p>' : ''}
+                    ${isLocked ? `<p class="lock-hint">${t('lockHint')}</p>` : ''}
                 `;
 
                 grid.appendChild(cardDiv);
@@ -2090,7 +2199,33 @@
             });
         };
 
+        window.reRequestHod = async function() {
+            if (!studentId) return;
+            const confirmed = await customConfirm(
+                t('confirmReRequestHod') || "ئایا دڵنیایی دێ داخوازییا خۆ دووبارە بۆ سەرۆکێ پشکێ فرێکەیەوە بۆ پەسەندکرن و واژۆکرنێ؟",
+                t('titleReRequestHod') || "ناردنا دووبارە بۆ سەرۆکێ پشکێ"
+            );
+            if (!confirmed) return;
+
+            const now = new Date();
+            const updates = {};
+            updates[`Clearance_Requests/${studentId}/hod_approved`] = false;
+            updates[`Clearance_Requests/${studentId}/status_hod`] = "Pending";
+            updates[`Clearance_Requests/${studentId}/note_hod`] = "";
+            updates[`Clearance_Requests/${studentId}/date_requested_hod`] = now.toISOString();
+
+            update(ref(db), updates).then(() => {
+                customAlert(t('alertReRequestHodSuccess') || "✅ داخوازییا تە ب سەرکەفتیانە بۆ سەرۆکێ پشکێ هاتە دووبارەکرن و فرێکرن!");
+            }).catch(err => {
+                customAlert("❌ " + err.message);
+            });
+        };
+
         window.sendClearanceFirebaseRequest = function (deptId) {
+            if (deptId === "hod") {
+                window.reRequestHod();
+                return;
+            }
             const thisCard = window.globalClearanceCards && window.globalClearanceCards[deptId];
 
             const _chkFinalIds = ['assistant_dean', 'assistantdean', 'vice_dean', 'dean_assistant', 'supervisor', 'harikar', 'ragiri', 'muawin'];
@@ -2119,7 +2254,7 @@
                 const isHodComplete = isHodApproved && !hasHodNote;
 
                 if (notApprovedCards.length > 0 || !isHodComplete) {
-                    customAlert("تکایە خو بگرە هەتا واژو سەر هەمی بەشێن دی و سەرۆکێ پشکێ بهێنە کرن، شنی زڤرەڤە.");
+                    customAlert("تکایە خو بگرە هەتا واژو سەر هەمی بەشێن دی  بهێنە کرن، .");
                     return;
                 }
             }
@@ -2135,6 +2270,22 @@
         };
 
         window.requestClearance = function (deptId) {
+            if (deptId === "hod") {
+                const hodApproved = latestData && latestData.hod_approved === true;
+                const hodNote = latestData ? latestData.note_hod : null;
+                if (hodApproved) {
+                    customAlert(t('alertHodApproved') || "✅ سەرۆکێ پشکێ داخوازیا تە پەسەند کرییە.");
+                    return;
+                }
+                if (hodNote && hodNote.trim() !== "") {
+                    const hodTitle = currentLang === 'en' ? 'Head of Department' : (currentLang === 'ar' ? 'رئيس القسم' : 'سەرۆکێ پشکێ');
+                    window.showRedNoteModal(hodTitle, hodNote.trim(), "hod");
+                    return;
+                }
+                window.reRequestHod();
+                return;
+            }
+
             if (latestData && latestData['status_' + deptId] === 'Approved') {
                 customAlert(window.t('alertReq'));
                 return;
@@ -2246,8 +2397,8 @@
             const firstChar = data.name ? data.name.trim().charAt(0) : 'ق';
             document.getElementById('avatar-char').innerText = firstChar;
             document.getElementById('student-name').innerText = data.name || '...';
-            document.getElementById('pill-dept').innerText = data.department || '—';
-            document.getElementById('pill-stage').innerText = data.stage || '—';
+            document.getElementById('pill-dept').innerText = getTranslatedDept(data.department, currentLang);
+            document.getElementById('pill-stage').innerText = getTranslatedStage(data.stage, currentLang);
             document.getElementById('pill-id').innerText = studentId;
 
             window.renderClearanceCards(window.globalClearanceCards, latestData);
