@@ -2574,9 +2574,12 @@
                         if (sData) {
                             const allOtherApproved = otherCardIds.every(id => sData['status_' + id] === 'Approved');
                             const hasAnyNote = otherCardIds.some(id => sData['note_' + id] && sData['note_' + id].trim() !== '');
+                            const isHodApproved = sData.hod_approved === true;
+                            const hasHodNote = sData.note_hod && sData.note_hod.trim() !== '';
+                            const isHodComplete = isHodApproved && !hasHodNote;
                             const currentFinalStatus = sData['status_' + finalCardId];
 
-                            if (allOtherApproved && !hasAnyNote && currentFinalStatus !== 'Approved' && currentFinalStatus !== 'Pending') {
+                            if (allOtherApproved && !hasAnyNote && isHodComplete && currentFinalStatus !== 'Approved' && currentFinalStatus !== 'Pending') {
                                 const now = new Date();
                                 autoForwardUpdates[`Clearance_Requests/${sId}/status_${finalCardId}`] = "Pending";
                                 autoForwardUpdates[`Clearance_Requests/${sId}/date_requested_${finalCardId}`] = now.toISOString();
@@ -2886,9 +2889,19 @@
                 };
 
                 const getHodBadgeHTML = (approved, note) => {
-                    if (approved === true) return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
-                    if (note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
-                    return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
+                    const hasNote = note && note.trim() !== "";
+                    let html = "";
+                    if (approved === true) {
+                        html += `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
+                    } else if (hasNote) {
+                        html += `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
+                    } else {
+                        html += `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
+                    }
+                    if (hasNote) {
+                        html += `<div class="office-note has-note-office-note" style="font-size:0.75rem; margin-top:4px; padding:4px 6px; text-align:right;">💬 ${escapeHTML(note)}</div>`;
+                    }
+                    return html;
                 };
 
                 hodStudentsArray.forEach(({ studentId, data }) => {
@@ -2927,9 +2940,19 @@
                 };
 
                 const getHodBadgeHTML = (approved, note) => {
-                    if (approved === true) return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
-                    if (note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
-                    return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
+                    const hasNote = note && note.trim() !== "";
+                    let html = "";
+                    if (approved === true) {
+                        html += `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
+                    } else if (hasNote) {
+                        html += `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
+                    } else {
+                        html += `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
+                    }
+                    if (hasNote) {
+                        html += `<div class="office-note has-note-office-note" style="font-size:0.75rem; margin-top:4px; padding:4px 6px; text-align:right;">💬 ${escapeHTML(note)}</div>`;
+                    }
+                    return html;
                 };
 
                 adStudentsArray.forEach(({ studentId, data }) => {
@@ -3899,9 +3922,12 @@
                     if (otherCardIds.length > 0) {
                         const allOtherApproved = otherCardIds.every(id => updatedStudent['status_' + id] === 'Approved');
                         const hasAnyNote = otherCardIds.some(id => updatedStudent['note_' + id] && updatedStudent['note_' + id].trim() !== '');
+                        const isHodApproved = updatedStudent.hod_approved === true;
+                        const hasHodNote = updatedStudent.note_hod && updatedStudent.note_hod.trim() !== '';
+                        const isHodComplete = isHodApproved && !hasHodNote;
                         const currentFinalStatus = updatedStudent['status_' + finalCardId];
 
-                        if (allOtherApproved && !hasAnyNote && currentFinalStatus !== 'Approved' && currentFinalStatus !== 'Pending') {
+                        if (allOtherApproved && !hasAnyNote && isHodComplete && currentFinalStatus !== 'Approved' && currentFinalStatus !== 'Pending') {
                             const now = new Date();
                             updates[`Clearance_Requests/${currentSearchId}/status_${finalCardId}`] = "Pending";
                             updates[`Clearance_Requests/${currentSearchId}/date_requested_${finalCardId}`] = now.toISOString();
@@ -4304,6 +4330,50 @@
                 
                 updateOfficeStatusCard(cardId, status, note, dateRequested);
             });
+
+            // Also render HOD card for managers/superadmin
+            if (isManager) {
+                const cardId = "hod";
+                const hodApproved = studentData ? studentData.hod_approved === true : false;
+                const hodNote = studentData ? studentData.note_hod : null;
+                const hodStatus = hodApproved ? "Approved" : (hodNote && hodNote.trim() !== "" ? "HasNote" : "Pending");
+
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "office-status-card";
+                cardDiv.id = `card-status-${cardId}`;
+                
+                const nameDiv = document.createElement("div");
+                nameDiv.className = "office-name";
+                nameDiv.innerText = `👑 سەرۆکێ پشکێ (HOD)`;
+                
+                const badgeSpan = document.createElement("span");
+                badgeSpan.className = "office-badge badge-not-requested";
+                badgeSpan.id = `badge-status-${cardId}`;
+                
+                const dateDiv = document.createElement("div");
+                dateDiv.id = `date-status-${cardId}`;
+                dateDiv.style.cssText = "font-size: 0.75rem; color: #94a3b8; margin-top: 8px; direction: ltr; text-align: center; font-family: 'Outfit', sans-serif;";
+                dateDiv.style.display = "none";
+
+                const noteDiv = document.createElement("div");
+                noteDiv.className = "office-note";
+                noteDiv.id = `note-status-${cardId}`;
+                noteDiv.style.display = "none";
+                
+                cardDiv.appendChild(nameDiv);
+                cardDiv.appendChild(badgeSpan);
+                cardDiv.appendChild(dateDiv);
+                cardDiv.appendChild(noteDiv);
+
+                const finalCardEl = grid.querySelector(`#card-status-${getFinalCardId()}`);
+                if (finalCardEl) {
+                    grid.insertBefore(cardDiv, finalCardEl);
+                } else {
+                    grid.appendChild(cardDiv);
+                }
+
+                updateOfficeStatusCard(cardId, hodStatus, hodNote, null);
+            }
         }
 
         let activeAssistantDeanTab = 'All';

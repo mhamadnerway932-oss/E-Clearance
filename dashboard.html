@@ -1979,7 +1979,10 @@
                 if (isFinalCard && statusVal !== 'Approved') {
                     const otherCardIds = Object.keys(cards).filter(id => id !== cardId);
                     const allOtherApproved = otherCardIds.every(id => studentData && studentData['status_' + id] === 'Approved');
-                    if (!allOtherApproved) {
+                    const isHodApproved = studentData && studentData.hod_approved === true;
+                    const hasHodNote = studentData && studentData.note_hod && studentData.note_hod.trim() !== '';
+                    const isHodComplete = isHodApproved && !hasHodNote;
+                    if (!allOtherApproved || !isHodComplete) {
                         isLocked = true;
                     }
                 }
@@ -2111,9 +2114,12 @@
                     const st = latestData && latestData['status_' + id];
                     return st !== 'Approved';
                 });
+                const isHodApproved = latestData && latestData.hod_approved === true;
+                const hasHodNote = latestData && latestData.note_hod && latestData.note_hod.trim() !== '';
+                const isHodComplete = isHodApproved && !hasHodNote;
 
-                if (notApprovedCards.length > 0) {
-                    customAlert("تکایە خو بگرە هەتا واژو سەر هەمی بەشێن دی بهێنە کرن، شنی زڤرەڤە.");
+                if (notApprovedCards.length > 0 || !isHodComplete) {
+                    customAlert("تکایە خو بگرە هەتا واژو سەر هەمی بەشێن دی و سەرۆکێ پشکێ بهێنە کرن، شنی زڤرەڤە.");
                     return;
                 }
             }
