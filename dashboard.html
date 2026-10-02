@@ -1394,9 +1394,6 @@
                 <div class="hod-banner-dot"></div>
                 <div class="hod-banner-dot"></div>
             </div>
-            <button id="btn-re-request-hod" onclick="reRequestHod()" style="display:none; padding: 10px 18px; border-radius: 12px; background: linear-gradient(135deg, #00f0ff, #0088ff); color: #040814; font-weight: 800; font-size: 0.88rem; border: none; cursor: pointer; font-family: inherit; white-space: nowrap; box-shadow: 0 4px 14px rgba(0, 240, 255, 0.3); transition: all 0.2s ease;">
-                🔄 داخوازییا دووبارە بۆ سەرۆکێ پشکێ
-            </button>
         </div>
 
         <!-- Portal Branding -->
@@ -1710,11 +1707,6 @@
                 noteModalSub: "تێبینییا هاتیە تۆمارکرن ژ لایێ ڤێ پشکێ ڤە:",
                 lockHint: "تکایە پێدڤییە هەمی بەشێن دی واژۆ بکەن",
                 reRequest: "🔄 داخوازییا دووبارە",
-                reRequestHod: "داخوازییا دووبارە بۆ سەرۆکێ پشکێ",
-                confirmReRequestHod: "ئایا دڵنیایی دێ داخوازییا خۆ دووبارە بۆ سەرۆکێ پشکێ فرێکەیەوە بۆ پەسەندکرن و واژۆکرنێ؟",
-                titleReRequestHod: "ناردنا دووبارە بۆ سەرۆکێ پشکێ",
-                alertReRequestHodSuccess: "✅ داخوازییا تە ب سەرکەفتیانە بۆ سەرۆکێ پشکێ هاتە دووبارەکرن و فرێکرن!",
-                alertHodApproved: "✅ سەرۆکێ پشکێ داخوازیا تە پەسەند کرییە.",
                 alertReq: "✅ داخوازیا تە پێشتر هاتیە تۆمارکرن.",
                 alertSent: "✅ داخوازیا تە ب سەرکەفتیانە هاتە ناردن.",
             },
@@ -1750,11 +1742,6 @@
                 noteModalSub: "Note recorded by this department:",
                 lockHint: "All other departments must approve first",
                 reRequest: "🔄 Resend Request",
-                reRequestHod: "Resend Request to HOD",
-                confirmReRequestHod: "Are you sure you want to resend your clearance request to the Head of Department?",
-                titleReRequestHod: "Resend Request to HOD",
-                alertReRequestHodSuccess: "✅ Your request was successfully resent to the Head of Department!",
-                alertHodApproved: "✅ The Head of Department has already approved your request.",
                 alertReq: "✅ Your request is already recorded.",
                 alertSent: "✅ Your request was sent successfully.",
             },
@@ -1790,11 +1777,6 @@
                 noteModalSub: "الملاحظة المسجلة من قبل هذا القسم:",
                 lockHint: "يجب موافقة جميع الأقسام الأخرى أولاً",
                 reRequest: "🔄 إعـادة الطلب",
-                reRequestHod: "إعادة إرسال الطلب لرئيس القسم",
-                confirmReRequestHod: "هل أنت متأكد من إعادة إرسال طلب براءة الذمة لرئيس القسم؟",
-                titleReRequestHod: "إعادة إرسال الطلب لرئيس القسم",
-                alertReRequestHodSuccess: "✅ تم إعادة إرسال طلبك بنجاح لرئيس القسم!",
-                alertHodApproved: "✅ وافق رئيس القسم على طلبك مسبقاً.",
                 alertReq: "✅ تم تسجيل طلبك مسبقاً.",
                 alertSent: "✅ تم إرسال طلبك بنجاح.",
             }
@@ -2011,35 +1993,6 @@
             if (!grid) return;
             grid.innerHTML = '';
 
-            // 👑 Head of Department (HOD) Status Card
-            const hodCardId = "hod";
-            const hodApproved = studentData ? studentData.hod_approved === true : false;
-            const hodNote = studentData ? studentData.note_hod : null;
-            const hodStatus = hodApproved ? "Approved" : (hodNote && hodNote.trim() !== "" ? "HasNote" : (studentData && studentData.status_hod ? studentData.status_hod : "Pending"));
-            const hodTitle = currentLang === 'en' ? 'Head of Department' : (currentLang === 'ar' ? 'رئيس القسم' : 'سەرۆکێ پشکێ');
-
-            const hodCardDiv = document.createElement('div');
-            hodCardDiv.className = 'status-card card-hod';
-            hodCardDiv.onclick = () => {
-                if (hodStatus === "Approved") {
-                    customAlert(t('alertHodApproved') || "✅ سەرۆکێ پشکێ داخوازیا تە پەسەند کرییە.");
-                } else if (hodNote && hodNote.trim() !== "") {
-                    window.showRedNoteModal(hodTitle, hodNote.trim(), "hod");
-                } else {
-                    window.reRequestHod();
-                }
-            };
-
-            hodCardDiv.innerHTML = `
-                <span class="card-icon">👑</span>
-                <h3>${hodTitle}</h3>
-                <div class="badge" id="status-hod">👆 <span>${t('clickReq')}</span></div>
-                <div class="note-box" id="note-hod" style="display:none;"></div>
-            `;
-
-            grid.appendChild(hodCardDiv);
-            window.updateCardStatus("status-hod", hodStatus, hodNote, "note-hod");
-
             const defaultEnNames = {
                 registration: "College Registration",
                 library: "College Library",
@@ -2199,33 +2152,7 @@
             });
         };
 
-        window.reRequestHod = async function() {
-            if (!studentId) return;
-            const confirmed = await customConfirm(
-                t('confirmReRequestHod') || "ئایا دڵنیایی دێ داخوازییا خۆ دووبارە بۆ سەرۆکێ پشکێ فرێکەیەوە بۆ پەسەندکرن و واژۆکرنێ؟",
-                t('titleReRequestHod') || "ناردنا دووبارە بۆ سەرۆکێ پشکێ"
-            );
-            if (!confirmed) return;
-
-            const now = new Date();
-            const updates = {};
-            updates[`Clearance_Requests/${studentId}/hod_approved`] = false;
-            updates[`Clearance_Requests/${studentId}/status_hod`] = "Pending";
-            updates[`Clearance_Requests/${studentId}/note_hod`] = "";
-            updates[`Clearance_Requests/${studentId}/date_requested_hod`] = now.toISOString();
-
-            update(ref(db), updates).then(() => {
-                customAlert(t('alertReRequestHodSuccess') || "✅ داخوازییا تە ب سەرکەفتیانە بۆ سەرۆکێ پشکێ هاتە دووبارەکرن و فرێکرن!");
-            }).catch(err => {
-                customAlert("❌ " + err.message);
-            });
-        };
-
         window.sendClearanceFirebaseRequest = function (deptId) {
-            if (deptId === "hod") {
-                window.reRequestHod();
-                return;
-            }
             const thisCard = window.globalClearanceCards && window.globalClearanceCards[deptId];
 
             const _chkFinalIds = ['assistant_dean', 'assistantdean', 'vice_dean', 'dean_assistant', 'supervisor', 'harikar', 'ragiri', 'muawin'];
@@ -2270,22 +2197,6 @@
         };
 
         window.requestClearance = function (deptId) {
-            if (deptId === "hod") {
-                const hodApproved = latestData && latestData.hod_approved === true;
-                const hodNote = latestData ? latestData.note_hod : null;
-                if (hodApproved) {
-                    customAlert(t('alertHodApproved') || "✅ سەرۆکێ پشکێ داخوازیا تە پەسەند کرییە.");
-                    return;
-                }
-                if (hodNote && hodNote.trim() !== "") {
-                    const hodTitle = currentLang === 'en' ? 'Head of Department' : (currentLang === 'ar' ? 'رئيس القسم' : 'سەرۆکێ پشکێ');
-                    window.showRedNoteModal(hodTitle, hodNote.trim(), "hod");
-                    return;
-                }
-                window.reRequestHod();
-                return;
-            }
-
             if (latestData && latestData['status_' + deptId] === 'Approved') {
                 customAlert(window.t('alertReq'));
                 return;
