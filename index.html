@@ -2230,8 +2230,8 @@
             const institution = devData.institution || "University of Duhok";
             const department = devData.department || "Statistics Department";
             const avatarUrl = devData.avatarUrl || "";
-            const whatsapp = devData.whatsapp || "https://wa.me/9647501065299";
-            const email = devData.email || "mailto:dev@uod.ac";
+            const whatsapp = devData.whatsapp || "9647501065299";
+            const email = devData.email || "dev@uod.ac";
             const telegram = devData.telegram || "https://t.me/Muhamadsalm";
             const version = devData.version || "v2.0 — 2026";
 
@@ -2245,21 +2245,27 @@
 
             // Update Avatar
             const avatarContainer = document.getElementById("dev-avatar-container");
+            const defaultSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
             if (avatarUrl && avatarUrl.trim() !== "") {
-                avatarContainer.innerHTML = `<img src="${avatarUrl.trim()}" alt="Developer Avatar" onerror="this.src=''; this.innerHTML='👨‍💻';">`;
+                const cleanUrl = avatarUrl.trim();
+                avatarContainer.innerHTML = `<img src="${cleanUrl}" alt="Developer Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.onerror=null; this.parentElement.innerHTML=\`${defaultSvg}\`;">`;
             } else {
-                avatarContainer.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+                avatarContainer.innerHTML = defaultSvg;
             }
 
             // Update Links
             const waBtn = document.getElementById("dev-whatsapp-btn");
             if (waBtn) {
-                waBtn.onclick = () => {
-                    let link = whatsapp.trim();
+                waBtn.onclick = (e) => {
+                    if (e) e.stopPropagation();
+                    let link = (whatsapp || "").trim();
+                    if (!link) link = "9647501065299";
                     if (/^\d+$/.test(link)) {
                         link = "https://wa.me/" + link;
                     } else if (link.startsWith("+") || link.startsWith("00")) {
                         link = "https://wa.me/" + link.replace(/\+/g, '').replace(/^00/, '');
+                    } else if (!link.startsWith("http://") && !link.startsWith("https://")) {
+                        link = "https://wa.me/" + link;
                     }
                     window.open(link, '_blank');
                 };
@@ -2267,13 +2273,15 @@
 
             const tgBtn = document.getElementById("dev-telegram-btn");
             if (tgBtn) {
-                tgBtn.onclick = () => {
-                    let link = telegram.trim();
+                tgBtn.onclick = (e) => {
+                    if (e) e.stopPropagation();
+                    let link = (telegram || "").trim();
+                    if (!link) link = "https://t.me/Muhamadsalm";
                     if (!link.startsWith("http://") && !link.startsWith("https://")) {
                         if (link.startsWith("t.me/")) {
                             link = "https://" + link;
                         } else {
-                            link = "https://t.me/" + link.replace(/@/g, '');
+                            link = "https://t.me/" + link.replace(/^@/, '');
                         }
                     }
                     window.open(link, '_blank');
@@ -2282,8 +2290,10 @@
 
             const mailBtn = document.getElementById("dev-email-btn");
             if (mailBtn) {
-                mailBtn.onclick = () => {
-                    let link = email.trim();
+                mailBtn.onclick = (e) => {
+                    if (e) e.stopPropagation();
+                    let link = (email || "").trim();
+                    if (!link) link = "dev@uod.ac";
                     if (!link.startsWith("mailto:") && link.includes("@")) {
                         link = "mailto:" + link;
                     }

@@ -1316,7 +1316,8 @@
 
                 <!-- Separator tabs for Statistics and Accounting -->
                 <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
-                    <button id="tab-ad-accounting" class="btn-action btn-search-style" onclick="switchAssistantDeanTab('Accounting')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📊 پشکا ژمێریاری (Accounting)</button>
+                    <button id="tab-ad-all" class="btn-action btn-search-style" onclick="switchAssistantDeanTab('All')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">🌐 هەمی قوتابی (All)</button>
+                    <button id="tab-ad-accounting" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Accounting')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📊 پشکا ژمێریاری (Accounting)</button>
                     <button id="tab-ad-statistics" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Statistics')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📈 پشکا ئامار و زانیاری (Statistics)</button>
                     <button id="tab-ad-finance" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Finance')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">💰 پشکا دارای بانک (Finance)</button>
                     <button id="tab-ad-economics" class="btn-action btn-back-style" onclick="switchAssistantDeanTab('Economics')" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 12px;">📉 پشکا ئابوری (Economics)</button>
@@ -2075,7 +2076,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, get, child, update, remove, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         let firebaseConfig = window.firebaseConfig;
         if (window.firebaseConfigPromise) {
@@ -2089,6 +2090,16 @@
         const app = initializeApp(firebaseConfig || window.firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
+
+        async function ensureAuthenticated() {
+            if (!auth.currentUser) {
+                try {
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.warn("Anonymous authentication failed:", e);
+                }
+            }
+        }
 
         // 🔐 Security & Admin mapping functions (resolveAdminEmail, escapeHTML, escapeJsAttr, escapeCSV) are loaded from ./assets/js/portal-sec.js
         let currentSearchId = "";
@@ -2217,6 +2228,7 @@
 
             if (authSuccess) {
                 // ✅ پاسوۆرد دروست بوو (Firebase خۆیا پشکاندی) → داخل بوون
+                await ensureAuthenticated();
                 clearLoginAttemptState(pendingDept);
                 confirmBtn.disabled = false;
                 document.getElementById("dept-login-modal").style.display = "none";
@@ -2785,23 +2797,7 @@
 
                 // If is Assistant Dean, check if student belongs to active tab
                 if (isAssistantDean && adRows) {
-                    let belongsToAdTab = false;
-                    const dpt = data.department || '';
-                    if (activeAssistantDeanTab === 'Accounting') {
-                        if (dpt === 'Accounting' || dpt === 'ژمێریاری') belongsToAdTab = true;
-                    } else if (activeAssistantDeanTab === 'Statistics') {
-                        if (dpt === 'Statistics' || dpt === 'ئامار' || dpt === 'ئامار و زانیاری') belongsToAdTab = true;
-                    } else if (activeAssistantDeanTab === 'Finance') {
-                        if (dpt === 'Finance' || dpt === 'دارایێ') belongsToAdTab = true;
-                    } else if (activeAssistantDeanTab === 'Economics') {
-                        if (dpt === 'Economics' || dpt === 'ئابوری' || dpt === 'ئابووری') belongsToAdTab = true;
-                    } else if (activeAssistantDeanTab === 'Administration') {
-                        if (dpt === 'Administration' || dpt === 'ئیدارە' || dpt === 'ئیدارێ') belongsToAdTab = true;
-                    } else if (activeAssistantDeanTab === 'Marketing') {
-                        if (dpt === 'Marketing' || dpt === 'بازارگەری') belongsToAdTab = true;
-                    }
-
-                    if (belongsToAdTab) {
+                    if (checkStudentBelongsToAdTab(data.department, activeAssistantDeanTab)) {
                         let approvalCount = 0;
                         if (globalClearanceCards) {
                             Object.values(globalClearanceCards).forEach(card => {
@@ -2889,8 +2885,9 @@
                     return `<span class="office-badge badge-not-requested" style="font-size:0.75rem; padding: 3px 8px;">⚪ نەکریە</span>`;
                 };
 
-                const getHodBadgeHTML = (approved) => {
+                const getHodBadgeHTML = (approved, note) => {
                     if (approved === true) return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
+                    if (note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
                     return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
                 };
 
@@ -2906,7 +2903,7 @@
                     });
                     
                     rowHTML += `
-                        <td>${getHodBadgeHTML(data.hod_approved)}</td>
+                        <td>${getHodBadgeHTML(data.hod_approved, data.note_hod)}</td>
                         <td style="display:flex; gap:4px; align-items:center;">
                             <button class="table-btn-view" onclick="loadStudentCardFromDashboard('${escapeJsAttr(studentId)}')">👁️ پشکنین</button>
                             <button class="table-btn-delete" onclick="confirmDeleteStudent('${escapeJsAttr(studentId)}', '${escapeJsAttr(data.name)}')">🗑️</button>
@@ -2929,8 +2926,9 @@
                     return `<span class="office-badge badge-not-requested" style="font-size:0.75rem; padding: 3px 8px;">⚪ نەکریە</span>`;
                 };
 
-                const getHodBadgeHTML = (approved) => {
+                const getHodBadgeHTML = (approved, note) => {
                     if (approved === true) return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
+                    if (note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
                     return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
                 };
 
@@ -2948,7 +2946,7 @@
                         }
                     });
                     
-                    rowHTML += `<td>${getHodBadgeHTML(data.hod_approved)}</td>`;
+                    rowHTML += `<td>${getHodBadgeHTML(data.hod_approved, data.note_hod)}</td>`;
                     
                     const unapproved = checkStudentUnapprovedOffices(data);
                     let stuckHTML = '';
@@ -3135,6 +3133,7 @@
 
         // ─── Bulk Reset Functions for HOD and Assistant Dean ───────────────
         window.deleteAllHodStudents = async function() {
+            await ensureAuthenticated();
             if (!latestSnapshot || !latestSnapshot.exists()) {
                 return customAlert("چو قوتابی نینن بۆ ژێبرنێ!");
             }
@@ -3189,6 +3188,7 @@
         };
 
         window.deleteAllAssistantDeanStudents = async function() {
+            await ensureAuthenticated();
             if (!latestSnapshot || !latestSnapshot.exists()) {
                 return customAlert("چو قوتابی نینن بۆ ژێبرنێ!");
             }
@@ -3210,12 +3210,7 @@
                 const studentId = childSnapshot.key;
                 const data = childSnapshot.val();
 
-                let belongsToTab = false;
-                if (activeAssistantDeanTab === 'Accounting') {
-                    if (data.department === 'Accounting' || data.department === 'ژمێریاری') belongsToTab = true;
-                } else if (activeAssistantDeanTab === 'Statistics') {
-                    if (data.department === 'Statistics' || data.department === 'ئامار' || data.department === 'ئامار و زانیاری') belongsToTab = true;
-                }
+                let belongsToTab = checkStudentBelongsToAdTab(data.department, activeAssistantDeanTab);
 
                 if (belongsToTab) {
                     updates[`Clearance_Requests/${studentId}/status_${finalId}`] = null;
@@ -3489,7 +3484,8 @@
             reader.readAsDataURL(file);
         };
 
-        window.saveSuperDeveloperSettings = function() {
+        window.saveSuperDeveloperSettings = async function() {
+            await ensureAuthenticated();
             const name = document.getElementById("dev-setting-name").value.trim();
             const role = document.getElementById("dev-setting-role").value.trim();
             const programmedBy = document.getElementById("dev-setting-programmed").value.trim();
@@ -3767,7 +3763,8 @@
             });
         }
 
-        window.saveSuperPasswords = function() {
+        window.saveSuperPasswords = async function() {
+            await ensureAuthenticated();
             const updatedPasswords = {
                 hod_accounting: document.getElementById("pass-hod-acc").value.trim(),
                 hod_statistics: document.getElementById("pass-hod-stat").value.trim(),
@@ -3833,7 +3830,8 @@
             document.getElementById("text-login-sub").value = data.loginSub || "";
         }
 
-        window.saveSuperTexts = function() {
+        window.saveSuperTexts = async function() {
+            await ensureAuthenticated();
             saveInputsToLocalTexts(editorLang);
 
             set(ref(db, 'System_Settings/Texts'), systemTexts)
@@ -3845,7 +3843,8 @@
                 });
         };
 
-        function processModalSubmit(isApproved) {
+        async function processModalSubmit(isApproved) {
+            await ensureAuthenticated();
             const enteredPass = document.getElementById("modal-password").value;
             const rawNote = document.getElementById("modal-note").value.trim();
             
@@ -3863,12 +3862,17 @@
 
             // ئەگەر HOD بوو
             if (modalStatusField === "__hod__") {
+                const hodStatus = isApproved ? "Approved" : (noteToSave ? "HasNote" : "Pending");
                 update(ref(db), { 
-                    [`Clearance_Requests/${currentSearchId}/hod_approved`]: true,
-                    [`Clearance_Requests/${currentSearchId}/status_hod`]: "Approved",
+                    [`Clearance_Requests/${currentSearchId}/hod_approved`]: isApproved ? true : false,
+                    [`Clearance_Requests/${currentSearchId}/status_hod`]: hodStatus,
                     [`Clearance_Requests/${currentSearchId}/note_hod`]: noteToSave
                 }).then(() => {
-                    customAlert(`✅ سەرۆکا پشکێ داخوازیا قوتابی پەسەند کرد!`);
+                    if (isApproved) {
+                        customAlert(`✅ سەرۆکا پشکێ داخوازیا قوتابی پەسەند کرد!`);
+                    } else {
+                        customAlert(`⚠️ تێبینیا سەرۆکا پشکێ ب سەرکەفتیانە هاتە تۆمارکرن!`);
+                    }
                     closeApprovalModal();
                 }).catch(() => {
                     customAlert("❌ کێشەیەک د ناردنێ دا هەیە!");
@@ -3956,7 +3960,8 @@
             document.getElementById("btn-card-cancel").style.display = "none";
         };
 
-        window.saveClearanceCard = function() {
+        window.saveClearanceCard = async function() {
+            await ensureAuthenticated();
             const cardId = document.getElementById("card-input-id").value.trim().toLowerCase();
             const icon = document.getElementById("card-input-icon").value.trim();
             const nameKu = document.getElementById("card-input-ku").value.trim();
@@ -4012,6 +4017,7 @@
         };
 
         window.deleteClearanceCard = async function(cardId) {
+            await ensureAuthenticated();
             if (cardId === "registration" || cardId === "library" || cardId === "dormitory" || cardId === "finance") {
                 if (!await customConfirm("⚠️ ئەڤە خانەکا سەرەکی یا سیستمێ یە. ئایا تو دڵنیایی دێ ژێ بەری؟")) {
                     return;
@@ -4300,9 +4306,10 @@
             });
         }
 
-        let activeAssistantDeanTab = 'Accounting';
+        let activeAssistantDeanTab = 'All';
 
         const _adTabIds = {
+            'All':            'tab-ad-all',
             'Accounting':     'tab-ad-accounting',
             'Statistics':     'tab-ad-statistics',
             'Finance':        'tab-ad-finance',
@@ -4310,6 +4317,26 @@
             'Administration': 'tab-ad-administration',
             'Marketing':      'tab-ad-marketing'
         };
+
+        function checkStudentBelongsToAdTab(studentDept, targetTab) {
+            if (!targetTab || targetTab === 'All') return true;
+            if (!studentDept) return false;
+            const dpt = studentDept.toLowerCase().trim();
+            if (targetTab === 'Accounting') {
+                return dpt.includes('account') || dpt.includes('ژمێریاری') || dpt.includes('ژمێریاری');
+            } else if (targetTab === 'Statistics') {
+                return dpt.includes('statistic') || dpt.includes('ئامار');
+            } else if (targetTab === 'Finance') {
+                return dpt.includes('finance') || dpt.includes('دارای') || dpt.includes('بانک');
+            } else if (targetTab === 'Economics') {
+                return dpt.includes('economic') || dpt.includes('ئابووری') || dpt.includes('ئابوری');
+            } else if (targetTab === 'Administration') {
+                return dpt.includes('administr') || dpt.includes('ئیدار') || dpt.includes('کارگێڕی') || dpt.includes('کارگێری');
+            } else if (targetTab === 'Marketing') {
+                return dpt.includes('market') || dpt.includes('بازارگەری') || dpt.includes('بازاڕگەڕی');
+            }
+            return false;
+        }
 
         window.switchAssistantDeanTab = function(deptTab) {
             activeAssistantDeanTab = deptTab;
@@ -4325,6 +4352,7 @@
         };
 
         window.signAssistantDeanDirect = async function(studentId) {
+            await ensureAuthenticated();
             currentSearchId = studentId;
             const finalId = getFinalCardId();
             if (await customConfirm("ئایا تو دڵنیایی دێ واژۆیا کۆتایی یا هاریکارێ ڕاگری بۆ ڤی قوتابی کەی؟")) {
@@ -4363,6 +4391,11 @@
                     }
                 }
             });
+            if (studentData.hod_approved !== true) {
+                if (!unapproved.includes('hod')) {
+                    unapproved.push('hod');
+                }
+            }
             return unapproved;
         }
 
@@ -4426,12 +4459,7 @@
                         const studentId = childSnapshot.key;
                         const data = childSnapshot.val();
                         
-                        let belongsToTab = false;
-                        if (activeAssistantDeanTab === 'Accounting') {
-                            if (data.department === 'Accounting' || data.department === 'ژمێریاری') belongsToTab = true;
-                        } else if (activeAssistantDeanTab === 'Statistics') {
-                            if (data.department === 'Statistics' || data.department === 'ئامار' || data.department === 'ئامار و زانیاری') belongsToTab = true;
-                        }
+                        let belongsToTab = checkStudentBelongsToAdTab(data.department, activeAssistantDeanTab);
                         if (!belongsToTab) return;
 
                         let row = [
@@ -4691,8 +4719,10 @@
             pendingDeleteId = "";
         });
 
-        document.getElementById("btn-delete-confirm").addEventListener("click", () => {
+        document.getElementById("btn-delete-confirm").addEventListener("click", async () => {
             if (!pendingDeleteId) return;
+
+            await ensureAuthenticated();
 
             const isHod = selectedAdminDept && selectedAdminDept.startsWith('hod_');
             const isAssistantDean = selectedAdminDept === 'assistant_dean';
@@ -4710,7 +4740,7 @@
                         pendingDeleteId = "";
                         customAlert("✅ هەژمارا قوتابی ب تەمامی هاتە ژێبرن!");
                     })
-                    .catch(() => customAlert("❌ کێشەیەک د ژێبرنا داتایێ دا هەیە!"));
+                    .catch((err) => customAlert("❌ خەلەتیەک چێبوو د ژێبرنا قوتابی دا:\n" + (err ? err.message : "")));
             } else if (isHod) {
                 const updates = {};
                 updates[`Clearance_Requests/${pendingDeleteId}/hod_approved`] = null;
@@ -4723,7 +4753,7 @@
                         pendingDeleteId = "";
                         customAlert("✅ واژۆیا سەرۆک پشکێ هاتە هەڵوەشاندن!");
                     })
-                    .catch(() => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە!"));
+                    .catch((err) => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە:\n" + (err ? err.message : "")));
             } else if (isAssistantDean) {
                 const finalId = getFinalCardId();
                 const updates = {};
@@ -4736,7 +4766,7 @@
                         pendingDeleteId = "";
                         customAlert("✅ واژۆیا معاونێ عمیدی هاتە هەڵوەشاندن!");
                     })
-                    .catch(() => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە!"));
+                    .catch((err) => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە:\n" + (err ? err.message : "")));
             } else if (selectedAdminDept) {
                 const updates = {};
                 updates[`Clearance_Requests/${pendingDeleteId}/status_${selectedAdminDept}`] = null;
@@ -4749,7 +4779,7 @@
                         pendingDeleteId = "";
                         customAlert("✅ داخوازییا قوتابی هاتە ڕەتکرن! قوتابی نوکە دشێت دووبارە داخوازیێ بنێریتەوە.");
                     })
-                    .catch(() => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە!"));
+                    .catch((err) => customAlert("❌ کێشەیەک د دەستکاریکرنا داتایێ دا هەیە:\n" + (err ? err.message : "")));
             }
         });
 

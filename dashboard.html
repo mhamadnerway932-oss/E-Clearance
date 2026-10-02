@@ -455,6 +455,20 @@
             background: #34d399;
         }
 
+        #hod-pending-banner.has-note-banner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(245, 158, 11, 0.08) 100%);
+            border-color: rgba(239, 68, 68, 0.4);
+            box-shadow: 0 16px 36px rgba(239, 68, 68, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        #hod-pending-banner.has-note-banner::before {
+            background: linear-gradient(90deg, transparent, #ef4444, #f59e0b, transparent);
+        }
+
+        #hod-pending-banner.has-note-banner .hod-banner-title {
+            color: #f87171;
+        }
+
         /* ── Student Information Card (Compact & Refined) ── */
         .student-info-card {
             background: linear-gradient(135deg, rgba(12, 18, 36, 0.6) 0%, rgba(6, 10, 22, 0.7) 100%);
@@ -1673,6 +1687,8 @@
                 hodBannerSubPending: "داخوازیا تە هاتیە تۆمارکرن ل دەڤ سەرۆکا پشکێ ",
                 hodBannerTitleApproved: "✅ پەسەندکر!  ",
                 hodBannerSubApproved: "سەرۆکێ پشکێ داخوازیا تە پەسەند کر..",
+                hodBannerTitleNote: "⚠️ تێبینیا سەرۆکێ پشکێ یا هەی",
+                hodBannerSubNote: "تێبینییا سەرۆکێ پشکێ: ",
                 deptLabel: "پشک",
                 stageLabel: "قۆناغ",
                 btnReq: "داخارا تە سەر سیستەمی یە",
@@ -1705,6 +1721,8 @@
                 hodBannerSubPending: "Your request is registered. The HOD will approve it soon and the dashboard will unlock.",
                 hodBannerTitleApproved: "✅ Approved! Your dashboard is active",
                 hodBannerSubApproved: "The HOD has approved your request. You can now start your clearance requests.",
+                hodBannerTitleNote: "⚠️ Note from Head of Department",
+                hodBannerSubNote: "HOD Note: ",
                 deptLabel: "Department",
                 stageLabel: "Stage",
                 btnReq: "Your request is in the system",
@@ -1737,6 +1755,8 @@
                 hodBannerSubPending: "تم تسجيل طلبك. سيوافق رئيس القسم عليه قريباً وستفتح لوحة التحكم.",
                 hodBannerTitleApproved: "✅ تمت الموافقة! لوحة التحكم الخاصة بك نشطة",
                 hodBannerSubApproved: "وافق رئيس القسم على طلبك. يمكنك الآن بدء طلبات براءة الذمة.",
+                hodBannerTitleNote: "⚠️ يوجد ملاحظة من رئيس القسم",
+                hodBannerSubNote: "ملاحظة رئيس القسم: ",
                 deptLabel: "القسم",
                 stageLabel: "المرحلة",
                 btnReq: "طلبك موجود في النظام",
@@ -1800,9 +1820,17 @@
 
             const banner = document.getElementById("hod-pending-banner");
             if (banner.style.display === "flex") {
-                const isApproved = banner.classList.contains('approved-banner');
-                document.getElementById("hod-banner-title").innerText = isApproved ? t('hodBannerTitleApproved') : t('hodBannerTitlePending');
-                document.getElementById("hod-banner-sub").innerText = isApproved ? t('hodBannerSubApproved') : t('hodBannerSubPending');
+                if (banner.classList.contains('has-note-banner')) {
+                    document.getElementById("hod-banner-icon").innerText = "⚠️";
+                    document.getElementById("hod-banner-title").innerText = t('hodBannerTitleNote');
+                    if (latestData && latestData.note_hod) {
+                        document.getElementById("hod-banner-sub").innerText = t('hodBannerSubNote') + latestData.note_hod;
+                    }
+                } else {
+                    const isApproved = banner.classList.contains('approved-banner');
+                    document.getElementById("hod-banner-title").innerText = isApproved ? t('hodBannerTitleApproved') : t('hodBannerTitlePending');
+                    document.getElementById("hod-banner-sub").innerText = isApproved ? t('hodBannerSubApproved') : t('hodBannerSubPending');
+                }
             }
 
             if (window.globalClearanceCards && Object.keys(window.globalClearanceCards).length > 0) {
@@ -2223,10 +2251,19 @@
             const isNewRegistration = localStorage.getItem("is_new_registration") === "true";
             const banner = document.getElementById("hod-pending-banner");
 
-            if (isNewRegistration) {
+            const hasHodNote = data.note_hod && data.note_hod.trim() !== "" && data.hod_approved !== true;
+
+            if (hasHodNote) {
+                banner.style.display = "flex";
+                banner.className = "has-note-banner";
+                document.getElementById("hod-banner-icon").innerText = "⚠️";
+                document.getElementById("hod-banner-title").innerText = t('hodBannerTitleNote');
+                document.getElementById("hod-banner-sub").innerText = t('hodBannerSubNote') + data.note_hod;
+                document.getElementById("hod-banner-dots").style.display = "none";
+            } else if (isNewRegistration) {
                 if (data.hod_approved === true) {
                     banner.style.display = "flex";
-                    banner.classList.add("approved-banner");
+                    banner.className = "approved-banner";
                     document.getElementById("hod-banner-icon").innerText = "✅";
                     document.getElementById("hod-banner-title").innerText = t('hodBannerTitleApproved');
                     document.getElementById("hod-banner-sub").innerText = t('hodBannerSubApproved');
@@ -2235,7 +2272,7 @@
                     setTimeout(() => { banner.style.display = "none"; }, 4000);
                 } else {
                     banner.style.display = "flex";
-                    banner.classList.remove("approved-banner");
+                    banner.className = "";
                     document.getElementById("hod-banner-icon").innerText = "⏳";
                     document.getElementById("hod-banner-title").innerText = t('hodBannerTitlePending');
                     document.getElementById("hod-banner-sub").innerText = t('hodBannerSubPending');
