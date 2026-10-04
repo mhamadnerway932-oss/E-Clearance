@@ -2933,8 +2933,8 @@
                 adStudentsArray.sort((a, b) => b.approvalCount - a.approvalCount);
 
                 const getBadgeHTML = (status, note) => {
-                    if (status === "Approved") return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ پەسەندکران</span>`;
-                    if (status !== "Approved" && note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
+                    if (status === "Approved") return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ پەسەندکر </span>`;
+                    if (status !== "Approved" && note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی </span>`;
                     if (status === "Pending") return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ل هیڤیێ</span>`;
                     return `<span class="office-badge badge-not-requested" style="font-size:0.75rem; padding: 3px 8px;">⚪ نەکریە</span>`;
                 };
@@ -4539,7 +4539,7 @@
                 Object.values(globalClearanceCards).forEach(card => {
                     if (card.id !== _finalIdExcel) {
                         const status = data['status_' + card.id];
-                        const statusStr = status === "Approved" ? "پەسەندکران" : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
+                        const statusStr = status === "Approved" ? "پەسەندکر " : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
                         row.push(`"${statusStr}"`);
                     }
                 });
@@ -4919,7 +4919,7 @@
 
                 Object.values(globalClearanceCards).forEach(card => {
                     const status = data['status_' + card.id];
-                    const statusStr = status === "Approved" ? "پەسەندکران" : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
+                    const statusStr = status === "Approved" ? "پەسەندکر " : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
                     row.push(`"${statusStr}"`);
                 });
 
