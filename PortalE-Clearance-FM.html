@@ -2516,11 +2516,11 @@
             if (status === "Approved") {
                 card.classList.add("approved-border");
                 badge.classList.add("badge-approved");
-                badge.innerText = "✅ پەسەندکران";
+                badge.innerText = "✅ پەسەندکر ";
             } else if (hasUnapprovedNote) {
                 card.classList.add("has-note-border");
                 badge.classList.add("badge-has-note");
-                badge.innerText = "⚠️ تێبینی هەیە";
+                badge.innerText = "⚠️ تێبینی ";
             } else if (status === "Pending") {
                 card.classList.add("pending-border");
                 badge.classList.add("badge-pending");
@@ -2882,8 +2882,8 @@
                 hodStudentsArray.sort((a, b) => b.approvalCount - a.approvalCount);
 
                 const getBadgeHTML = (status, note) => {
-                    if (status === "Approved") return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ پەسەندکران</span>`;
-                    if (status !== "Approved" && note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
+                    if (status === "Approved") return `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ پەسەندکر </span>`;
+                    if (status !== "Approved" && note && note.trim() !== "") return `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی </span>`;
                     if (status === "Pending") return `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ل هیڤیێ</span>`;
                     return `<span class="office-badge badge-not-requested" style="font-size:0.75rem; padding: 3px 8px;">⚪ نەکریە</span>`;
                 };
@@ -2894,7 +2894,7 @@
                     if (approved === true) {
                         html += `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
                     } else if (hasNote) {
-                        html += `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
+                        html += `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی </span>`;
                     } else {
                         html += `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
                     }
@@ -2945,7 +2945,7 @@
                     if (approved === true) {
                         html += `<span class="office-badge badge-approved" style="font-size:0.75rem; padding: 3px 8px;">✅ واژۆکریە</span>`;
                     } else if (hasNote) {
-                        html += `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی هەیە</span>`;
+                        html += `<span class="office-badge badge-has-note" style="font-size:0.75rem; padding: 3px 8px;">⚠️ تێبینی </span>`;
                     } else {
                         html += `<span class="office-badge badge-pending" style="font-size:0.75rem; padding: 3px 8px;">⏳ ماینە</span>`;
                     }
@@ -3047,25 +3047,19 @@
 
             const quickNotesMap = {
                 finance: [
-                    "💰 پارە ل سەر ناڤێ تە هەنە، تکایە سەرەدانا بەشێ دارایی بکە.",
-                    "⚠️ هەتا پارێ قستی نەدەی، گەردەن ئازاکرن نەهێتە کرن.",
-                    "📄 ژمێریاری: پاکتاوکرنا دارایی پێویستە."
+                    "💰 پارە ل سەر ناڤێ تە هەنە، هیفیە سەرەدانا بەشێ دارایی بکە.",
                 ],
                 library: [
-                    "📚 تکایە سەرەدانا پەرتووکخانێ بکە، پەڕتووک ل سەر ناڤێ تە هەیە.",
-                    "📖 پەڕتووکا وەرگرتی نەزڤڕاندییە بۆ پەرتووکخانێ."
+                    "📚 هیفیە سەرەدانا پەرتووکخانێ بکە، پەڕتووک ل سەر ناڤێ تە هەیە.",
                 ],
                 dormitory: [
-                    "🏢 تکایە سەرەدانا بەشێن ناڤخۆیی بکە، پاکتاوکرنا ژوورێ پێویستە.",
                     "🔑 کلیل یان کەلوپەلێن بەشێن ناڤخۆیی نەزڤڕاندینە."
                 ],
                 registration: [
-                    "📋 تکایە سەرەدانا تۆمارێ بکە بۆ تەمامکرنا بەڵگەنامەیان.",
-                    "📂 کێشە د دۆسیەیا تە دا هەیە، سەرەدانا تۆمارا کۆلیژێ بکە."
-                ],
+                    "📋 هیفیە سەرەدانا تۆمارا کولیژێ بکە.",
+                ], 
                 __hod__: [
-                    "👑 تکایە سەرەدانا سەرۆکێ پشکێ بکە.",
-                    "🎓 بەڵگەنامەیێن قۆناغێن بورین ژ کەمی هەنە."
+                    "👑 هیفیە سەرەدانا پشکێ بکە.",
                 ]
             };
 
@@ -3084,8 +3078,7 @@
                 deptNotes = quickNotesMap.__hod__;
             } else {
                 deptNotes = [
-                    "⚠️ تکایە سەرەدانا ڤی بەشی بکە بۆ یەکلاییکردنا مامەڵەیێ.",
-                    "📝 کێشەک د کارێن تە دا هەیە، سەرەدانا بەشی بکە."
+                    "📝 کێشەک د کارێن تە دا هەیە، سەرەدانا ئەفی بەشی بکە."
                 ];
             }
 
@@ -4425,7 +4418,7 @@
             await ensureAuthenticated();
             currentSearchId = studentId;
             const finalId = getFinalCardId();
-            if (await customConfirm("ئایا تو دڵنیایی دێ واژۆیا کۆتایی یا هاریکارێ ڕاگری بۆ ڤی قوتابی کەی؟")) {
+            if (await customConfirm("  واژۆیا کۆتایی  ")) {
                 const updates = {};
                 updates[`Clearance_Requests/${studentId}/status_${finalId}`] = "Approved";
                 updates[`Clearance_Requests/${studentId}/note_${finalId}`] = "";
@@ -4481,6 +4474,12 @@
             return cardId;
         }
 
+        // Helper function for CSV escaping
+        function csvSafe(str) {
+            if (str === null || str === undefined) return "";
+            return String(str).replace(/"/g, '""');
+        }
+
         function renderAdTableHeaders(cards) {
             const headerRow = document.getElementById("ad-table-header-row");
             if (!headerRow) return;
@@ -4502,84 +4501,92 @@
             `;
         }
 
-        // Click handler for Excel Export on Assistant Dean dashboard
-        document.addEventListener('DOMContentLoaded', () => {
-            const exportBtn = document.getElementById("btn-export-excel-ad");
-            if (exportBtn) {
-                exportBtn.addEventListener("click", () => {
-                    if (!latestSnapshot || !latestSnapshot.exists()) {
-                        customAlert("چو داتا نینن بۆ دەرئێخستنێ!");
-                        return;
-                    }
-
-                    const _finalIdExcel = getFinalCardId();
-                    let headers = ["ID", "ناڤێ قوتابی", "پشک", "قۆناغ"];
-                    Object.values(globalClearanceCards).forEach(card => {
-                        if (card.id !== _finalIdExcel) {
-                            headers.push(card.name_ku || card.id);
-                        }
-                    });
-                    headers.push("واژۆی HOD");
-                    headers.push("شوێنا ڕاگرتنێ");
-                    headers.push("واژۆیا معاونێ عمیدی");
-
-                    let csvContent = "\uFEFF" + headers.join(",") + "\n";
-
-                    latestSnapshot.forEach((childSnapshot) => {
-                        const studentId = childSnapshot.key;
-                        const data = childSnapshot.val();
-                        
-                        let belongsToTab = checkStudentBelongsToAdTab(data.department, activeAssistantDeanTab);
-                        if (!belongsToTab) return;
-
-                        let row = [
-                            `"${csvSafe(studentId)}"`,
-                            data.name ? `"${csvSafe(data.name)}"` : "",
-                            data.department ? `"${csvSafe(data.department)}"` : "",
-                            `"${csvSafe(data.stage || "١")}"`
-                        ];
-
-                        Object.values(globalClearanceCards).forEach(card => {
-                            if (card.id !== _finalIdExcel) {
-                                const status = data['status_' + card.id];
-                                const statusStr = status === "Approved" ? "پەسەندکران" : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
-                                row.push(statusStr);
-                            }
-                        });
-
-                        const hod = data.hod_approved === true ? "واژۆکریە" : "ماینە";
-                        row.push(hod);
-
-                        const unapproved = checkStudentUnapprovedOffices(data);
-                        let stuckStr = "";
-                        if (unapproved.length === 0) {
-                            stuckStr = "ئامادەیە";
-                        } else {
-                            stuckStr = "ل دەڤ " + unapproved.map(getOfficeKurdishShortName).join(" و ") + " مایە";
-                        }
-                        row.push(`"${stuckStr}"`);
-
-                        const adStatus = data['status_' + _finalIdExcel] === "Approved" ? "واژۆکریە" : "ماینە";
-                        row.push(adStatus);
-
-                        csvContent += row.join(",") + "\n";
-                    });
-
-                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                    const link = document.createElement("a");
-                    const url = URL.createObjectURL(blob);
-                    
-                    link.setAttribute("href", url);
-                    const dateStr = new Date().toISOString().split('T')[0];
-                    link.setAttribute("download", `Assistant_Dean_${activeAssistantDeanTab}_Clearance_${dateStr}.csv`);
-                    link.style.visibility = 'hidden';
-                    
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                });
+        // Export to Excel function for Assistant Dean
+        function exportAssistantDeanExcel() {
+            if (!latestSnapshot || !latestSnapshot.exists()) {
+                customAlert("چو داتا نینن بۆ دەرئێخستنێ!");
+                return;
             }
-        });
+
+            const _finalIdExcel = getFinalCardId();
+            let headers = ["ID", "ناڤێ قوتابی", "پشک", "قۆناغ"];
+            Object.values(globalClearanceCards).forEach(card => {
+                if (card.id !== _finalIdExcel) {
+                    headers.push(card.name_ku || card.id);
+                }
+            });
+            headers.push("واژۆی HOD");
+            headers.push("شوێنا ڕاگرتنێ");
+            headers.push("واژۆیا معاونێ عمیدی");
+
+            let csvContent = "\uFEFF" + headers.join(",") + "\n";
+            let rowCount = 0;
+
+            latestSnapshot.forEach((childSnapshot) => {
+                const studentId = childSnapshot.key;
+                const data = childSnapshot.val();
+                
+                let belongsToTab = checkStudentBelongsToAdTab(data.department, activeAssistantDeanTab);
+                if (!belongsToTab) return;
+
+                let row = [
+                    `"${csvSafe(studentId)}"`,
+                    data.name ? `"${csvSafe(data.name)}"` : "",
+                    data.department ? `"${csvSafe(data.department)}"` : "",
+                    `"${csvSafe(data.stage || "١")}"`
+                ];
+
+                Object.values(globalClearanceCards).forEach(card => {
+                    if (card.id !== _finalIdExcel) {
+                        const status = data['status_' + card.id];
+                        const statusStr = status === "Approved" ? "پەسەندکران" : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
+                        row.push(`"${statusStr}"`);
+                    }
+                });
+
+                const hod = data.hod_approved === true ? "واژۆکریە" : "ماینە";
+                row.push(`"${hod}"`);
+
+                const unapproved = checkStudentUnapprovedOffices(data);
+                let stuckStr = "";
+                if (unapproved.length === 0) {
+                    stuckStr = "ئامادەیە";
+                } else {
+                    stuckStr = "ل دەڤ " + unapproved.map(getOfficeKurdishShortName).join(" و ") + " مایە";
+                }
+                row.push(`"${stuckStr}"`);
+
+                const adStatus = data['status_' + _finalIdExcel] === "Approved" ? "واژۆکریە" : "ماینە";
+                row.push(`"${adStatus}"`);
+
+                csvContent += row.join(",") + "\n";
+                rowCount++;
+            });
+
+            if (rowCount === 0) {
+                customAlert("چو قوتابی نەهاتنە دۆزین بۆ دەرئێخستنێ د ڤێ لیستێ دا!");
+                return;
+            }
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            const dateStr = new Date().toISOString().split('T')[0];
+            link.setAttribute("download", `Assistant_Dean_${activeAssistantDeanTab}_Clearance_${dateStr}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Attach click listener for Assistant Dean Excel button
+        const btnExportAd = document.getElementById("btn-export-excel-ad");
+        if (btnExportAd) {
+            btnExportAd.addEventListener("click", exportAssistantDeanExcel);
+        }
 
         function renderApproveButtons(cards) {
             const container = document.getElementById("dynamic-approve-buttons");
@@ -4619,7 +4626,7 @@
                     }
                 }
                 const finalId = getFinalCardId();
-                if (await customConfirm("ئایا تو دڵنیایی دێ واژۆیا کۆتایی یا هاریکارێ ڕاگری بۆ ڤی قوتابی کەی؟")) {
+                if (await customConfirm("واژۆیا کۆتایی هاریکارێ ڕاگری")) {
                     const updates = {};
                     updates[`Clearance_Requests/${currentSearchId}/status_${finalId}`] = "Approved";
                     updates[`Clearance_Requests/${currentSearchId}/note_${finalId}`] = "";
@@ -4861,7 +4868,8 @@
         });
 
         // 📥 Export to Excel (CSV with BOM for UTF-8)
-        document.getElementById("btn-export-excel").addEventListener("click", () => {
+        // Export to Excel for HOD / Specific Department Dashboard
+        function exportHodExcel() {
             if (!latestSnapshot || !latestSnapshot.exists()) {
                 customAlert("چو داتا نینن بۆ دەرئێخستنێ!");
                 return;
@@ -4875,7 +4883,8 @@
 
             let csvContent = "\uFEFF" + headers.join(",") + "\n";
 
-            const isHod = selectedAdminDept === 'hod_accounting' || selectedAdminDept === 'hod_statistics';
+            const isHod = selectedAdminDept && selectedAdminDept.startsWith('hod_');
+            let rowCount = 0;
 
             latestSnapshot.forEach((childSnapshot) => {
                 const studentId = childSnapshot.key;
@@ -4884,10 +4893,19 @@
                 // If it's a specific HOD, only export their students
                 if (isHod) {
                     let belongsToHodDept = false;
+                    const dptVal = (data.department || '').toLowerCase();
                     if (selectedAdminDept === 'hod_accounting') {
-                        if (data.department === 'Accounting' || data.department === 'ژمێریاری') belongsToHodDept = true;
+                        if (dptVal.includes('account') || dptVal.includes('ژمێریاری')) belongsToHodDept = true;
                     } else if (selectedAdminDept === 'hod_statistics') {
-                        if (data.department === 'Statistics' || data.department === 'ئامار و زانیاری' || data.department === 'ئامار') belongsToHodDept = true;
+                        if (dptVal.includes('statistic') || dptVal.includes('ئامار')) belongsToHodDept = true;
+                    } else if (selectedAdminDept === 'hod_finance') {
+                        if (dptVal.includes('finance') || dptVal.includes('دارای') || dptVal.includes('بانک')) belongsToHodDept = true;
+                    } else if (selectedAdminDept === 'hod_economics') {
+                        if (dptVal.includes('economic') || dptVal.includes('ئابووری') || dptVal.includes('ئابوری')) belongsToHodDept = true;
+                    } else if (selectedAdminDept === 'hod_marketing') {
+                        if (dptVal.includes('market') || dptVal.includes('بازارگەری') || dptVal.includes('بازاڕگەڕی')) belongsToHodDept = true;
+                    } else if (selectedAdminDept === 'hod_administration') {
+                        if (dptVal.includes('administr') || dptVal.includes('ئیدار') || dptVal.includes('کارگێڕی') || dptVal.includes('کارگێری')) belongsToHodDept = true;
                     }
                     if (!belongsToHodDept) return;
                 }
@@ -4902,14 +4920,20 @@
                 Object.values(globalClearanceCards).forEach(card => {
                     const status = data['status_' + card.id];
                     const statusStr = status === "Approved" ? "پەسەندکران" : (status === "Pending" ? "ل هیڤیێ" : "نەکریە");
-                    row.push(statusStr);
+                    row.push(`"${statusStr}"`);
                 });
 
                 const hod = data.hod_approved === true ? "واژۆکریە" : "ماینە";
-                row.push(hod);
+                row.push(`"${hod}"`);
 
                 csvContent += row.join(",") + "\n";
+                rowCount++;
             });
+
+            if (rowCount === 0) {
+                customAlert("چو قوتابی نەهاتنە دۆزین بۆ دەرئێخستنێ د ڤێ لیستێ دا!");
+                return;
+            }
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
@@ -4917,13 +4941,19 @@
             
             link.setAttribute("href", url);
             const dateStr = new Date().toISOString().split('T')[0];
-            link.setAttribute("download", `Students_Clearance_${dateStr}.csv`);
+            const deptBadge = document.getElementById("dashboard-dept-badge") ? document.getElementById("dashboard-dept-badge").innerText : selectedAdminDept;
+            link.setAttribute("download", `HOD_${deptBadge}_Clearance_${dateStr}.csv`);
             link.style.visibility = 'hidden';
             
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        });
+        }
+
+        const hodBtnExport = document.getElementById("btn-export-excel");
+        if (hodBtnExport) {
+            hodBtnExport.addEventListener("click", exportHodExcel);
+        }
 
         // 📬 Listen to Feedbacks node in Realtime Database
         let allFeedbacks = {};
