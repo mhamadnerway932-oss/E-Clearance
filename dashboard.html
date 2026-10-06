@@ -1944,6 +1944,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
         let firebaseConfig = window.firebaseConfig;
         if (window.firebaseConfigPromise) {
@@ -1956,11 +1957,10 @@
         }
         const app = initializeApp(firebaseConfig || window.firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
 
-        const studentId = localStorage.getItem("current_student_id");
-        if (!studentId) {
-            window.location.replace("index.html");
-        }
+        let currentStudentId = null;
+        let unsubscribeStudentListener = null;
 
         onValue(ref(db, 'System_Settings/Texts'), (snapshot) => {
             if (snapshot.exists()) {
@@ -1987,8 +1987,12 @@
 
         document.getElementById("btn-logout").addEventListener("click", async () => {
             if (await customConfirm(window.t('confirmLogout'))) {
-                localStorage.removeItem("current_student_id");
                 localStorage.removeItem("is_new_registration");
+                try {
+                    await signOut(auth);
+                } catch (e) {
+                    console.error("Sign out error:", e);
+                }
                 window.location.href = "index.html";
             }
         });
@@ -2190,10 +2194,11 @@
                 }
             }
 
+            if (!currentStudentId) return;
             const now = new Date();
             const updates = {};
-            updates[`Clearance_Requests/${studentId}/status_${deptId}`] = "Pending";
-            updates[`Clearance_Requests/${studentId}/date_requested_${deptId}`] = now.toISOString();
+            updates[`Clearance_Requests/${currentStudentId}/status_${deptId}`] = "Pending";
+            updates[`Clearance_Requests/${currentStudentId}/date_requested_${deptId}`] = now.toISOString();
 
             update(ref(db), updates)
                 .then(() => customAlert(window.t('alertSent')))
@@ -2280,7 +2285,7 @@
         }
 
         function checkAutoForwardToAssistantDean(data) {
-            if (!data || !studentId) return;
+            if (!data || !currentStudentId) return;
             const cards = window.globalClearanceCards || {};
             const cardKeys = Object.keys(cards);
             if (cardKeys.length === 0) return;
@@ -2296,8 +2301,8 @@
             if (allOtherApproved && !hasAnyNote && currentFinalStatus !== 'Approved' && currentFinalStatus !== 'Pending') {
                 const now = new Date();
                 const updates = {};
-                updates[`Clearance_Requests/${studentId}/status_${finalCardId}`] = "Pending";
-                updates[`Clearance_Requests/${studentId}/date_requested_${finalCardId}`] = now.toISOString();
+                updates[`Clearance_Requests/${currentStudentId}/status_${finalCardId}`] = "Pending";
+                updates[`Clearance_Requests/${currentStudentId}/date_requested_${finalCardId}`] = now.toISOString();
                 update(ref(db), updates).catch(err => console.error("Auto forward to Assistant Dean failed:", err));
             }
         }
@@ -2377,86 +2382,110 @@
 
         let previousStudentData = null;
 
-        onValue(ref(db, 'Clearance_Requests/' + studentId), snapshot => {
-            if (!snapshot.exists()) return;
-            const data = snapshot.val();
+        window.initStudentDataListener = function (studentId) {
+            if (!studentId) return;
+            currentStudentId = studentId;
 
-            if (previousStudentData) {
-                const cards = window.globalClearanceCards || {};
-                Object.keys(cards).forEach(cardId => {
-                    const card = cards[cardId];
-                    const deptName = (card && (card['name_' + (window.currentLang || 'ku')] || card.name_ku)) || cardId;
-
-                    const oldStatus = previousStudentData['status_' + cardId];
-                    const newStatus = data['status_' + cardId];
-                    if (newStatus === 'Approved' && oldStatus !== 'Approved') {
-                        sendStudentNotification(`✅ پەسەندکرنا واژۆیێ: ${deptName}`, `داخوازیا تە ژ لایێ (${deptName}) ڤە هاتە واژۆکرن و پەسەندکرن.`);
-                    }
-
-                    const oldNote = previousStudentData['note_' + cardId] || '';
-                    const newNote = data['note_' + cardId] || '';
-                    if (newNote.trim() !== '' && newNote !== oldNote) {
-                        sendStudentNotification(`⚠️ تێبینی ژ لایێ: ${deptName}`, `تێبینی: ${newNote}`);
-                    }
-                });
-
-                if (data.hod_approved === true && previousStudentData.hod_approved !== true) {
-                    sendStudentNotification(`👑 پەسەندکرنا سەروک پشکێ`, `داخوازیا تە ژ لایێ سەروک پشکێ ڤە هاتە پەسەندکرن.`);
-                }
-                const oldHodNote = previousStudentData.note_hod || '';
-                const newHodNote = data.note_hod || '';
-                if (newHodNote.trim() !== '' && newHodNote !== oldHodNote) {
-                    sendStudentNotification(`⚠️ تێبینییا سەروک پشکێ`, `تێبینی: ${newHodNote}`);
-                }
+            if (unsubscribeStudentListener) {
+                unsubscribeStudentListener();
+                unsubscribeStudentListener = null;
             }
-            previousStudentData = JSON.parse(JSON.stringify(data));
-            latestData = data;
 
-            checkAutoForwardToAssistantDean(data);
+            unsubscribeStudentListener = onValue(ref(db, 'Clearance_Requests/' + studentId), snapshot => {
+                if (!snapshot.exists()) return;
+                const data = snapshot.val();
 
-            const firstChar = data.name ? data.name.trim().charAt(0) : 'ق';
-            document.getElementById('avatar-char').innerText = firstChar;
-            document.getElementById('student-name').innerText = data.name || '...';
-            document.getElementById('pill-dept').innerText = getTranslatedDept(data.department, currentLang);
-            document.getElementById('pill-stage').innerText = getTranslatedStage(data.stage, currentLang);
-            document.getElementById('pill-id').innerText = studentId;
+                if (previousStudentData) {
+                    const cards = window.globalClearanceCards || {};
+                    Object.keys(cards).forEach(cardId => {
+                        const card = cards[cardId];
+                        const deptName = (card && (card['name_' + (window.currentLang || 'ku')] || card.name_ku)) || cardId;
 
-            window.renderClearanceCards(window.globalClearanceCards, latestData);
+                        const oldStatus = previousStudentData['status_' + cardId];
+                        const newStatus = data['status_' + cardId];
+                        if (newStatus === 'Approved' && oldStatus !== 'Approved') {
+                            sendStudentNotification(`✅ پەسەندکرنا واژۆیێ: ${deptName}`, `داخوازیا تە ژ لایێ (${deptName}) ڤە هاتە واژۆکرن و پەسەندکرن.`);
+                        }
 
-            checkAllApproved(data);
+                        const oldNote = previousStudentData['note_' + cardId] || '';
+                        const newNote = data['note_' + cardId] || '';
+                        if (newNote.trim() !== '' && newNote !== oldNote) {
+                            sendStudentNotification(`⚠️ تێبینی ژ لایێ: ${deptName}`, `تێبینی: ${newNote}`);
+                        }
+                    });
 
-            const isNewRegistration = localStorage.getItem("is_new_registration") === "true";
-            const banner = document.getElementById("hod-pending-banner");
+                    if (data.hod_approved === true && previousStudentData.hod_approved !== true) {
+                        sendStudentNotification(`👑 پەسەندکرنا سەروک پشکێ`, `داخوازیا تە ژ لایێ سەروک پشکێ ڤە هاتە پەسەندکرن.`);
+                    }
+                    const oldHodNote = previousStudentData.note_hod || '';
+                    const newHodNote = data.note_hod || '';
+                    if (newHodNote.trim() !== '' && newHodNote !== oldHodNote) {
+                        sendStudentNotification(`⚠️ تێبینییا سەروک پشکێ`, `تێبینی: ${newHodNote}`);
+                    }
+                }
+                previousStudentData = JSON.parse(JSON.stringify(data));
+                latestData = data;
 
-            const hasHodNote = data.note_hod && data.note_hod.trim() !== "" && data.hod_approved !== true;
+                checkAutoForwardToAssistantDean(data);
 
-            if (hasHodNote) {
-                banner.style.display = "flex";
-                banner.className = "has-note-banner";
-                document.getElementById("hod-banner-icon").innerText = "⚠️";
-                document.getElementById("hod-banner-title").innerText = t('hodBannerTitleNote');
-                document.getElementById("hod-banner-sub").innerText = t('hodBannerSubNote') + data.note_hod;
-                document.getElementById("hod-banner-dots").style.display = "none";
-            } else if (isNewRegistration) {
-                if (data.hod_approved === true) {
+                const firstChar = data.name ? data.name.trim().charAt(0) : 'ق';
+                document.getElementById('avatar-char').innerText = firstChar;
+                document.getElementById('student-name').innerText = data.name || '...';
+                document.getElementById('pill-dept').innerText = getTranslatedDept(data.department, currentLang);
+                document.getElementById('pill-stage').innerText = getTranslatedStage(data.stage, currentLang);
+                document.getElementById('pill-id').innerText = studentId;
+
+                window.renderClearanceCards(window.globalClearanceCards, latestData);
+
+                checkAllApproved(data);
+
+                const isNewRegistration = localStorage.getItem("is_new_registration") === "true";
+                const banner = document.getElementById("hod-pending-banner");
+
+                const hasHodNote = data.note_hod && data.note_hod.trim() !== "" && data.hod_approved !== true;
+
+                if (hasHodNote) {
                     banner.style.display = "flex";
-                    banner.className = "approved-banner";
-                    document.getElementById("hod-banner-icon").innerText = "✅";
-                    document.getElementById("hod-banner-title").innerText = t('hodBannerTitleApproved');
-                    document.getElementById("hod-banner-sub").innerText = t('hodBannerSubApproved');
+                    banner.className = "has-note-banner";
+                    document.getElementById("hod-banner-icon").innerText = "⚠️";
+                    document.getElementById("hod-banner-title").innerText = t('hodBannerTitleNote');
+                    document.getElementById("hod-banner-sub").innerText = t('hodBannerSubNote') + data.note_hod;
                     document.getElementById("hod-banner-dots").style.display = "none";
-                    localStorage.setItem("is_new_registration", "false");
-                    setTimeout(() => { banner.style.display = "none"; }, 4000);
+                } else if (isNewRegistration) {
+                    if (data.hod_approved === true) {
+                        banner.style.display = "flex";
+                        banner.className = "approved-banner";
+                        document.getElementById("hod-banner-icon").innerText = "✅";
+                        document.getElementById("hod-banner-title").innerText = t('hodBannerTitleApproved');
+                        document.getElementById("hod-banner-sub").innerText = t('hodBannerSubApproved');
+                        document.getElementById("hod-banner-dots").style.display = "none";
+                        localStorage.setItem("is_new_registration", "false");
+                        setTimeout(() => { banner.style.display = "none"; }, 4000);
+                    } else {
+                        banner.style.display = "flex";
+                        banner.className = "";
+                        document.getElementById("hod-banner-icon").innerText = "⏳";
+                        document.getElementById("hod-banner-title").innerText = t('hodBannerTitlePending');
+                        document.getElementById("hod-banner-sub").innerText = t('hodBannerSubPending');
+                        document.getElementById("hod-banner-dots").style.display = "flex";
+                    }
                 } else {
-                    banner.style.display = "flex";
-                    banner.className = "";
-                    document.getElementById("hod-banner-icon").innerText = "⏳";
-                    document.getElementById("hod-banner-title").innerText = t('hodBannerTitlePending');
-                    document.getElementById("hod-banner-sub").innerText = t('hodBannerSubPending');
-                    document.getElementById("hod-banner-dots").style.display = "flex";
+                    banner.style.display = "none";
+                }
+            });
+        };
+
+        // 🔒 Firebase Auth Listener (OWASP CWE-285 Fix)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const studentId = user.uid || (user.email ? user.email.split('@')[0] : null);
+                if (studentId && window.initStudentDataListener) {
+                    window.initStudentDataListener(studentId);
+                } else {
+                    window.location.replace("index.html");
                 }
             } else {
-                banner.style.display = "none";
+                window.location.replace("index.html");
             }
         });
 
