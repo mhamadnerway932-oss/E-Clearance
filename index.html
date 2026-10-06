@@ -1868,6 +1868,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, onValue, query, orderByChild, equalTo, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
        
         let firebaseConfig = window.firebaseConfig;
@@ -1881,6 +1882,7 @@
         }
         const app = initializeApp(firebaseConfig || window.firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
 
         let generatedOtpCode = "";
         let registrationDataTemp = null;
@@ -2025,6 +2027,11 @@
                 }
 
                 clearLoginAttemptState();
+                try {
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.warn("Auth sign-in warning:", e);
+                }
                 localStorage.setItem("current_student_id", foundPhone);
                 localStorage.setItem("is_new_registration", "false");
                 window.location.href = "dashboard.html";
@@ -2150,7 +2157,12 @@
                 status_library: "Not Requested",
                 status_dormitory: "Not Requested",
                 status_finance: "Not Requested"
-            }).then(() => {
+            }).then(async () => {
+                try {
+                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.warn("Auth sign-in warning:", e);
+                }
                 localStorage.setItem("current_student_id", data.phone);
                 localStorage.setItem("is_new_registration", "true");
                 window.location.href = "dashboard.html";

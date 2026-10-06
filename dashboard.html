@@ -2482,30 +2482,41 @@
 
         // 🔒 Firebase Auth Listener & Profile Data Loader (OWASP CWE-285 Fix)
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const uid = user.uid;
+            let studentId = localStorage.getItem("current_student_id");
+
+            if (!user && studentId) {
+                try {
+                    const cred = await signInAnonymously(auth);
+                    user = cred.user;
+                } catch (e) {
+                    console.warn("Anonymous auto sign-in error:", e);
+                }
+            }
+
+            if (user || studentId) {
+                if (!studentId && user) {
+                    studentId = user.uid;
+                }
 
                 // Hide raw UID display on screen
                 const pillIdContainer = document.getElementById('pill-id-container');
                 if (pillIdContainer) pillIdContainer.style.display = 'none';
 
-                // 1 & 2. Fetch student profile from Realtime Database path: students/${user.uid}
+                // Fetch student profile from Realtime Database
                 try {
-                    const studentSnap = await get(ref(db, `students/${uid}`));
                     let sData = null;
-                    if (studentSnap.exists()) {
-                        sData = studentSnap.val();
+                    const reqSnap = await get(ref(db, `Clearance_Requests/${studentId}`));
+                    if (reqSnap.exists()) {
+                        sData = reqSnap.val();
                     } else {
-                        // Fallback to Clearance_Requests node if students node does not have profile
-                        const reqSnap = await get(ref(db, `Clearance_Requests/${uid}`));
-                        if (reqSnap.exists()) {
-                            sData = reqSnap.val();
+                        const studentSnap = await get(ref(db, `students/${studentId}`));
+                        if (studentSnap.exists()) {
+                            sData = studentSnap.val();
                         }
                     }
 
                     if (sData) {
-                        // 3. Extract fullName/name, department, stage & dynamically update UI container (#studentInfoDisplay)
-                        const fullName = sData.fullName || sData.name || '...';
+                        const fullName = sData.name || sData.fullName || '...';
                         const dept = getTranslatedDept(sData.department, currentLang);
                         const stage = getTranslatedStage(sData.stage, currentLang);
 
@@ -2525,9 +2536,9 @@
                     console.error("Error fetching student profile:", err);
                 }
 
-                // 4. Trigger session listener function with verified user.uid
+                // Trigger session listener function with verified studentId
                 if (window.initStudentDataListener) {
-                    window.initStudentDataListener(uid);
+                    window.initStudentDataListener(studentId);
                 }
             } else {
                 window.location.replace("index.html");
