@@ -2429,10 +2429,11 @@
             document.getElementById("empty-state").style.display = "none";
             document.getElementById("result-card").style.display = "flex";
             
-            document.getElementById("res-name").innerText = "ناڤێ قوتابی: " + data.name;
-            document.getElementById("res-dept").innerText = "پشک: " + data.department;
-            document.getElementById("res-stage").innerText = "قۆناغ: " + (data.stage || "نەزانراو");
-            document.getElementById("res-id-badge").innerText = "ID: " + searchId;
+            const studentPhone = data ? (data.phone || data.phoneNumber || data.student_id || searchId) : searchId;
+            document.getElementById("res-name").innerText = "ناڤێ قوتابی: " + (data ? data.name : '');
+            document.getElementById("res-dept").innerText = "پشک: " + (data ? data.department : '');
+            document.getElementById("res-stage").innerText = "قۆناغ: " + (data ? (data.stage || "نەزانراو") : "نەزانراو");
+            document.getElementById("res-id-badge").innerText = "ID: " + studentPhone;
 
             // Generate initial character for avatar
             const firstChar = data.name ? data.name.trim().charAt(0) : "ق";
@@ -2842,6 +2843,8 @@
                     }
                 }
 
+                const studentPhone = data.phone || data.phoneNumber || data.student_id || studentId;
+
                 const div = document.createElement("div");
                 div.className = "student-item";
                 div.style.display = "flex";
@@ -2856,7 +2859,7 @@
                 infoSpan.style.flex = "1";
                 infoSpan.innerHTML = `
                     <span style="font-weight: 700; color: #fff;">${escapeHTML(data.name)}</span>
-                    <span style="font-size: 0.75rem; color: #94a3b8; background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 8px; font-family: 'Outfit';">${escapeHTML(studentId)}</span>
+                    <span style="font-size: 0.75rem; color: #94a3b8; background: rgba(255,255,255,0.08); padding: 4px 8px; border-radius: 8px; font-family: 'Outfit';">${escapeHTML(studentPhone)}</span>
                 `;
                 infoSpan.onclick = () => loadStudentCard(studentId, data);
 
@@ -2905,9 +2908,10 @@
                 };
 
                 hodStudentsArray.forEach(({ studentId, data }) => {
+                    const studentPhone = data.phone || data.phoneNumber || data.student_id || studentId;
                     const tr = document.createElement("tr");
                     let rowHTML = `
-                        <td style="font-weight: 700; color: #fff;">${escapeHTML(data.name)} <br><span style="font-size:0.75rem; color:#94a3b8; font-family:'Outfit';">${escapeHTML(studentId)}</span></td>
+                        <td style="font-weight: 700; color: #fff;">${escapeHTML(data.name)} <br><span style="font-size:0.75rem; color:#94a3b8; font-family:'Outfit';">${escapeHTML(studentPhone)}</span></td>
                         <td>${escapeHTML(data.stage || "١")}</td>
                     `;
                     
@@ -2956,9 +2960,10 @@
                 };
 
                 adStudentsArray.forEach(({ studentId, data }) => {
+                    const studentPhone = data.phone || data.phoneNumber || data.student_id || studentId;
                     const tr = document.createElement("tr");
                     let rowHTML = `
-                        <td style="font-weight: 700; color: #fff;">${escapeHTML(data.name)} <br><span style="font-size:0.75rem; color:#94a3b8; font-family:'Outfit';">${escapeHTML(studentId)}</span></td>
+                        <td style="font-weight: 700; color: #fff;">${escapeHTML(data.name)} <br><span style="font-size:0.75rem; color:#94a3b8; font-family:'Outfit';">${escapeHTML(studentPhone)}</span></td>
                         <td>${escapeHTML(data.stage || "١")}</td>
                     `;
                     
@@ -3640,8 +3645,9 @@
 
                 if (!belongsToTab) return;
 
+                const studentPhone = data.phone || data.phoneNumber || data.student_id || studentId;
                 const name = (data.name || "").toLowerCase();
-                const phone = (studentId || "").toLowerCase();
+                const phone = (studentPhone || "").toLowerCase();
                 const deptStr = (data.department || "").toLowerCase();
                 if (searchQuery && !name.includes(searchQuery) && !phone.includes(searchQuery) && !deptStr.includes(searchQuery)) {
                     return;
@@ -3656,7 +3662,7 @@
                 tr.innerHTML = `
                     <td style="font-weight: 700; color: #fff;">${escapeHTML(data.name || '—')}</td>
                     <td><span class="meta-badge highlight" style="font-size:0.78rem;">${escapeHTML(data.department || '—')}</span></td>
-                    <td style="font-family: 'Outfit'; color: #00f0ff;">${escapeHTML(studentId)}</td>
+                    <td style="font-family: 'Outfit'; color: #00f0ff;">${escapeHTML(studentPhone)}</td>
                     <td>${escapeHTML(data.stage || "١")}</td>
                     <td>
                         <div style="display:flex; gap:5px; align-items:center; justify-content:center;">
