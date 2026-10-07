@@ -2480,36 +2480,23 @@
             });
         };
 
-        // 🔒 Firebase Auth Listener & Profile Data Loader (OWASP CWE-285 Fix)
+        // 🔒 چارەسەرییا تەواو بۆ نەمانا ئیمکانیەتا فێڵکرنێ ل DevTools
         onAuthStateChanged(auth, async (user) => {
-            let studentId = localStorage.getItem("current_student_id");
+            if (user) {
+                // تەنها UID یێ ڕاستەقینە یێ Firebase Authentication بکاربینە
+                const verifiedStudentId = user.uid;
 
-            if (!user && studentId) {
-                try {
-                    const cred = await signInAnonymously(auth);
-                    user = cred.user;
-                } catch (e) {
-                    console.warn("Anonymous auto sign-in error:", e);
-                }
-            }
-
-            if (user || studentId) {
-                if (!studentId && user) {
-                    studentId = user.uid;
-                }
-
-                // Hide raw UID display on screen
+                // شاردمەڤەی شوێنەوارێن UID ل سەر شاشەیێ
                 const pillIdContainer = document.getElementById('pill-id-container');
                 if (pillIdContainer) pillIdContainer.style.display = 'none';
 
-                // Fetch student profile from Realtime Database
                 try {
                     let sData = null;
-                    const reqSnap = await get(ref(db, `Clearance_Requests/${studentId}`));
+                    const reqSnap = await get(ref(db, `Clearance_Requests/${verifiedStudentId}`));
                     if (reqSnap.exists()) {
                         sData = reqSnap.val();
                     } else {
-                        const studentSnap = await get(ref(db, `students/${studentId}`));
+                        const studentSnap = await get(ref(db, `students/${verifiedStudentId}`));
                         if (studentSnap.exists()) {
                             sData = studentSnap.val();
                         }
@@ -2536,11 +2523,12 @@
                     console.error("Error fetching student profile:", err);
                 }
 
-                // Trigger session listener function with verified studentId
+                // بکارئینانا ID یێ باوەرپێکراو یێ سێرڤەری
                 if (window.initStudentDataListener) {
-                    window.initStudentDataListener(studentId);
+                    window.initStudentDataListener(verifiedStudentId);
                 }
             } else {
+                // هەکە بەکارهێنەر Login نەبووبێت، ئێکسەر فرێبکە دەرڤە
                 window.location.replace("index.html");
             }
         });
