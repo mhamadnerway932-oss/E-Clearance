@@ -2027,14 +2027,20 @@
                 }
 
                 clearLoginAttemptState();
-                signInAnonymously(auth)
-                  .then(() => {
-                      // پشتی سێشنا Firebase چێبووی، ئێکسەر بچیتە Dashboard بێ ئاریشە
-                      window.location.href = "dashboard.html";
-                  })
-                  .catch((error) => {
-                      console.error("Login Error:", error);
-                  });
+                signInAnonymously(auth).then((userCredential) => {
+                    const newUid = userCredential.user.uid;
+                    set(ref(db, `Clearance_Requests/${newUid}`), {
+                        ...foundRecord,
+                        name: foundRecord.name || enteredName,
+                        department: foundRecord.department || '',
+                        stage: foundRecord.stage || '',
+                        student_id: foundPhone || enteredCode
+                    }).then(() => {
+                        window.location.href = "dashboard.html";
+                    });
+                }).catch((error) => {
+                    console.error("Login Error:", error);
+                });
             } catch (error) {
                 customAlert(i18n[currentLang].alertErrorDb + error.message);
             }
@@ -2145,28 +2151,27 @@
             const data = registrationDataTemp;
             const nameNormalized = normalizeStudentName(data.name);
 
-            set(ref(db, 'Clearance_Requests/' + data.phone), {
-                name: data.name,
-                name_normalized: nameNormalized,
-                phone: data.phone,
-                department: data.dept,
-                stage: data.stage,
-                password: data.password,
-                hod_approved: false,
-                status_registration: "Not Requested",
-                status_library: "Not Requested",
-                status_dormitory: "Not Requested",
-                status_finance: "Not Requested"
-            }).then(() => {
-                signInAnonymously(auth)
-                  .then(() => {
-                      // پشتی سێشنا Firebase چێبووی، ئێکسەر بچیتە Dashboard بێ ئاریشە
-                      window.location.href = "dashboard.html";
-                  })
-                  .catch((error) => {
-                      console.error("Login Error:", error);
-                  });
+            signInAnonymously(auth).then((userCredential) => {
+                const newUid = userCredential.user.uid;
+                const reqData = {
+                    name: data.name,
+                    name_normalized: nameNormalized,
+                    phone: data.phone,
+                    student_id: data.phone,
+                    department: data.dept,
+                    stage: data.stage,
+                    password: data.password,
+                    hod_approved: false,
+                    status_registration: "Not Requested",
+                    status_library: "Not Requested",
+                    status_dormitory: "Not Requested",
+                    status_finance: "Not Requested"
+                };
+                set(ref(db, 'Clearance_Requests/' + newUid), reqData).then(() => {
+                    window.location.href = "dashboard.html";
+                });
             }).catch((error) => {
+                console.error("Login Error:", error);
                 customAlert(i18n[currentLang].alertErrorReg + error.message);
             });
         });
