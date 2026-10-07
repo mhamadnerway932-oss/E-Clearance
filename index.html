@@ -2027,14 +2027,14 @@
                 }
 
                 clearLoginAttemptState();
-                try {
-                    await signInAnonymously(auth);
-                } catch (e) {
-                    console.warn("Auth sign-in warning:", e);
-                }
-                localStorage.setItem("current_student_id", foundPhone);
-                localStorage.setItem("is_new_registration", "false");
-                window.location.href = "dashboard.html";
+                signInAnonymously(auth)
+                  .then(() => {
+                      // پشتی سێشنا Firebase چێبووی، ئێکسەر بچیتە Dashboard بێ ئاریشە
+                      window.location.href = "dashboard.html";
+                  })
+                  .catch((error) => {
+                      console.error("Login Error:", error);
+                  });
             } catch (error) {
                 customAlert(i18n[currentLang].alertErrorDb + error.message);
             }
@@ -2157,15 +2157,15 @@
                 status_library: "Not Requested",
                 status_dormitory: "Not Requested",
                 status_finance: "Not Requested"
-            }).then(async () => {
-                try {
-                    await signInAnonymously(auth);
-                } catch (e) {
-                    console.warn("Auth sign-in warning:", e);
-                }
-                localStorage.setItem("current_student_id", data.phone);
-                localStorage.setItem("is_new_registration", "true");
-                window.location.href = "dashboard.html";
+            }).then(() => {
+                signInAnonymously(auth)
+                  .then(() => {
+                      // پشتی سێشنا Firebase چێبووی، ئێکسەر بچیتە Dashboard بێ ئاریشە
+                      window.location.href = "dashboard.html";
+                  })
+                  .catch((error) => {
+                      console.error("Login Error:", error);
+                  });
             }).catch((error) => {
                 customAlert(i18n[currentLang].alertErrorReg + error.message);
             });

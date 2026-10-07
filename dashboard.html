@@ -2480,13 +2480,12 @@
             });
         };
 
-        // 🔒 چارەسەرییا تەواو بۆ نەمانا ئیمکانیەتا فێڵکرنێ ل DevTools
+        // 🔒 پاراستنا تەمام ب ڕێکا Firebase Auth
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // تەنها UID یێ ڕاستەقینە یێ Firebase Authentication بکاربینە
+                // وەرگرتنا ناسنامەیا دروست ژ سێرڤەرێ Firebase
                 const verifiedStudentId = user.uid;
 
-                // شاردمەڤەی شوێنەوارێن UID ل سەر شاشەیێ
                 const pillIdContainer = document.getElementById('pill-id-container');
                 if (pillIdContainer) pillIdContainer.style.display = 'none';
 
@@ -2523,12 +2522,11 @@
                     console.error("Error fetching student profile:", err);
                 }
 
-                // بکارئینانا ID یێ باوەرپێکراو یێ سێرڤەری
                 if (window.initStudentDataListener) {
                     window.initStudentDataListener(verifiedStudentId);
                 }
             } else {
-                // هەکە بەکارهێنەر Login نەبووبێت، ئێکسەر فرێبکە دەرڤە
+                // ئەگەر بەکارهێنەر داخل نەبووبیت، بچیتە دەرڤە
                 window.location.replace("index.html");
             }
         });
