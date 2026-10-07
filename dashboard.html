@@ -2480,54 +2480,60 @@
             });
         };
 
-        // 🔒 پاراستنا تەمام ب ڕێکا Firebase Auth
+        // 🔒 پاراستنا لاپەڕەی (Unauthorized Access Protection ب ڕێکا Firebase Auth)
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // وەرگرتنا ناسنامەیا دروست ژ سێرڤەرێ Firebase
-                const verifiedStudentId = user.uid;
-
-                const pillIdContainer = document.getElementById('pill-id-container');
-                if (pillIdContainer) pillIdContainer.style.display = 'none';
-
-                try {
-                    let sData = null;
-                    const reqSnap = await get(ref(db, `Clearance_Requests/${verifiedStudentId}`));
-                    if (reqSnap.exists()) {
-                        sData = reqSnap.val();
-                    } else {
-                        const studentSnap = await get(ref(db, `students/${verifiedStudentId}`));
-                        if (studentSnap.exists()) {
-                            sData = studentSnap.val();
-                        }
-                    }
-
-                    if (sData) {
-                        const fullName = sData.name || sData.fullName || '...';
-                        const dept = getTranslatedDept(sData.department, currentLang);
-                        const stage = getTranslatedStage(sData.stage, currentLang);
-
-                        const nameEl = document.getElementById('student-name');
-                        if (nameEl) nameEl.innerText = fullName;
-
-                        const deptEl = document.getElementById('pill-dept');
-                        if (deptEl) deptEl.innerText = dept;
-
-                        const stageEl = document.getElementById('pill-stage');
-                        if (stageEl) stageEl.innerText = stage;
-
-                        const avatarEl = document.getElementById('avatar-char');
-                        if (avatarEl && fullName) avatarEl.innerText = fullName.trim().charAt(0);
-                    }
-                } catch (err) {
-                    console.error("Error fetching student profile:", err);
-                }
-
-                if (window.initStudentDataListener) {
-                    window.initStudentDataListener(verifiedStudentId);
-                }
-            } else {
-                // ئەگەر بەکارهێنەر داخل نەبووبیت، بچیتە دەرڤە
+            if (!user) {
                 window.location.replace("index.html");
+                return;
+            }
+
+            // وەرگرتنا ناسنامەیا دروست ژ سێرڤەرێ Firebase
+            const verifiedStudentId = user.uid;
+
+            const pillIdContainer = document.getElementById('pill-id-container');
+            if (pillIdContainer) pillIdContainer.style.display = 'none';
+
+            try {
+                let sData = null;
+                const reqSnap = await get(ref(db, `Clearance_Requests/${verifiedStudentId}`));
+                if (reqSnap.exists()) {
+                    sData = reqSnap.val();
+                } else {
+                    const studentSnap = await get(ref(db, `students/${verifiedStudentId}`));
+                    if (studentSnap.exists()) {
+                        sData = studentSnap.val();
+                    }
+                }
+
+                if (sData) {
+                    const fullName = sData.name || sData.fullName || '...';
+                    const dept = getTranslatedDept(sData.department, currentLang);
+                    const stage = getTranslatedStage(sData.stage, currentLang);
+
+                    const nameEl = document.getElementById('student-name');
+                    if (nameEl) nameEl.innerText = fullName;
+
+                    const deptEl = document.getElementById('pill-dept');
+                    if (deptEl) deptEl.innerText = dept;
+
+                    const stageEl = document.getElementById('pill-stage');
+                    if (stageEl) stageEl.innerText = stage;
+
+                    const avatarEl = document.getElementById('avatar-char');
+                    if (avatarEl && fullName) avatarEl.innerText = fullName.trim().charAt(0);
+                } else {
+                    // ئەگەر user.uid ل ناڤ لیستا داتابێسێ/ڕێپێدانێ نەبێت، ڕاستەوخۆ دەیباتەوە index.html
+                    window.location.replace("index.html");
+                    return;
+                }
+            } catch (err) {
+                console.error("Error fetching student profile:", err);
+                window.location.replace("index.html");
+                return;
+            }
+
+            if (window.initStudentDataListener) {
+                window.initStudentDataListener(verifiedStudentId);
             }
         });
 
